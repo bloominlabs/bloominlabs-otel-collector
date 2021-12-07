@@ -16,6 +16,7 @@ import (
 	journaldreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver"
 	jaegerreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/jaegerreceiver"
 	prometheusreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver"
+	prometheusexecreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver"
 	hostmetricsreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver"
 	postgresqlreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver"
 
@@ -56,6 +57,7 @@ func components() (component.Factories, error) {
 		journaldreceiver.NewFactory(),
 		jaegerreceiver.NewFactory(),
 		prometheusreceiver.NewFactory(),
+		prometheusexecreceiver.NewFactory(),
 		hostmetricsreceiver.NewFactory(),
 		postgresqlreceiver.NewFactory(),
 	}

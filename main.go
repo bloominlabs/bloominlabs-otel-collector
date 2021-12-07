@@ -19,7 +19,7 @@ func main() {
 	}
 
 	info := component.BuildInfo{
-		Command:  "otelcol-custom",
+		Command:  "bloominlabs-otel-collector",
 		Description: "Custom OpenTelemetry Collector distribution",
 		Version:  "1.0.0",
 	}

@@ -1041,8 +1041,8 @@ github.com/hashicorp/go-immutable-radix v1.0.0/go.mod h1:0y9vanUI8NX6FsYoO3zeMjh
 github.com/hashicorp/go-immutable-radix v1.2.0/go.mod h1:0y9vanUI8NX6FsYoO3zeMjhV/C5i9g4Q3DwcSNZ4P60=
 github.com/hashicorp/go-immutable-radix v1.3.1 h1:DKHmCUm2hRBK510BaiZlwvpD40f8bJFeZnpfm2KLowc=
 github.com/hashicorp/go-immutable-radix v1.3.1/go.mod h1:0y9vanUI8NX6FsYoO3zeMjhV/C5i9g4Q3DwcSNZ4P60=
-github.com/hashicorp/go-msgpack v0.5.3 h1:zKjpN5BK/P5lMYrLmBHdBULWbJ0XpYR+7NGzqkZzoD4=
 github.com/hashicorp/go-msgpack v0.5.3/go.mod h1:ahLV/dePpqEmjfWmKiqvPkv/twdG7iPBM1vqhUKIvfM=
+github.com/hashicorp/go-msgpack v0.5.5 h1:i9R9JSrqIz0QVLz3sz+i3YJdT7TTSLcfLLzJi9aZTuI=
 github.com/hashicorp/go-multierror v0.0.0-20161216184304-ed905158d874/go.mod h1:JMRHfdO9jKNzS/+BTlxCjKNQHg/jZAft8U7LloJvN7I=
 github.com/hashicorp/go-multierror v1.0.0/go.mod h1:dHtQlpGsu+cZNNAkkCN/P3hoUDHhCYQXV3UM06sGGrk=
 github.com/hashicorp/go-multierror v1.1.0 h1:B9UzwGQJehnUY1yNrnwREHc3fGbC2xefo8g4TbElacI=
@@ -1199,6 +1199,8 @@ github.com/jwilder/encoding v0.0.0-20170811194829-b4e1701a28ef/go.mod h1:Ct9fl0F
 github.com/karrick/godirwalk v1.8.0/go.mod h1:H5KPZjojv4lE+QYImBI8xVtrBRgYrIVsaRPx4tDPEn4=
 github.com/karrick/godirwalk v1.10.3 h1:lOpSw2vJP0y5eLBW906QwKsUK/fe/QDyoqM5rnnuPDY=
 github.com/karrick/godirwalk v1.10.3/go.mod h1:RoGL9dQei4vP9ilrpETWE8CLOZ1kiN0LhBygSwrAsHA=
+github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 h1:Z9n2FFNUXsshfwJMBgNA0RU6/i7WVaAegv3PtuIHPMs=
+github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51/go.mod h1:CzGEWj7cYgsdH8dAjBGEr58BoE7ScuLd+fwFZ44+/x8=
 github.com/kisielk/errcheck v1.1.0/go.mod h1:EZBBE59ingxPouuu3KfxchcWSUPOHkagtvWXihfKN4Q=
 github.com/kisielk/errcheck v1.2.0/go.mod h1:/BMXB+zMLi60iA8Vv6Ksmxu/1UDYcXs4uQLJ+jE2L00=
 github.com/kisielk/errcheck v1.5.0 h1:e8esj/e4R+SAOwFwN+n3zr0nYeCyeweozKfO23MvHzY=
@@ -1479,6 +1481,8 @@ github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldrecei
 github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver v0.40.0/go.mod h1:fxGTzaZROBZJ3SDqYnYTcjzpe3dDYOYIr+ovSEFPPuI=
 github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.40.0 h1:8LeZIScRiVckNXKXLtQTFuCnymDjc27di9rhJ+UQqic=
 github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.40.0/go.mod h1:hGMmlxd+EMcUSKhz6tEi6eqGZrpwbROeE3/GQBxo8x8=
+github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver v0.40.0 h1:s//HoSy1IuHjRgLIcPSG5+KlSSaX3HTwUkzOEdJ4xtE=
+github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver v0.40.0/go.mod h1:1GfjGIo09tpURHhOZTfHKSlNkf5CcS03fE50UCtwCx0=
 github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.40.0 h1:66Lu5/q8QYEhfoJwtCBTOkBUU3UcHm3uOxf6ID1AAjQ=
 github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.40.0/go.mod h1:B+xJb1mP9Mpzyz5q/NKWP2574RNTIgri2aAxhl/VAr8=
 github.com/open-telemetry/opentelemetry-log-collection v0.22.0 h1:GrzrnzzuXZLkshHwOqHroKRpS99vWWd8U34g+TJyNFY=
