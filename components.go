@@ -4,14 +4,14 @@ package main
 
 import (
 	"go.opentelemetry.io/collector/component"
-	"go.opentelemetry.io/collector/consumer/consumererror"
-	"go.opentelemetry.io/collector/service/defaultcomponents"
-
-	// extensions
+	lokiexporter "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/lokiexporter"
+	prometheusremotewriteexporter "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusremotewriteexporter"
 	pprofextension "github.com/open-telemetry/opentelemetry-collector-contrib/extension/pprofextension"
 	healthcheckextension "github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension"
-
-	// receivers
+	attributesprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"
+	resourceprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor"
+	resourcedetectionprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor"
+	lokiprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor"
 	filelogreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver"
 	journaldreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver"
 	jaegerreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/jaegerreceiver"
@@ -19,40 +19,21 @@ import (
 	prometheusexecreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver"
 	hostmetricsreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver"
 	postgresqlreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver"
-
-	// exporters
-	lokiexporter "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/lokiexporter"
-	prometheusremotewriteexporter "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusremotewriteexporter"
-
-	// processors
-	attributesprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"
-	resourceprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor"
-	resourcedetectionprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor"
-	lokiprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor"
 )
 
 func components() (component.Factories, error) {
-	var errs []error
 	var err error
-	var factories component.Factories
-	factories, err = defaultcomponents.Components()
+	factories := component.Factories{}
+
+	factories.Extensions, err = component.MakeExtensionFactoryMap(
+		pprofextension.NewFactory(),
+		healthcheckextension.NewFactory(),
+	)
 	if err != nil {
 		return component.Factories{}, err
 	}
 
-	extensions := []component.ExtensionFactory{
-		pprofextension.NewFactory(),
-		healthcheckextension.NewFactory(),
-	}
-	for _, ext := range factories.Extensions {
-		extensions = append(extensions, ext)
-	}
-	factories.Extensions, err = component.MakeExtensionFactoryMap(extensions...)
-	if err != nil {
-		errs = append(errs, err)
-	}
-
-	receivers := []component.ReceiverFactory{
+	factories.Receivers, err = component.MakeReceiverFactoryMap(
 		filelogreceiver.NewFactory(),
 		journaldreceiver.NewFactory(),
 		jaegerreceiver.NewFactory(),
@@ -60,40 +41,28 @@ func components() (component.Factories, error) {
 		prometheusexecreceiver.NewFactory(),
 		hostmetricsreceiver.NewFactory(),
 		postgresqlreceiver.NewFactory(),
-	}
-	for _, rcv := range factories.Receivers {
-		receivers = append(receivers, rcv)
-	}
-	factories.Receivers, err = component.MakeReceiverFactoryMap(receivers...)
+	)
 	if err != nil {
-		errs = append(errs, err)
+		return component.Factories{}, err
 	}
 
-	exporters := []component.ExporterFactory{
+	factories.Exporters, err = component.MakeExporterFactoryMap(
 		lokiexporter.NewFactory(),
 		prometheusremotewriteexporter.NewFactory(),
-	}
-	for _, exp := range factories.Exporters {
-		exporters = append(exporters, exp)
-	}
-	factories.Exporters, err = component.MakeExporterFactoryMap(exporters...)
+	)
 	if err != nil {
-		errs = append(errs, err)
+		return component.Factories{}, err
 	}
 
-	processors := []component.ProcessorFactory{
+	factories.Processors, err = component.MakeProcessorFactoryMap(
 		attributesprocessor.NewFactory(),
 		resourceprocessor.NewFactory(),
 		resourcedetectionprocessor.NewFactory(),
 		lokiprocessor.NewFactory(),
-	}
-	for _, pr := range factories.Processors {
-		processors = append(processors, pr)
-	}
-	factories.Processors, err = component.MakeProcessorFactoryMap(processors...)
+	)
 	if err != nil {
-		errs = append(errs, err)
+		return component.Factories{}, err
 	}
 
-	return factories, consumererror.Combine(errs)
+	return factories, nil
 }

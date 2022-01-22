@@ -19,9 +19,9 @@ func main() {
 	}
 
 	info := component.BuildInfo{
-		Command:  "bloominlabs-otel-collector",
+		Command:     "bloominlabs-otel-collector",
 		Description: "Custom OpenTelemetry Collector distribution",
-		Version:  "1.0.0",
+		Version:     "1.0.0",
 	}
 
 	if err := run(service.CollectorSettings{BuildInfo: info, Factories: factories}); err != nil {
