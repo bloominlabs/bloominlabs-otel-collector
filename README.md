@@ -1,6 +1,6 @@
 # bloominlabs-otel-collector
 
-bloomin lab's otel-collector distribution used for infrastructure components
+otel-collector distribution used for bloomin' labs' infrastructure components
 
 ## Usage
 
