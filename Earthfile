@@ -4,7 +4,7 @@ FROM golang:1.17
 WORKDIR /bloominlabs-otel-collector
 
 deps:
-  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.42.0
+  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.43.0
 
 mc-monitor:
   FROM itzg/mc-monitor:0.10.6
