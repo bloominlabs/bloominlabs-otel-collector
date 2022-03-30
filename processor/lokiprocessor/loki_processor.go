@@ -20,35 +20,35 @@ import (
 	"go.opentelemetry.io/collector/model/pdata"
 )
 
-type resourceProcessor struct {}
+type resourceProcessor struct{}
 
 func (rp *resourceProcessor) processLogs(_ context.Context, ld pdata.Logs) (pdata.Logs, error) {
-  	rls := ld.ResourceLogs()
+	rls := ld.ResourceLogs()
 	for i := 0; i < rls.Len(); i++ {
 		rs := rls.At(i)
 		ilss := rs.InstrumentationLibraryLogs()
 		for j := 0; j < ilss.Len(); j++ {
 			ils := ilss.At(j)
-			logs := ils.Logs()
+			logs := ils.LogRecords()
 			for k := 0; k < logs.Len(); k++ {
 				lr := logs.At(k)
-        body := lr.Body().MapVal()
-        message, exists := body.Get("MESSAGE");
-        if !exists {
-          continue
-        }
-        unit, exists := body.Get("_SYSTEMD_UNIT")
-        if !exists {
-          continue
-        }
-        hostname, exists := body.Get("_HOSTNAME")
-        if !exists {
-          continue
-        }
+				body := lr.Body().MapVal()
+				message, exists := body.Get("MESSAGE")
+				if !exists {
+					continue
+				}
+				unit, exists := body.Get("_SYSTEMD_UNIT")
+				if !exists {
+					continue
+				}
+				hostname, exists := body.Get("_HOSTNAME")
+				if !exists {
+					continue
+				}
 
-        lr.Body().SetStringVal(message.StringVal())
-        lr.Attributes().Insert("unit", unit)
-        lr.Attributes().Insert("hostname", hostname)
+				lr.Body().SetStringVal(message.StringVal())
+				lr.Attributes().Insert("unit", unit)
+				lr.Attributes().Insert("hostname", hostname)
 			}
 		}
 	}
