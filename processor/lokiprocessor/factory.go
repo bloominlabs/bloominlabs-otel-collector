@@ -47,9 +47,10 @@ func createDefaultConfig() config.Processor {
 
 func createLogsProcessor(
 	_ context.Context,
-	_ component.ProcessorCreateSettings,
+	set component.ProcessorCreateSettings,
 	cfg config.Processor,
-	nextConsumer consumer.Logs) (component.LogsProcessor, error) {
+	nextConsumer consumer.Logs,
+) (component.LogsProcessor, error) {
 	proc := &resourceProcessor{}
 	return processorhelper.NewLogsProcessor(
 		cfg,

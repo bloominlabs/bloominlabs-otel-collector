@@ -17,16 +17,16 @@ package lokiprocessor
 import (
 	"context"
 
-	"go.opentelemetry.io/collector/model/pdata"
+	"go.opentelemetry.io/collector/pdata/plog"
 )
 
 type resourceProcessor struct{}
 
-func (rp *resourceProcessor) processLogs(_ context.Context, ld pdata.Logs) (pdata.Logs, error) {
+func (rp *resourceProcessor) processLogs(_ context.Context, ld plog.Logs) (plog.Logs, error) {
 	rls := ld.ResourceLogs()
 	for i := 0; i < rls.Len(); i++ {
 		rs := rls.At(i)
-		ilss := rs.InstrumentationLibraryLogs()
+		ilss := rs.ScopeLogs()
 		for j := 0; j < ilss.Len(); j++ {
 			ils := ilss.At(j)
 			logs := ils.LogRecords()
