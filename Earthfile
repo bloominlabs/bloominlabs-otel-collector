@@ -13,6 +13,7 @@ mc-monitor:
 build:
   FROM +deps
   COPY processor processor
+  COPY receiver receiver
   COPY otelcol-builder.yaml . 
   RUN GO111MODULE=on CGO_ENABLED=0 builder --output-path . --config otelcol-builder.yaml --name bloominlabs-otel-collector --skip-compilation
   SAVE ARTIFACT *.go AS LOCAL ./
