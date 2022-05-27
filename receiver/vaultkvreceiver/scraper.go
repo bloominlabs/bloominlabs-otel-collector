@@ -16,7 +16,6 @@ package vaultkvreceiver // import "github.com/open-telemetry/opentelemetry-colle
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/hashicorp/vault/api"
@@ -74,18 +73,8 @@ func (p *vaultKVScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 
 	now := pcommon.NewTimestampFromTime(time.Now())
 
-	client.listKeys(ctx)
-	keys, err := client.listKeys(ctx)
-	if err != nil {
-		return pmetric.NewMetrics(), fmt.Errorf("failed to list keys: %w", err)
-	}
-
 	var errors scrapererror.ScrapeErrors
-
-	fmt.Println(keys)
-	for _, key := range keys {
-		p.collectCreatedTime(ctx, now, client, key, errors)
-	}
+	p.collectCreatedTime(ctx, now, client, errors)
 
 	return p.mb.Emit(), errors.Combine()
 }
@@ -94,33 +83,19 @@ func (p *vaultKVScraper) collectCreatedTime(
 	ctx context.Context,
 	now pcommon.Timestamp,
 	client client,
-	path string,
 	errors scrapererror.ScrapeErrors,
 ) {
-	return
-	// metadata, err := client.getPathMetadata(ctx, path)
-	// if err != nil {
-	// 	p.logger.Error("Errors encountered while fetching path metadata", zap.Error(err))
-	// 	errors.AddPartial(0, err)
-	// }
+	secretMetadata, err := client.listSecretMetadata(ctx)
+	if err != nil {
+		p.logger.Error("failed to list secret metadata", zap.Error(err))
+		errors.AddPartial(0, err)
+	}
 
-	// // Metrics can be partially collected (non-nil) even if there were partial errors reported
-	// if blocksReadByTableMetrics == nil {
-	// 	return
-	// }
-	// for _, table := range blocksReadByTableMetrics {
-	// 	for sourceKey, source := range metadata.MapAttributeSource {
-	// 		value, ok := table.stats[sourceKey]
-	// 		if !ok {
-	// 			// Data isn't present, error was already logged at a lower level
-	// 			continue
-	// 		}
-	// 		i, err := p.parseInt(sourceKey, value)
-	// 		if err != nil {
-	// 			errors.AddPartial(0, err)
-	// 			continue
-	// 		}
-	// 		p.mb.RecordPostgresqlBlocksReadDataPoint(now, i, table.database, table.table, source)
-	// 	}
-	// }
+	// Metrics can be partially collected (non-nil) even if there were partial errors reported
+	if secretMetadata == nil {
+		return
+	}
+	for key, metadata := range secretMetadata {
+		p.mb.RecordVaultkvCreatedOnDataPoint(now, metadata.CreatedTime.Unix(), key, p.config.Mount)
+	}
 }

@@ -1,59 +1,138 @@
 package main
 
 import (
-	"context"
 	"fmt"
-	"reflect"
+	"log"
+	"path"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/vault/api"
+	"github.com/mitchellh/mapstructure"
 )
 
-func listKeys(ctx context.Context, c *api.Client) ([]string, error) {
-	fmt.Println("initial path", "infra/")
-	return recursiveListKeys(ctx, c, "infra/")
+const (
+	Delimiter            = "/"
+	mountEnginePath      = "sys/mounts/%s"
+	readWriteSecretsPath = "%s/data/%s"
+	listSecretsPath      = "%s/metadata/%s"
+)
+
+type MetadataResponse struct {
+	CreatedTime    time.Time `mapstructure:"created_time"`
+	CurrentVersion int       `mapstructure:"current_version"`
+	MaxVersions    int       `mapstructure:"max_versions"`
+	UpdatedTime    time.Time `mapstructure:"updated_time"`
 }
 
-func recursiveListKeys(ctx context.Context, client *api.Client, path string) ([]string, error) {
-	var secretListPath []string
+// Secrets holds all recursive secrets of a certain path.
+type Secrets map[string]MetadataResponse
 
-	fmt.Println("path", path)
-	secretList, err := listSecret(ctx, client, path)
-	if err == nil && secretList != nil {
-		for _, secret := range secretList.Data["keys"].([]interface{}) {
-			if strings.HasSuffix(secret.(string), "/") {
-				keys, err := recursiveListKeys(ctx, client, path+secret.(string))
-				if err != nil {
-					return secretListPath, fmt.Errorf("failed to list keys under %s: %w", path, err)
-				}
-				secretListPath = append(secretListPath, keys...)
-			} else {
-				secretListPath = append([]string{strings.Replace(path, "metadata", "data", -1) + secret.(string)}, secretListPath...)
+// ListRecursive returns secrets to a path recursive.
+func (s *Secrets) ListRecursive(client *api.Client, rootPath, subPath string) error {
+	keys, err := ListSecrets(client, rootPath, subPath)
+	if err != nil {
+		// no sub directories in here, but lets check for normal kv pairs then..
+		secrets, e := ReadSecrets(client, rootPath, subPath)
+		if e == nil {
+			(*s)[path.Join(rootPath, subPath)] = secrets
+
+			return nil
+		}
+
+		return err
+	}
+
+	for _, k := range keys {
+		if strings.HasSuffix(k, Delimiter) {
+			if err := s.ListRecursive(client, rootPath, path.Join(subPath, k)); err != nil {
+				return err
 			}
+		} else {
+			secrets, err := ReadSecrets(client, rootPath, path.Join(subPath, k))
+			if err != nil {
+				(*s)[path.Join(rootPath, subPath, k)] = MetadataResponse{}
+
+				continue
+			}
+
+			(*s)[path.Join(rootPath, subPath, k)] = secrets
 		}
 	}
-	return secretListPath, nil
+
+	return nil
 }
 
-func listSecret(ctx context.Context, client *api.Client, path string) (*api.Secret, error) {
-	secret, err := client.Logical().List(path)
+// ListSecrets returns all keys from vault kv secret path.
+func ListSecrets(client *api.Client, rootPath, subPath string) ([]string, error) {
+	data, err := client.Logical().List(fmt.Sprintf(listSecretsPath, rootPath, subPath))
 	if err != nil {
-		return nil, fmt.Errorf("couldn't list from vault: %w", err)
+		return nil, err
 	}
 
-	if isNil(secret) {
-		return nil, fmt.Errorf("listed %s but was nil", path)
+	if data == nil {
+		return nil, fmt.Errorf("no secrets under path \"%s\" found", path.Join(rootPath, subPath))
 	}
-	return secret, err
+
+	if data.Data != nil {
+		keys := []string{}
+
+		k, ok := data.Data["keys"].([]interface{})
+		if !ok {
+			log.Fatalf("did not found any keys in %s/%s", rootPath, subPath)
+		}
+
+		for _, e := range k {
+			keys = append(keys, fmt.Sprintf("%v", e))
+		}
+
+		return keys, nil
+	}
+
+	return nil, fmt.Errorf("no secrets in %s found", path.Join(rootPath, subPath))
 }
 
-func isNil(v interface{}) bool {
-	return v == nil || (reflect.ValueOf(v).Kind() == reflect.Ptr && reflect.ValueOf(v).IsNil())
+// ReadSecrets returns a map with all secrets from a kv engine path.
+func ReadSecrets(client *api.Client, rootPath, subPath string) (MetadataResponse, error) {
+	var resp MetadataResponse
+
+	data, err := client.Logical().Read(fmt.Sprintf(listSecretsPath, rootPath, subPath))
+	if err != nil {
+		return resp, err
+	}
+
+	if data == nil {
+		return resp, fmt.Errorf("no secrets in %s found", path.Join(rootPath, subPath))
+	}
+
+	decoder, err := mapstructure.NewDecoder(
+		&mapstructure.DecoderConfig{
+			Result:     &resp,
+			DecodeHook: mapstructure.StringToTimeHookFunc(time.RFC3339),
+		},
+	)
+	fmt.Println("err", err)
+	if err != nil {
+		return resp, err
+	}
+
+	err = decoder.Decode(data.Data)
+	fmt.Println(err, data.Data)
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, nil
 }
 
 func main() {
-	client, _ := api.NewClient(api.DefaultConfig())
+	client, err := api.NewClient(api.DefaultConfig())
+	if err != nil {
+		log.Fatal(err)
+	}
 
-	keys, err := listKeys(context.Background(), client)
-	fmt.Println(keys, err)
+	secrets := make(Secrets)
+
+	secrets.ListRecursive(client, "infra/", "")
+	fmt.Println(secrets)
 }

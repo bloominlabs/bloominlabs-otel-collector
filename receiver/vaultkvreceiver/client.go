@@ -14,19 +14,41 @@
 
 package vaultkvreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver"
 
+// https://github.com/FalcoSuessgott/vkv
+
 import (
 	"context"
 	"fmt"
-	"reflect"
+	"log"
+	"path"
 	"strings"
+	"time"
 
 	"github.com/hashicorp/vault/api"
+	"github.com/mitchellh/mapstructure"
 )
 
+const (
+	Delimiter            = "/"
+	mountEnginePath      = "sys/mounts/%s"
+	readWriteSecretsPath = "%s/data/%s"
+	listSecretsPath      = "%s/metadata/%s"
+)
+
+type MetadataResponse struct {
+	CreatedTime    time.Time `mapstructure:"created_time"`
+	CurrentVersion int       `mapstructure:"current_version"`
+	MaxVersions    int       `mapstructure:"max_versions"`
+	UpdatedTime    time.Time `mapstructure:"updated_time"`
+}
+
+// Secrets holds all recursive secrets of a certain path.
+type Secrets map[string]MetadataResponse
+
 type client interface {
-	listKeys(ctx context.Context) ([]string, error)
-	recursiveListKeys(ctx context.Context, path string) ([]string, error)
-	listSecret(ctx context.Context, path string) (*api.Secret, error)
+	listSecretMetadata(ctx context.Context) (Secrets, error)
+	listSecrets(rootPath, subPath string) ([]string, error)
+	readSecrets(rootPath, subPath string) (MetadataResponse, error)
 }
 
 type vaultKVClient struct {
@@ -44,50 +66,103 @@ func newVaultKVClient(client *api.Client) (*vaultKVClient, error) {
 	}, nil
 }
 
-type MetricStat struct {
-	database string
-	table    string
-	stats    map[string]string
+func (c *vaultKVClient) listSecretMetadata(ctx context.Context) (Secrets, error) {
+	secrets := make(Secrets)
+	err := secrets.listRecursive(c, c.mount, "")
+	return secrets, err
 }
 
-func (c *vaultKVClient) listKeys(ctx context.Context) ([]string, error) {
-	fmt.Println("initial path", c.mount)
-	return c.recursiveListKeys(ctx, c.mount)
-}
+// ListRecursive returns secrets to a path recursive.
+func (s *Secrets) listRecursive(client *vaultKVClient, rootPath, subPath string) error {
+	keys, err := client.listSecrets(rootPath, subPath)
+	if err != nil {
+		// no sub directories in here, but lets check for normal kv pairs then..
+		secrets, e := client.readSecrets(rootPath, subPath)
+		if e == nil {
+			(*s)[path.Join(rootPath, subPath)] = secrets
 
-func (c *vaultKVClient) recursiveListKeys(ctx context.Context, path string) ([]string, error) {
-	var secretListPath []string
+			return nil
+		}
 
-	fmt.Println("path", path)
-	secretList, err := c.listSecret(ctx, path)
-	if err == nil && secretList != nil {
-		for _, secret := range secretList.Data["keys"].([]interface{}) {
-			if strings.HasSuffix(secret.(string), "/") {
-				keys, err := c.recursiveListKeys(ctx, path+secret.(string))
-				if err != nil {
-					return secretListPath, fmt.Errorf("failed to list keys under %s: %w", path, err)
-				}
-				secretListPath = append(secretListPath, keys...)
-			} else {
-				secretListPath = append([]string{strings.Replace(path, "metadata", "data", -1) + secret.(string)}, secretListPath...)
+		return err
+	}
+
+	for _, k := range keys {
+		if strings.HasSuffix(k, Delimiter) {
+			if err := s.listRecursive(client, rootPath, path.Join(subPath, k)); err != nil {
+				return err
 			}
+		} else {
+			secrets, err := client.readSecrets(rootPath, path.Join(subPath, k))
+			if err != nil {
+				(*s)[path.Join(rootPath, subPath, k)] = MetadataResponse{}
+
+				continue
+			}
+
+			(*s)[path.Join(rootPath, subPath, k)] = secrets
 		}
 	}
-	return secretListPath, nil
+
+	return nil
 }
 
-func (c *vaultKVClient) listSecret(ctx context.Context, path string) (*api.Secret, error) {
-	secret, err := c.client.Logical().List(path)
+// ListSecrets returns all keys from vault kv secret path.
+func (c *vaultKVClient) listSecrets(rootPath, subPath string) ([]string, error) {
+	data, err := c.client.Logical().List(fmt.Sprintf(listSecretsPath, rootPath, subPath))
 	if err != nil {
-		return nil, fmt.Errorf("couldn't list from vault: %w", err)
+		return nil, err
 	}
 
-	if isNil(secret) {
-		return nil, fmt.Errorf("listed %s but was nil", path)
+	if data == nil {
+		return nil, fmt.Errorf("no secrets under path \"%s\" found", path.Join(rootPath, subPath))
 	}
-	return secret, err
+
+	if data.Data != nil {
+		keys := []string{}
+
+		k, ok := data.Data["keys"].([]interface{})
+		if !ok {
+			log.Fatalf("did not found any keys in %s/%s", rootPath, subPath)
+		}
+
+		for _, e := range k {
+			keys = append(keys, fmt.Sprintf("%v", e))
+		}
+
+		return keys, nil
+	}
+
+	return nil, fmt.Errorf("no secrets in %s found", path.Join(rootPath, subPath))
 }
 
-func isNil(v interface{}) bool {
-	return v == nil || (reflect.ValueOf(v).Kind() == reflect.Ptr && reflect.ValueOf(v).IsNil())
+// ReadSecrets returns a map with all secrets from a kv engine path.
+func (c *vaultKVClient) readSecrets(rootPath, subPath string) (MetadataResponse, error) {
+	var resp MetadataResponse
+
+	data, err := c.client.Logical().Read(fmt.Sprintf(listSecretsPath, rootPath, subPath))
+	if err != nil {
+		return resp, err
+	}
+
+	if data == nil {
+		return resp, fmt.Errorf("no secrets in %s found", path.Join(rootPath, subPath))
+	}
+
+	decoder, err := mapstructure.NewDecoder(
+		&mapstructure.DecoderConfig{
+			Result:     &resp,
+			DecodeHook: mapstructure.StringToTimeHookFunc(time.RFC3339),
+		},
+	)
+	if err != nil {
+		return resp, err
+	}
+
+	err = decoder.Decode(data.Data)
+	if err != nil {
+		return resp, err
+	}
+
+	return resp, nil
 }
