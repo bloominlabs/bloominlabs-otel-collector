@@ -8,8 +8,9 @@ These are the metrics available for this scraper.
 
 | Name | Description | Unit | Type | Attributes |
 | ---- | ----------- | ---- | ---- | ---------- |
-| **vaultkv.created_on** | The epoch time in seconds the key was created at. | s | Sum(Int) | <ul> <li>key</li> <li>mount</li> </ul> |
+| **vaultkv.created_on** | The epoch time in seconds the key was created at. | s | Sum(Int) | <ul> <li>key</li> <li>mount</li> <li>type</li> </ul> |
 | **vaultkv.metadata** | Metadata about the key. | 1 | Sum(Int) | <ul> <li>key</li> <li>mount</li> <li>versions</li> <li>current_version</li> </ul> |
+| **vaultkv.metadata.error** | The epoch time in seconds the key was created at. | 1 | Sum(Int) | <ul> <li>key</li> <li>mount</li> <li>metadata_error_type</li> </ul> |
 
 **Highlighted metrics** are emitted by default. Other metrics are optional and not emitted by default.
 Any metric can be enabled or disabled with the following scraper configuration:
@@ -26,5 +27,7 @@ metrics:
 | ---- | ----------- | ------ |
 | current_version | The key's current version. |  |
 | key | The path to the vault key. |  |
+| metadata_error_type (type) | The type of error encountered when checking the custom metadata of a key. | missing_type, invalid_type |
 | mount | The mount path for the KV store. |  |
+| type (type) | The type of secret for the key sorted in custom metadata. | digitalocean.spaces, digitalocean.api, tailscale.api, consul.encryption, nomad.encryption |
 | versions | The number of versions for the key. |  |

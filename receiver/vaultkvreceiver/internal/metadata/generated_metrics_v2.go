@@ -17,8 +17,9 @@ type MetricSettings struct {
 
 // MetricsSettings provides settings for vaultkvreceiver metrics.
 type MetricsSettings struct {
-	VaultkvCreatedOn MetricSettings `mapstructure:"vaultkv.created_on"`
-	VaultkvMetadata  MetricSettings `mapstructure:"vaultkv.metadata"`
+	VaultkvCreatedOn     MetricSettings `mapstructure:"vaultkv.created_on"`
+	VaultkvMetadata      MetricSettings `mapstructure:"vaultkv.metadata"`
+	VaultkvMetadataError MetricSettings `mapstructure:"vaultkv.metadata.error"`
 }
 
 func DefaultMetricsSettings() MetricsSettings {
@@ -29,7 +30,74 @@ func DefaultMetricsSettings() MetricsSettings {
 		VaultkvMetadata: MetricSettings{
 			Enabled: true,
 		},
+		VaultkvMetadataError: MetricSettings{
+			Enabled: true,
+		},
 	}
+}
+
+// AttributeMetadataErrorType specifies the a value metadata_error_type attribute.
+type AttributeMetadataErrorType int
+
+const (
+	_ AttributeMetadataErrorType = iota
+	AttributeMetadataErrorTypeMissingType
+	AttributeMetadataErrorTypeInvalidType
+)
+
+// String returns the string representation of the AttributeMetadataErrorType.
+func (av AttributeMetadataErrorType) String() string {
+	switch av {
+	case AttributeMetadataErrorTypeMissingType:
+		return "missing_type"
+	case AttributeMetadataErrorTypeInvalidType:
+		return "invalid_type"
+	}
+	return ""
+}
+
+// MapAttributeMetadataErrorType is a helper map of string to AttributeMetadataErrorType attribute value.
+var MapAttributeMetadataErrorType = map[string]AttributeMetadataErrorType{
+	"missing_type": AttributeMetadataErrorTypeMissingType,
+	"invalid_type": AttributeMetadataErrorTypeInvalidType,
+}
+
+// AttributeType specifies the a value type attribute.
+type AttributeType int
+
+const (
+	_ AttributeType = iota
+	AttributeTypeDigitaloceanSpaces
+	AttributeTypeDigitaloceanAPI
+	AttributeTypeTailscaleAPI
+	AttributeTypeConsulEncryption
+	AttributeTypeNomadEncryption
+)
+
+// String returns the string representation of the AttributeType.
+func (av AttributeType) String() string {
+	switch av {
+	case AttributeTypeDigitaloceanSpaces:
+		return "digitalocean.spaces"
+	case AttributeTypeDigitaloceanAPI:
+		return "digitalocean.api"
+	case AttributeTypeTailscaleAPI:
+		return "tailscale.api"
+	case AttributeTypeConsulEncryption:
+		return "consul.encryption"
+	case AttributeTypeNomadEncryption:
+		return "nomad.encryption"
+	}
+	return ""
+}
+
+// MapAttributeType is a helper map of string to AttributeType attribute value.
+var MapAttributeType = map[string]AttributeType{
+	"digitalocean.spaces": AttributeTypeDigitaloceanSpaces,
+	"digitalocean.api":    AttributeTypeDigitaloceanAPI,
+	"tailscale.api":       AttributeTypeTailscaleAPI,
+	"consul.encryption":   AttributeTypeConsulEncryption,
+	"nomad.encryption":    AttributeTypeNomadEncryption,
 }
 
 type metricVaultkvCreatedOn struct {
@@ -49,7 +117,7 @@ func (m *metricVaultkvCreatedOn) init() {
 	m.data.Sum().DataPoints().EnsureCapacity(m.capacity)
 }
 
-func (m *metricVaultkvCreatedOn) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64, keyAttributeValue string, mountAttributeValue string) {
+func (m *metricVaultkvCreatedOn) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64, keyAttributeValue string, mountAttributeValue string, typeAttributeValue string) {
 	if !m.settings.Enabled {
 		return
 	}
@@ -59,6 +127,7 @@ func (m *metricVaultkvCreatedOn) recordDataPoint(start pcommon.Timestamp, ts pco
 	dp.SetIntVal(val)
 	dp.Attributes().Insert("key", pcommon.NewValueString(keyAttributeValue))
 	dp.Attributes().Insert("mount", pcommon.NewValueString(mountAttributeValue))
+	dp.Attributes().Insert("type", pcommon.NewValueString(typeAttributeValue))
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
@@ -142,16 +211,72 @@ func newMetricVaultkvMetadata(settings MetricSettings) metricVaultkvMetadata {
 	return m
 }
 
+type metricVaultkvMetadataError struct {
+	data     pmetric.Metric // data buffer for generated metric.
+	settings MetricSettings // metric settings provided by user.
+	capacity int            // max observed number of data points added to the metric.
+}
+
+// init fills vaultkv.metadata.error metric with initial data.
+func (m *metricVaultkvMetadataError) init() {
+	m.data.SetName("vaultkv.metadata.error")
+	m.data.SetDescription("The epoch time in seconds the key was created at.")
+	m.data.SetUnit("1")
+	m.data.SetDataType(pmetric.MetricDataTypeSum)
+	m.data.Sum().SetIsMonotonic(false)
+	m.data.Sum().SetAggregationTemporality(pmetric.MetricAggregationTemporalityCumulative)
+	m.data.Sum().DataPoints().EnsureCapacity(m.capacity)
+}
+
+func (m *metricVaultkvMetadataError) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64, keyAttributeValue string, mountAttributeValue string, metadataErrorTypeAttributeValue string) {
+	if !m.settings.Enabled {
+		return
+	}
+	dp := m.data.Sum().DataPoints().AppendEmpty()
+	dp.SetStartTimestamp(start)
+	dp.SetTimestamp(ts)
+	dp.SetIntVal(val)
+	dp.Attributes().Insert("key", pcommon.NewValueString(keyAttributeValue))
+	dp.Attributes().Insert("mount", pcommon.NewValueString(mountAttributeValue))
+	dp.Attributes().Insert("type", pcommon.NewValueString(metadataErrorTypeAttributeValue))
+}
+
+// updateCapacity saves max length of data point slices that will be used for the slice capacity.
+func (m *metricVaultkvMetadataError) updateCapacity() {
+	if m.data.Sum().DataPoints().Len() > m.capacity {
+		m.capacity = m.data.Sum().DataPoints().Len()
+	}
+}
+
+// emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
+func (m *metricVaultkvMetadataError) emit(metrics pmetric.MetricSlice) {
+	if m.settings.Enabled && m.data.Sum().DataPoints().Len() > 0 {
+		m.updateCapacity()
+		m.data.MoveTo(metrics.AppendEmpty())
+		m.init()
+	}
+}
+
+func newMetricVaultkvMetadataError(settings MetricSettings) metricVaultkvMetadataError {
+	m := metricVaultkvMetadataError{settings: settings}
+	if settings.Enabled {
+		m.data = pmetric.NewMetric()
+		m.init()
+	}
+	return m
+}
+
 // MetricsBuilder provides an interface for scrapers to report metrics while taking care of all the transformations
 // required to produce metric representation defined in metadata and user settings.
 type MetricsBuilder struct {
-	startTime              pcommon.Timestamp   // start time that will be applied to all recorded data points.
-	metricsCapacity        int                 // maximum observed number of metrics per resource.
-	resourceCapacity       int                 // maximum observed number of resource attributes.
-	metricsBuffer          pmetric.Metrics     // accumulates metrics data before emitting.
-	buildInfo              component.BuildInfo // contains version information
-	metricVaultkvCreatedOn metricVaultkvCreatedOn
-	metricVaultkvMetadata  metricVaultkvMetadata
+	startTime                  pcommon.Timestamp   // start time that will be applied to all recorded data points.
+	metricsCapacity            int                 // maximum observed number of metrics per resource.
+	resourceCapacity           int                 // maximum observed number of resource attributes.
+	metricsBuffer              pmetric.Metrics     // accumulates metrics data before emitting.
+	buildInfo                  component.BuildInfo // contains version information
+	metricVaultkvCreatedOn     metricVaultkvCreatedOn
+	metricVaultkvMetadata      metricVaultkvMetadata
+	metricVaultkvMetadataError metricVaultkvMetadataError
 }
 
 // metricBuilderOption applies changes to default metrics builder.
@@ -166,11 +291,12 @@ func WithStartTime(startTime pcommon.Timestamp) metricBuilderOption {
 
 func NewMetricsBuilder(settings MetricsSettings, buildInfo component.BuildInfo, options ...metricBuilderOption) *MetricsBuilder {
 	mb := &MetricsBuilder{
-		startTime:              pcommon.NewTimestampFromTime(time.Now()),
-		metricsBuffer:          pmetric.NewMetrics(),
-		buildInfo:              buildInfo,
-		metricVaultkvCreatedOn: newMetricVaultkvCreatedOn(settings.VaultkvCreatedOn),
-		metricVaultkvMetadata:  newMetricVaultkvMetadata(settings.VaultkvMetadata),
+		startTime:                  pcommon.NewTimestampFromTime(time.Now()),
+		metricsBuffer:              pmetric.NewMetrics(),
+		buildInfo:                  buildInfo,
+		metricVaultkvCreatedOn:     newMetricVaultkvCreatedOn(settings.VaultkvCreatedOn),
+		metricVaultkvMetadata:      newMetricVaultkvMetadata(settings.VaultkvMetadata),
+		metricVaultkvMetadataError: newMetricVaultkvMetadataError(settings.VaultkvMetadataError),
 	}
 	for _, op := range options {
 		op(mb)
@@ -225,6 +351,7 @@ func (mb *MetricsBuilder) EmitForResource(rmo ...ResourceMetricsOption) {
 	ils.Metrics().EnsureCapacity(mb.metricsCapacity)
 	mb.metricVaultkvCreatedOn.emit(ils.Metrics())
 	mb.metricVaultkvMetadata.emit(ils.Metrics())
+	mb.metricVaultkvMetadataError.emit(ils.Metrics())
 	for _, op := range rmo {
 		op(rm)
 	}
@@ -245,13 +372,18 @@ func (mb *MetricsBuilder) Emit(rmo ...ResourceMetricsOption) pmetric.Metrics {
 }
 
 // RecordVaultkvCreatedOnDataPoint adds a data point to vaultkv.created_on metric.
-func (mb *MetricsBuilder) RecordVaultkvCreatedOnDataPoint(ts pcommon.Timestamp, val int64, keyAttributeValue string, mountAttributeValue string) {
-	mb.metricVaultkvCreatedOn.recordDataPoint(mb.startTime, ts, val, keyAttributeValue, mountAttributeValue)
+func (mb *MetricsBuilder) RecordVaultkvCreatedOnDataPoint(ts pcommon.Timestamp, val int64, keyAttributeValue string, mountAttributeValue string, typeAttributeValue AttributeType) {
+	mb.metricVaultkvCreatedOn.recordDataPoint(mb.startTime, ts, val, keyAttributeValue, mountAttributeValue, typeAttributeValue.String())
 }
 
 // RecordVaultkvMetadataDataPoint adds a data point to vaultkv.metadata metric.
 func (mb *MetricsBuilder) RecordVaultkvMetadataDataPoint(ts pcommon.Timestamp, val int64, keyAttributeValue string, mountAttributeValue string, versionsAttributeValue string, currentVersionAttributeValue string) {
 	mb.metricVaultkvMetadata.recordDataPoint(mb.startTime, ts, val, keyAttributeValue, mountAttributeValue, versionsAttributeValue, currentVersionAttributeValue)
+}
+
+// RecordVaultkvMetadataErrorDataPoint adds a data point to vaultkv.metadata.error metric.
+func (mb *MetricsBuilder) RecordVaultkvMetadataErrorDataPoint(ts pcommon.Timestamp, val int64, keyAttributeValue string, mountAttributeValue string, metadataErrorTypeAttributeValue AttributeMetadataErrorType) {
+	mb.metricVaultkvMetadataError.recordDataPoint(mb.startTime, ts, val, keyAttributeValue, mountAttributeValue, metadataErrorTypeAttributeValue.String())
 }
 
 // Reset resets metrics builder to its initial state. It should be used when external metrics source is restarted,

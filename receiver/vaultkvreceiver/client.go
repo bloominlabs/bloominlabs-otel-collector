@@ -36,10 +36,15 @@ const (
 )
 
 type MetadataResponse struct {
-	CreatedTime    time.Time `mapstructure:"created_time"`
-	CurrentVersion int       `mapstructure:"current_version"`
-	MaxVersions    int       `mapstructure:"max_versions"`
-	UpdatedTime    time.Time `mapstructure:"updated_time"`
+	CreatedTime    time.Time         `mapstructure:"created_time"`
+	CurrentVersion int               `mapstructure:"current_version"`
+	MaxVersions    int               `mapstructure:"max_versions"`
+	UpdatedTime    time.Time         `mapstructure:"updated_time"`
+	CustomMetadata map[string]string `mapstructure:"custom_metadata"`
+}
+
+func (c *MetadataResponse) Type() string {
+	return c.CustomMetadata["type"]
 }
 
 // Secrets holds all recursive secrets of a certain path.

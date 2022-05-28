@@ -19,10 +19,11 @@ const (
 )
 
 type MetadataResponse struct {
-	CreatedTime    time.Time `mapstructure:"created_time"`
-	CurrentVersion int       `mapstructure:"current_version"`
-	MaxVersions    int       `mapstructure:"max_versions"`
-	UpdatedTime    time.Time `mapstructure:"updated_time"`
+	CreatedTime    time.Time         `mapstructure:"created_time"`
+	CurrentVersion int               `mapstructure:"current_version"`
+	MaxVersions    int               `mapstructure:"max_versions"`
+	UpdatedTime    time.Time         `mapstructure:"updated_time"`
+	CustomMetadata map[string]string `mapstructure:"custom_metadata"`
 }
 
 // Secrets holds all recursive secrets of a certain path.
@@ -111,16 +112,16 @@ func ReadSecrets(client *api.Client, rootPath, subPath string) (MetadataResponse
 			DecodeHook: mapstructure.StringToTimeHookFunc(time.RFC3339),
 		},
 	)
-	fmt.Println("err", err)
 	if err != nil {
 		return resp, err
 	}
 
 	err = decoder.Decode(data.Data)
-	fmt.Println(err, data.Data)
 	if err != nil {
 		return resp, err
 	}
+
+	fmt.Println(resp.CustomMetadata["test"] == "")
 
 	return resp, nil
 }
@@ -134,5 +135,4 @@ func main() {
 	secrets := make(Secrets)
 
 	secrets.ListRecursive(client, "infra/", "")
-	fmt.Println(secrets)
 }

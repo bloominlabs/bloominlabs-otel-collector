@@ -6,6 +6,10 @@ WORKDIR /bloominlabs-otel-collector
 deps:
   RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.47.0
 
+certs:
+  RUN curl -k https://vault.prod.stratos.host:8200/v1/internal/ca/pem > /etc/ssl/certs/internal.pem
+  SAVE ARTIFACT /etc/ssl/certs/internal.pem
+
 mc-monitor:
   FROM itzg/mc-monitor:0.10.6
   SAVE ARTIFACT mc-monitor
@@ -26,8 +30,9 @@ build:
 docker:
   FROM alpine:latest
   RUN apk add --update ca-certificates
-  COPY +build/bloominlabs-otel-collector .
   COPY +mc-monitor/mc-monitor /usr/bin/mc-monitor
+  COPY +certs/internal.pem /etc/ssl/certs/internal.pem
+  COPY +build/bloominlabs-otel-collector .
   ENTRYPOINT ["./bloominlabs-otel-collector"]
   SAVE IMAGE otel-collector:latest
   SAVE IMAGE --push ghcr.io/bloominlabs/otel-collector:latest

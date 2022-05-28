@@ -9,6 +9,21 @@ attributes:
     description: The number of versions for the key.
   current_version:
     description: The key's current version.
+  type:
+    value: type
+    description: The type of secret for the key sorted in custom metadata.
+    enum:
+      - digitalocean.spaces
+      - digitalocean.api
+      - tailscale.api
+      - consul.encryption
+      - nomad.encryption
+  metadata_error_type:
+    value: type
+    description: The type of error encountered when checking the custom metadata of a key.
+    enum:
+      - missing_type
+      - invalid_type
 
 metrics:
   vaultkv.created_on:
@@ -19,7 +34,16 @@ metrics:
       value_type: int
       monotonic: true
       aggregation: cumulative
-    attributes: [key, mount]
+    attributes: [key, mount, type]
+  vaultkv.metadata.error:
+    enabled: true
+    description: The epoch time in seconds the key was created at.
+    unit: 1
+    sum:
+      value_type: int
+      monotonic: false
+      aggregation: cumulative
+    attributes: [key, mount, metadata_error_type]
   vaultkv.metadata:
     enabled: true
     description: Metadata about the key.

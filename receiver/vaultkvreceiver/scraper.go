@@ -16,6 +16,7 @@ package vaultkvreceiver // import "github.com/open-telemetry/opentelemetry-colle
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	"github.com/hashicorp/vault/api"
@@ -25,14 +26,14 @@ import (
 	"go.opentelemetry.io/collector/receiver/scrapererror"
 	"go.uber.org/zap"
 
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver/internal/metadata"
+	metricMetadata "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver/internal/metadata"
 )
 
 type vaultKVScraper struct {
 	logger        *zap.Logger
 	config        *Config
 	clientFactory vaultKVClientFactory
-	mb            *metadata.MetricsBuilder
+	mb            *metricMetadata.MetricsBuilder
 }
 
 type vaultKVClientFactory interface {
@@ -59,7 +60,7 @@ func newVaultKVScraper(
 		logger:        settings.Logger,
 		config:        config,
 		clientFactory: clientFactory,
-		mb:            metadata.NewMetricsBuilder(config.Metrics, settings.BuildInfo),
+		mb:            metricMetadata.NewMetricsBuilder(config.Metrics, settings.BuildInfo),
 	}
 }
 
@@ -74,7 +75,12 @@ func (p *vaultKVScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 	now := pcommon.NewTimestampFromTime(time.Now())
 
 	var errors scrapererror.ScrapeErrors
-	p.collectCreatedTime(ctx, now, client, errors)
+	secretMetadata, err := client.listSecretMetadata(ctx)
+	if err != nil {
+		p.logger.Error("failed to list secret metadata", zap.Error(err))
+		errors.AddPartial(0, err)
+	}
+	p.collectCreatedTime(ctx, now, secretMetadata, errors)
 
 	return p.mb.Emit(), errors.Combine()
 }
@@ -82,20 +88,41 @@ func (p *vaultKVScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 func (p *vaultKVScraper) collectCreatedTime(
 	ctx context.Context,
 	now pcommon.Timestamp,
-	client client,
+	secretMetadata Secrets,
 	errors scrapererror.ScrapeErrors,
 ) {
-	secretMetadata, err := client.listSecretMetadata(ctx)
-	if err != nil {
-		p.logger.Error("failed to list secret metadata", zap.Error(err))
-		errors.AddPartial(0, err)
-	}
-
 	// Metrics can be partially collected (non-nil) even if there were partial errors reported
 	if secretMetadata == nil {
 		return
 	}
+
+	fmt.Println(secretMetadata)
 	for key, metadata := range secretMetadata {
-		p.mb.RecordVaultkvCreatedOnDataPoint(now, metadata.CreatedTime.Unix(), key, p.config.Mount)
+		t := metadata.Type()
+		if t == "" {
+			p.mb.RecordVaultkvMetadataErrorDataPoint(
+				now, 1, key, p.config.Mount,
+				metricMetadata.AttributeMetadataErrorTypeMissingType,
+			)
+			continue
+		}
+		val, ok := metricMetadata.MapAttributeType[t]
+		if ok {
+			p.mb.RecordVaultkvCreatedOnDataPoint(
+				now,
+				metadata.CreatedTime.Unix(),
+				key,
+				p.config.Mount,
+				val,
+			)
+		} else {
+			p.mb.RecordVaultkvMetadataErrorDataPoint(
+				now,
+				1,
+				key,
+				p.config.Mount,
+				metricMetadata.AttributeMetadataErrorTypeInvalidType,
+			)
+		}
 	}
 }
