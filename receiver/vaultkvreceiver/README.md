@@ -1,6 +1,6 @@
-# PostgreSQL Receiver
+# VaultKV Receiver
 
-This receiver queries the PostgreSQL [statistics collector](https://www.postgresql.org/docs/9.6/monitoring-stats.html).
+This receiver queries the [Vault KV V2 metadata](https://www.vaultproject.io/api-docs/secret/kv/kv-v2#list-secrets).
 
 Supported pipeline types: `metrics`
 
@@ -8,28 +8,31 @@ Supported pipeline types: `metrics`
 
 ## Prerequisites
 
-This receiver supports PostgreSQL versions 9.6+
+This receiver supports vault API version v1.
 
-The monitoring user must be granted `SELECT` on `pg_stat_database`.
+The `VAULT_TOKEN` provided to the receiver must have one of the following policies
+
+```hcl
+# list all metadata for all mounts
+
+# list metadata for a mount
+path "+/metadata*" {
+  capabilities = ["read", "list"]
+}
+
+# list metadata for all keys under a mount
+path "secret/metadata/*" {
+  capabilities = ["read", "list"]
+}
+```
 
 ## Configuration
 
-The following settings are required to create a database connection:
-- `username`
-- `password`
-
 The following settings are optional:
-- `endpoint` (default = `localhost:5432`): The endpoint of the postgresql server. Whether using TCP or Unix sockets, this value should be `host:port`. If `transport` is set to `unix`, the endpoint will internally be translated from `host:port` to `/host.s.PGSQL.port`
-- `transport` (default = `tcp`): The transport protocol being used to connect to postgresql. Available options are `tcp` and `unix`.
 
-- `databases` (default = `[]`): The list of databases for which the receiver will attempt to collect statistics. If an empty list is provided, the receiver will attempt to collect statistics for all non-template databases.
+- `addr` (default = `https://localhost:8200`): The endpoint of the vaultserver.
 
-The following settings are also optional and nested under `tls` to help configure client transport security
-- `insecure` (default = `false`): Whether to enable client transport security for the postgresql connection.
-- `insecure_skip_verify` (default = `true`): Whether to validate server name and certificate if client transport security is enabled.
-- `cert_file` (default = `$HOME/.postgresql/postgresql.crt`): A cerficate used for client authentication, if necessary.
-- `key_file` (default = `$HOME/.postgresql/postgresql.key`): An SSL key used for client authentication, if necessary.
-- `ca_file` (default = ""): A set of certificate authorities used to validate the database server's SSL certificate.
+- `mount` (default = `infra/`): The mount to query key metadata for. The receiver will automatically recurse through the mount and find all keys.
 
 - `collection_interval` (default = `10s`): This receiver collects metrics on an interval. This value must be a string readable by Golang's [time.ParseDuration](https://pkg.go.dev/time#ParseDuration). Valid time units are `ns`, `us` (or `µs`), `ms`, `s`, `m`, `h`.
 
@@ -37,23 +40,13 @@ The following settings are also optional and nested under `tls` to help configur
 
 ```yaml
 receivers:
-  postgresql:
-    endpoint: localhost:5432
-    transport: tcp
-    username: otel
-    password: $POSTGRESQL_PASSWORD
-    databases:
-      - otel
+  vaultkv:
+    addr: https://localhost:8200
+    mount: "infra/"
     collection_interval: 10s
-    tls:
-      insecure: false
-      unsecure_skip_verify: false
-      ca_file: /home/otel/authorities.crt
-      cert_file: /home/otel/mypostgrescert.crt
-      key_file: /home/otel/mypostgreskey.key
 ```
 
-The full list of settings exposed for this receiver are documented [here](./config.go) with detailed sample configurations [here](./testdata/config.yaml). TLS config is documented further under the [opentelemetry collector's configtls package](https://github.com/open-telemetry/opentelemetry-collector/blob/main/config/configtls/README.md). 
+The full list of settings exposed for this receiver are documented [here](./config.go) with detailed sample configurations [here](./testdata/config.yaml).
 
 ## Metrics
 
