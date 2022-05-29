@@ -15,12 +15,10 @@
 package vaultkvreceiver
 
 import (
-	"errors"
 	"fmt"
 	"testing"
 
 	"github.com/stretchr/testify/require"
-	"go.uber.org/multierr"
 )
 
 func TestValidate(t *testing.T) {
@@ -30,73 +28,30 @@ func TestValidate(t *testing.T) {
 		expected              error
 	}{
 		{
-			desc:                  "missing username and password",
-			defaultConfigModifier: func(cfg *Config) {},
-			expected: multierr.Combine(
-				errors.New(ErrNoUsername),
-				errors.New(ErrNoPassword),
-			),
-		},
-		{
-			desc: "missing password",
+			desc: "just /",
 			defaultConfigModifier: func(cfg *Config) {
-				cfg.Username = "otel"
+				cfg.Mount = "/"
 			},
-			expected: multierr.Combine(
-				errors.New(ErrNoPassword),
-			),
+			expected: fmt.Errorf(ErrInvalidMountTmpl, "/"),
 		},
 		{
-			desc: "missing username",
+			desc: "leading /",
 			defaultConfigModifier: func(cfg *Config) {
-				cfg.Password = "otel"
+				cfg.Mount = "/test"
 			},
-			expected: multierr.Combine(
-				errors.New(ErrNoUsername),
-			),
+			expected: fmt.Errorf(ErrInvalidMountTmpl, "/test"),
 		},
 		{
-			desc: "bad endpoint",
+			desc: "missing /",
 			defaultConfigModifier: func(cfg *Config) {
-				cfg.Username = "otel"
-				cfg.Password = "otel"
-				cfg.Endpoint = "open-telemetry"
+				cfg.Mount = "test"
 			},
-			expected: multierr.Combine(
-				errors.New(ErrHostPort),
-			),
+			expected: fmt.Errorf(ErrInvalidMountTmpl, "test"),
 		},
 		{
-			desc: "bad transport",
+			desc: "valid/",
 			defaultConfigModifier: func(cfg *Config) {
-				cfg.Username = "otel"
-				cfg.Password = "otel"
-				cfg.Transport = "teacup"
-			},
-			expected: multierr.Combine(
-				errors.New(ErrTransportsSupported),
-			),
-		},
-		{
-			desc: "unsupported SSL params",
-			defaultConfigModifier: func(cfg *Config) {
-				cfg.Username = "otel"
-				cfg.Password = "otel"
-				cfg.ServerName = "notlocalhost"
-				cfg.MinVersion = "1.0"
-				cfg.MaxVersion = "1.0"
-			},
-			expected: multierr.Combine(
-				fmt.Errorf(ErrNotSupported, "ServerName"),
-				fmt.Errorf(ErrNotSupported, "MaxVersion"),
-				fmt.Errorf(ErrNotSupported, "MinVersion"),
-			),
-		},
-		{
-			desc: "no error",
-			defaultConfigModifier: func(cfg *Config) {
-				cfg.Username = "otel"
-				cfg.Password = "otel"
+				cfg.Mount = "test/"
 			},
 			expected: nil,
 		},

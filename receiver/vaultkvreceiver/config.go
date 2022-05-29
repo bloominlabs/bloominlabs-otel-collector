@@ -15,17 +15,30 @@
 package vaultkvreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver"
 
 import (
+	"fmt"
+	"strings"
+
 	"go.opentelemetry.io/collector/receiver/scraperhelper"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver/internal/metadata"
 )
 
+const (
+	ErrInvalidMountTmpl = "invalid 'mount' (%s) provided. should be in the form '<mount>/'"
+)
+
 type Config struct {
 	scraperhelper.ScraperControllerSettings `mapstructure:",squash"`
 	Mount                                   string                   `mapstructure:"mount"`
+	URL                                     string                   `mapstructure:"url"`
 	Metrics                                 metadata.MetricsSettings `mapstructure:"metrics"`
 }
 
 func (cfg *Config) Validate() error {
+	split := strings.Split(cfg.Mount, "/")
+
+	if len(split) != 2 || split[0] == "" || split[1] != "" {
+		return fmt.Errorf(ErrInvalidMountTmpl, cfg.Mount)
+	}
 	return nil
 }

@@ -1,0 +1,52 @@
+{
+   "resourceMetrics": [
+      {
+         "resource": {},
+         "scopeMetrics": [
+            {
+               "metrics": [
+                  {
+                     "description": "The epoch time in seconds the key was created at.",
+                     "name": "vaultkv.metadata.error",
+                     "sum": {
+                        "aggregationTemporality": "AGGREGATION_TEMPORALITY_CUMULATIVE",
+                        "dataPoints": [
+                           {
+                              "asInt": "1",
+                              "attributes": [
+                                 {
+                                    "key": "key",
+                                    "value": {
+                                       "stringValue": "infra/key1"
+                                    }
+                                 },
+                                 {
+                                    "key": "mount",
+                                    "value": {
+                                       "stringValue": "infra/"
+                                    }
+                                 },
+                                 {
+                                    "key": "type",
+                                    "value": {
+                                       "stringValue": "invalid_type"
+                                    }
+                                 }
+                              ],
+                              "startTimeUnixNano": "1653800218966884404",
+                              "timeUnixNano": "1653800218966907777"
+                           }
+                        ]
+                     },
+                     "unit": "1"
+                  }
+               ],
+               "scope": {
+                  "name": "otelcol/vaultkvreceiver",
+                  "version": "latest"
+               }
+            }
+         ]
+      }
+   ]
+}

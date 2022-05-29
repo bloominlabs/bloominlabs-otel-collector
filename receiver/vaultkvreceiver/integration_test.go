@@ -24,9 +24,10 @@ import (
 	"testing"
 	"time"
 
+	"github.com/hashicorp/vault/api"
+	"github.com/hashicorp/vault/http"
+	"github.com/hashicorp/vault/vault"
 	"github.com/stretchr/testify/require"
-	"github.com/testcontainers/testcontainers-go"
-	"github.com/testcontainers/testcontainers-go/wait"
 	"go.opentelemetry.io/collector/component/componenttest"
 	"go.opentelemetry.io/collector/consumer/consumertest"
 
@@ -42,76 +43,32 @@ type testCase struct {
 	expectedFile string
 }
 
-func TestPostgreSQLIntegration(t *testing.T) {
+func TestVaultIntegration(t *testing.T) {
 	testCases := []testCase{
 		{
 			name: "single_db",
-			cfg: func(hostname string) *Config {
+			cfg: func(addr string) *Config {
 				f := NewFactory()
 				cfg := f.CreateDefaultConfig().(*Config)
-				cfg.Endpoint = net.JoinHostPort(hostname, "15432")
-				cfg.Databases = []string{"otel"}
-				cfg.Username = "otel"
-				cfg.Password = "otel"
-				cfg.Insecure = true
+				cfg.URL = addr
 				return cfg
 			},
-			expectedFile: filepath.Join("testdata", "integration", "expected_single_db.json"),
-		},
-		{
-			name: "multi_db",
-			cfg: func(hostname string) *Config {
-				f := NewFactory()
-				cfg := f.CreateDefaultConfig().(*Config)
-				cfg.Endpoint = net.JoinHostPort(hostname, "15432")
-				cfg.Databases = []string{"otel", "otel2"}
-				cfg.Username = "otel"
-				cfg.Password = "otel"
-				cfg.Insecure = true
-				return cfg
-			},
-			expectedFile: filepath.Join("testdata", "integration", "expected_multi_db.json"),
-		},
-		{
-			name: "all_db",
-			cfg: func(hostname string) *Config {
-				f := NewFactory()
-				cfg := f.CreateDefaultConfig().(*Config)
-				cfg.Endpoint = net.JoinHostPort(hostname, "15432")
-				cfg.Databases = []string{}
-				cfg.Username = "otel"
-				cfg.Password = "otel"
-				cfg.Insecure = true
-				return cfg
-			},
-			expectedFile: filepath.Join("testdata", "integration", "expected_all_db.json"),
 		},
 	}
 
-	container := getContainer(t, testcontainers.ContainerRequest{
-		FromDockerfile: testcontainers.FromDockerfile{
-			Context:    filepath.Join("testdata", "integration"),
-			Dockerfile: "Dockerfile.postgresql",
-		},
-		ExposedPorts: []string{"15432:5432"},
-		WaitingFor: wait.ForListeningPort("5432").
-			WithStartupTimeout(2 * time.Minute),
-	})
-	defer func() {
-		require.NoError(t, container.Terminate(context.Background()))
-	}()
-	hostname, err := container.Host(context.Background())
-	require.NoError(t, err)
-
 	for _, tc := range testCases {
 		t.Run(tc.name, func(t *testing.T) {
-			expectedMetrics, err := golden.ReadMetrics(tc.expectedFile)
+			srv, client := createTestVault(t)
+			defer srv.Close()
+
+			expectedFile := filepath.Join("testdata", "integration", tc.name+".json")
+			expectedMetrics, err := golden.ReadMetrics(expectedFile)
 			require.NoError(t, err)
 
 			f := NewFactory()
 			consumer := new(consumertest.MetricsSink)
 			settings := componenttest.NewNopReceiverCreateSettings()
-			rcvr, err := f.CreateMetricsReceiver(context.Background(), settings, tc.cfg(hostname), consumer)
+			rcvr, err := f.CreateMetricsReceiver(context.Background(), settings, tc.cfg(client.Address()), consumer)
 			require.NoError(t, err, "failed creating metrics receiver")
 			require.NoError(t, rcvr.Start(context.Background(), componenttest.NewNopHost()))
 			require.Eventuallyf(t, func() bool {
@@ -125,14 +82,27 @@ func TestPostgreSQLIntegration(t *testing.T) {
 	}
 }
 
-func getContainer(t *testing.T, req testcontainers.ContainerRequest) testcontainers.Container {
-	require.NoError(t, req.Validate())
-	container, err := testcontainers.GenericContainer(
-		context.Background(),
-		testcontainers.GenericContainerRequest{
-			ContainerRequest: req,
-			Started:          true,
-		})
-	require.NoError(t, err)
-	return container
+func createTestVault(t *testing.T) (net.Listener, *api.Client) {
+	t.Helper()
+
+	coreConfig := &vault.CoreConfig{}
+
+	// Create an in-memory, unsealed core (the "backend", if you will).
+	core, _, token := vault.TestCoreUnsealedWithConfig(t, coreConfig)
+
+	// Start an HTTP server for the core.
+	srv, addr := http.TestServer(t, core)
+
+	// Create a client that talks to the server, initially authenticating with
+	// the root token.
+	conf := api.DefaultConfig()
+	conf.Address = addr
+
+	client, err := api.NewClient(conf)
+	if err != nil {
+		t.Fatal(err)
+	}
+	client.SetToken(token)
+
+	return srv, client
 }

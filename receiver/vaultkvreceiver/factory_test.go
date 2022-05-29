@@ -29,14 +29,13 @@ import (
 func TestType(t *testing.T) {
 	factory := NewFactory()
 	ft := factory.Type()
-	require.EqualValues(t, "postgresql", ft)
+	require.EqualValues(t, "vaultkv", ft)
 }
 
 func TestValidConfig(t *testing.T) {
 	factory := NewFactory()
 	cfg := factory.CreateDefaultConfig().(*Config)
-	cfg.Username = "otel"
-	cfg.Password = "otel"
+	cfg.Mount = "test/"
 	require.NoError(t, cfg.Validate())
 }
 
@@ -47,11 +46,10 @@ func TestCreateMetricsReceiver(t *testing.T) {
 		componenttest.NewNopReceiverCreateSettings(),
 		&Config{
 			ScraperControllerSettings: scraperhelper.ScraperControllerSettings{
-				ReceiverSettings:   config.NewReceiverSettings(config.NewComponentID("postgresql")),
+				ReceiverSettings:   config.NewReceiverSettings(config.NewComponentID("vaultkv")),
 				CollectionInterval: 10 * time.Second,
 			},
-			Username: "otel",
-			Password: "otel",
+			Mount: "test/",
 		},
 		consumertest.NewNop(),
 	)

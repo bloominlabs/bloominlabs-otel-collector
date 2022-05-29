@@ -16,7 +16,6 @@ package vaultkvreceiver // import "github.com/open-telemetry/opentelemetry-colle
 
 import (
 	"context"
-	"fmt"
 	"time"
 
 	"github.com/hashicorp/vault/api"
@@ -42,8 +41,12 @@ type vaultKVClientFactory interface {
 
 type defaultClientFactory struct{}
 
-func (d *defaultClientFactory) getClient(c *Config, database string) (client, error) {
-	client, err := api.NewClient(api.DefaultConfig())
+func (d *defaultClientFactory) getClient(c *Config, mount string) (client, error) {
+	config := api.DefaultConfig()
+	if c.URL != "" {
+		config.Address = c.URL
+	}
+	client, err := api.NewClient(config)
 	if err != nil {
 		return nil, err
 	}
@@ -66,7 +69,7 @@ func newVaultKVScraper(
 
 // scrape scrapes the metric stats, transforms them and attributes them into a metric slices.
 func (p *vaultKVScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
-	client, err := p.clientFactory.getClient(p.config, "infra/")
+	client, err := p.clientFactory.getClient(p.config, p.config.Mount)
 	if err != nil {
 		p.logger.Error("Failed to initialize vault client", zap.Error(err))
 		return pmetric.NewMetrics(), err
@@ -96,7 +99,6 @@ func (p *vaultKVScraper) collectCreatedTime(
 		return
 	}
 
-	fmt.Println(secretMetadata)
 	for key, metadata := range secretMetadata {
 		t := metadata.Type()
 		if t == "" {
