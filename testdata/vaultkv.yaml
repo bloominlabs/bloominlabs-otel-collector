@@ -1,0 +1,40 @@
+receivers:
+  vaultkv:
+    mount: "stratos-api/"
+
+processors:
+  batch:
+
+  resource/metric:
+    attributes:
+      - key: service.name
+        action: delete
+      - key: instance
+        action: delete
+      # - key: job
+      #   action: delete
+      # - key: host.name
+      #   action: delete
+
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 128
+
+exporters:
+  logging:
+    logLevel: debug
+
+extensions:
+  memory_ballast:
+    size_mib: 32
+  health_check:
+  pprof:
+  zpages:
+
+service:
+  extensions: [health_check, pprof, zpages, memory_ballast]
+  pipelines:
+    metrics:
+      receivers: [vaultkv]
+      processors: [memory_limiter, batch]
+      exporters: [logging]
