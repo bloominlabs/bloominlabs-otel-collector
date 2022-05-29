@@ -51,7 +51,7 @@ func (d *defaultClientFactory) getClient(c *Config, mount string) (client, error
 		return nil, err
 	}
 
-	return newVaultKVClient(client)
+	return newVaultKVClient(client, c.Mount)
 }
 
 func newVaultKVScraper(

@@ -4,7 +4,7 @@ FROM golang:1.17
 WORKDIR /bloominlabs-otel-collector
 
 deps:
-  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.47.0
+  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.52.0
 
 certs:
   RUN curl -k https://vault.prod.stratos.host:8200/v1/internal/ca/pem > /etc/ssl/certs/internal.pem

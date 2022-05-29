@@ -63,11 +63,10 @@ type vaultKVClient struct {
 
 var _ client = (*vaultKVClient)(nil)
 
-func newVaultKVClient(client *api.Client) (*vaultKVClient, error) {
+func newVaultKVClient(client *api.Client, mount string) (*vaultKVClient, error) {
 	return &vaultKVClient{
 		client: client,
-		// TODO
-		mount: "infra/",
+		mount:  mount,
 	}, nil
 }
 
