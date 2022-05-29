@@ -21,9 +21,11 @@ import (
 	"fmt"
 	"log"
 	"path"
+	"strconv"
 	"strings"
 	"time"
 
+	"github.com/hashicorp/go-multierror"
 	"github.com/hashicorp/vault/api"
 	"github.com/mitchellh/mapstructure"
 )
@@ -35,16 +37,28 @@ const (
 	listSecretsPath      = "%s/metadata/%s"
 )
 
+type Version struct {
+	CreatedTime  time.Time `mapstructure:"created_time"`
+	DeletionTime string    `mapstructure:"deletion_time"`
+	Destroyed    bool      `mapstructure:"destroyed"`
+}
+
 type MetadataResponse struct {
-	CreatedTime    time.Time         `mapstructure:"created_time"`
-	CurrentVersion int               `mapstructure:"current_version"`
-	MaxVersions    int               `mapstructure:"max_versions"`
-	UpdatedTime    time.Time         `mapstructure:"updated_time"`
-	CustomMetadata map[string]string `mapstructure:"custom_metadata"`
+	CreatedTime    time.Time          `mapstructure:"created_time"`
+	CurrentVersion int                `mapstructure:"current_version"`
+	MaxVersions    int                `mapstructure:"max_versions"`
+	UpdatedTime    time.Time          `mapstructure:"updated_time"`
+	CustomMetadata map[string]string  `mapstructure:"custom_metadata"`
+	Versions       map[string]Version `mapstructure:"versions"`
 }
 
 func (c *MetadataResponse) Type() string {
 	return c.CustomMetadata["type"]
+}
+
+func (c *MetadataResponse) LastestVersionCreatedTime() time.Time {
+	version := strconv.Itoa(c.CurrentVersion)
+	return c.Versions[version].CreatedTime
 }
 
 // Secrets holds all recursive secrets of a certain path.
@@ -91,6 +105,7 @@ func (s *Secrets) listRecursive(client *vaultKVClient, rootPath, subPath string)
 		return err
 	}
 
+	var readSecretsErrors error
 	for _, k := range keys {
 		if strings.HasSuffix(k, Delimiter) {
 			if err := s.listRecursive(client, rootPath, path.Join(subPath, k)); err != nil {
@@ -100,7 +115,7 @@ func (s *Secrets) listRecursive(client *vaultKVClient, rootPath, subPath string)
 			secrets, err := client.readSecrets(rootPath, path.Join(subPath, k))
 			if err != nil {
 				(*s)[path.Join(rootPath, subPath, k)] = MetadataResponse{}
-
+				readSecretsErrors = multierror.Append(readSecretsErrors, err)
 				continue
 			}
 
@@ -108,7 +123,7 @@ func (s *Secrets) listRecursive(client *vaultKVClient, rootPath, subPath string)
 		}
 	}
 
-	return nil
+	return readSecretsErrors
 }
 
 // ListSecrets returns all keys from vault kv secret path.
@@ -164,9 +179,5 @@ func (c *vaultKVClient) readSecrets(rootPath, subPath string) (MetadataResponse,
 	}
 
 	err = decoder.Decode(data.Data)
-	if err != nil {
-		return resp, err
-	}
-
-	return resp, nil
+	return resp, err
 }

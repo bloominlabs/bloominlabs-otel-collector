@@ -112,7 +112,7 @@ func (p *vaultKVScraper) collectCreatedTime(
 		if ok {
 			p.mb.RecordVaultkvCreatedOnDataPoint(
 				now,
-				metadata.CreatedTime.Unix(),
+				metadata.LastestVersionCreatedTime().Unix(),
 				key,
 				p.config.Mount,
 				val,
