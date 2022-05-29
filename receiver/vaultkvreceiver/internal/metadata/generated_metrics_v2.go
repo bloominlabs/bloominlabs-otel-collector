@@ -72,6 +72,8 @@ const (
 	AttributeTypeTailscaleAPI
 	AttributeTypeConsulEncryption
 	AttributeTypeNomadEncryption
+	AttributeTypeDiscordWebhook
+	AttributeTypeAuth0AppKeys
 )
 
 // String returns the string representation of the AttributeType.
@@ -87,6 +89,10 @@ func (av AttributeType) String() string {
 		return "consul.encryption"
 	case AttributeTypeNomadEncryption:
 		return "nomad.encryption"
+	case AttributeTypeDiscordWebhook:
+		return "discord.webhook"
+	case AttributeTypeAuth0AppKeys:
+		return "auth0.app_keys"
 	}
 	return ""
 }
@@ -98,6 +104,8 @@ var MapAttributeType = map[string]AttributeType{
 	"tailscale.api":       AttributeTypeTailscaleAPI,
 	"consul.encryption":   AttributeTypeConsulEncryption,
 	"nomad.encryption":    AttributeTypeNomadEncryption,
+	"discord.webhook":     AttributeTypeDiscordWebhook,
+	"auth0.app_keys":      AttributeTypeAuth0AppKeys,
 }
 
 type metricVaultkvCreatedOn struct {

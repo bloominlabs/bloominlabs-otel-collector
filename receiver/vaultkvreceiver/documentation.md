@@ -29,5 +29,5 @@ metrics:
 | key | The path to the vault key. |  |
 | metadata_error_type (type) | The type of error encountered when checking the custom metadata of a key. | missing_type, invalid_type |
 | mount | The mount path for the KV store. |  |
-| type (type) | The type of secret for the key sorted in custom metadata. | digitalocean.spaces, digitalocean.api, tailscale.api, consul.encryption, nomad.encryption |
+| type (type) | The type of secret for the key sorted in custom metadata. | digitalocean.spaces, digitalocean.api, tailscale.api, consul.encryption, nomad.encryption, discord.webhook, auth0.app_keys |
 | versions | The number of versions for the key. |  |

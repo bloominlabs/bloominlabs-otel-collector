@@ -18,6 +18,8 @@ attributes:
       - tailscale.api
       - consul.encryption
       - nomad.encryption
+      - discord.webhook
+      - auth0.app_keys
   metadata_error_type:
     value: type
     description: The type of error encountered when checking the custom metadata of a key.
