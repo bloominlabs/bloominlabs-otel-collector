@@ -1,6 +1,6 @@
 # https://github.com/hashicorp/vault/pull/12358
 VERSION 0.6
-FROM golang:1.17
+FROM golang:1.18
 WORKDIR /bloominlabs-otel-collector
 
 deps:
