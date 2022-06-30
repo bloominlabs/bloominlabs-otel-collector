@@ -21,6 +21,7 @@ processors:
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.51.0"
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.51.0"
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor v0.51.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.51.0"
 exporters:
   - import: go.opentelemetry.io/collector/exporter/loggingexporter
     gomod: go.opentelemetry.io/collector v0.51.0
