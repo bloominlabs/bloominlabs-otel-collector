@@ -18,7 +18,6 @@ import (
 	"context"
 
 	"github.com/hashicorp/nomad/api"
-	"go.opentelemetry.io/collector/pdata/internal"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"k8s.io/utils/lru"
 )
@@ -54,7 +53,7 @@ func (rp *resourceProcessor) processLogs(_ context.Context, ld plog.Logs) (plog.
 				}
 
 				for key, val := range allocation.Job.Meta {
-					lr.Attributes().Insert(key, internal.NewValueString(val))
+					lr.Attributes().InsertString(key, val)
 				}
 			}
 		}
