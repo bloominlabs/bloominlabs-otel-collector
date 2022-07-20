@@ -16,8 +16,12 @@ package nomadprocessor
 
 import (
 	"context"
+	"fmt"
+	"sync"
 
+	// "github.com/bloominlabs/baseplate-go/config"
 	"github.com/hashicorp/nomad/api"
+	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"k8s.io/utils/lru"
 )
@@ -25,9 +29,14 @@ import (
 type resourceProcessor struct {
 	allocationCache *lru.Cache
 	client          *api.Client
+
+	// Lock to allow updating the client when rotating credentials on disk
+	sync.RWMutex
 }
 
 func (rp *resourceProcessor) processLogs(_ context.Context, ld plog.Logs) (plog.Logs, error) {
+	rp.RLock()
+	defer rp.Unlock()
 	rls := ld.ResourceLogs()
 	for i := 0; i < rls.Len(); i++ {
 		rs := rls.At(i)
@@ -37,26 +46,68 @@ func (rp *resourceProcessor) processLogs(_ context.Context, ld plog.Logs) (plog.
 			logs := ils.LogRecords()
 			for k := 0; k < logs.Len(); k++ {
 				lr := logs.At(k)
-				// TODO, use error
-				allocationID, _ := lr.Attributes().Get("allocation_id")
+				allocationIDVal, ok := lr.Attributes().Get("nomad_allocation_id")
+				if !ok {
+					allocationIDVal, ok = lr.Attributes().Get("allocation_id")
+				}
+				if !ok {
+					allocationIDVal, ok = lr.Attributes().Get("allocation.id")
+				}
+				if !ok {
+					allocationIDVal, ok = lr.Attributes().Get("nomad.allocation.id")
+				}
 
 				var allocation *api.Allocation
-
+				allocationID := allocationIDVal.AsString()
 				allocationFromCache, ok := rp.allocationCache.Get(allocationID)
 				if !ok {
-					// TODO: use error
-					alloc, _, _ := rp.client.Allocations().Info(allocationID.AsString(), &api.QueryOptions{AllowStale: true})
+					fmt.Println("cache miss for ", allocationIDVal.AsString())
+					alloc, _, err := rp.client.Allocations().Info(allocationID, &api.QueryOptions{AllowStale: true})
+					if err != nil {
+						return ld, fmt.Errorf("failed to get allocation: %w", err)
+					}
 					allocation = alloc
 					rp.allocationCache.Add(allocationID, alloc)
 				} else {
+					fmt.Println("cache hit for ", allocationID)
 					allocation = allocationFromCache.(*api.Allocation)
 				}
 
+				lr.Attributes().InsertString("nomad.job.name", *allocation.Job.Name)
 				for key, val := range allocation.Job.Meta {
-					lr.Attributes().InsertString(key, val)
+					fmt.Println(key, val)
+					lr.Attributes().InsertString("nomad.job.meta."+key, val)
 				}
 			}
 		}
 	}
 	return ld, nil
+}
+
+func (s *resourceProcessor) Start(_ context.Context, host component.Host) error {
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	return nil
+}
+
+func (s *resourceProcessor) Shutdown(context.Context) error {
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	fmt.Println("=================================")
+	return nil
 }

@@ -18,11 +18,13 @@ import (
 	"context"
 
 	"github.com/hashicorp/nomad/api"
+	// "github.com/rs/zerolog/log"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config"
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/processor/processorhelper"
 	"k8s.io/utils/lru"
+	// bConfig "github.com/bloominlabs/baseplate-go/config"
 )
 
 const (
@@ -44,6 +46,7 @@ func NewFactory() component.ProcessorFactory {
 func createDefaultConfig() config.Processor {
 	return &Config{
 		ProcessorSettings: config.NewProcessorSettings(config.NewComponentID(typeStr)),
+		LRUCacheSize:      1000,
 	}
 }
 
@@ -56,10 +59,21 @@ func createLogsProcessor(
 
 	client, _ := api.NewClient(api.DefaultConfig())
 
+	// if cfg.TokenFile {
+	// 	w, err := bConfig.NewRateLimitedFileWatcher([]string{cfg.TokenFile}, log.With().Logger().Output(io.Discard), time.Second)
+
+	// 	if err != nil {
+	// 		return nil, fmt.Errorf("failed to create file watcher: %w", err)
+	// 	}
+	// }
+
 	proc := &resourceProcessor{
-		allocationCache: lru.New(1000),
+		allocationCache: lru.New(1000), // cfg.LRUCacheSize),
 		client:          client,
 	}
+	// need to embed a custom start / shutdown function to handle the file NewRateLimitedFileWatcher
+	// The method i found was deprecated so idk how to do it rn
+	// https://github.com/open-telemetry/opentelemetry-collector/blob/v0.48.0/component/componenthelper/component.go#L22
 	return processorhelper.NewLogsProcessor(
 		cfg,
 		nextConsumer,
