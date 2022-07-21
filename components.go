@@ -19,6 +19,7 @@ import (
 	resourcedetectionprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor"
 	lokiprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor"
 	metricstransformprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor"
+	nomadprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor"
 	otlpreceiver "go.opentelemetry.io/collector/receiver/otlpreceiver"
 	filelogreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver"
 	vaultkvreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver"
@@ -77,6 +78,7 @@ func components() (component.Factories, error) {
 		resourcedetectionprocessor.NewFactory(),
 		lokiprocessor.NewFactory(),
 		metricstransformprocessor.NewFactory(),
+		nomadprocessor.NewFactory(),
 	)
 	if err != nil {
 		return component.Factories{}, err
