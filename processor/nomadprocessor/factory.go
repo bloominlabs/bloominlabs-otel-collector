@@ -16,15 +16,19 @@ package nomadprocessor
 
 import (
 	"context"
+	"fmt"
+	"io"
+	"time"
 
 	"github.com/hashicorp/nomad/api"
-	// "github.com/rs/zerolog/log"
+	"github.com/rs/zerolog/log"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config"
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/processor/processorhelper"
 	"k8s.io/utils/lru"
-	// bConfig "github.com/bloominlabs/baseplate-go/config"
+
+	bConfig "github.com/bloominlabs/baseplate-go/config"
 )
 
 const (
@@ -56,21 +60,26 @@ func createLogsProcessor(
 	cfg config.Processor,
 	nextConsumer consumer.Logs,
 ) (component.LogsProcessor, error) {
+	oCfg := cfg.(*Config)
 
 	client, _ := api.NewClient(api.DefaultConfig())
 
-	// if cfg.TokenFile {
-	// 	w, err := bConfig.NewRateLimitedFileWatcher([]string{cfg.TokenFile}, log.With().Logger().Output(io.Discard), time.Second)
-
-	// 	if err != nil {
-	// 		return nil, fmt.Errorf("failed to create file watcher: %w", err)
-	// 	}
-	// }
-
 	proc := &resourceProcessor{
-		allocationCache: lru.New(1000), // cfg.LRUCacheSize),
+		allocationCache: lru.New(oCfg.LRUCacheSize),
 		client:          client,
 	}
+
+	if oCfg.TokenFile != "" {
+		w, err := bConfig.NewRateLimitedFileWatcher([]string{oCfg.TokenFile}, log.With().Logger().Output(io.Discard), time.Second)
+
+		if err != nil {
+			return nil, fmt.Errorf("failed to create file watcher: %w", err)
+		}
+
+		proc.watcher = &w
+		proc.tokenFile = &oCfg.TokenFile
+	}
+
 	// need to embed a custom start / shutdown function to handle the file NewRateLimitedFileWatcher
 	// The method i found was deprecated so idk how to do it rn
 	// https://github.com/open-telemetry/opentelemetry-collector/blob/v0.48.0/component/componenthelper/component.go#L22
@@ -78,5 +87,7 @@ func createLogsProcessor(
 		cfg,
 		nextConsumer,
 		proc.processLogs,
-		processorhelper.WithCapabilities(processorCapabilities))
+		processorhelper.WithCapabilities(processorCapabilities),
+		processorhelper.WithStart(proc.Start),
+		processorhelper.WithShutdown(proc.Shutdown))
 }

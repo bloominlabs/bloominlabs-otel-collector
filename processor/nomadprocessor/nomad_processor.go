@@ -17,26 +17,29 @@ package nomadprocessor
 import (
 	"context"
 	"fmt"
+	"os"
+	"strings"
 	"sync"
 
-	// "github.com/bloominlabs/baseplate-go/config"
 	"github.com/hashicorp/nomad/api"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/pdata/plog"
 	"k8s.io/utils/lru"
+
+	bConfig "github.com/bloominlabs/baseplate-go/config"
 )
 
 type resourceProcessor struct {
 	allocationCache *lru.Cache
 	client          *api.Client
+	watcher         *bConfig.Watcher
+	tokenFile       *string
 
 	// Lock to allow updating the client when rotating credentials on disk
 	sync.RWMutex
 }
 
 func (rp *resourceProcessor) processLogs(_ context.Context, ld plog.Logs) (plog.Logs, error) {
-	rp.RLock()
-	defer rp.Unlock()
 	rls := ld.ResourceLogs()
 	for i := 0; i < rls.Len(); i++ {
 		rs := rls.At(i)
@@ -49,65 +52,67 @@ func (rp *resourceProcessor) processLogs(_ context.Context, ld plog.Logs) (plog.
 				allocationIDVal, ok := lr.Attributes().Get("nomad_allocation_id")
 				if !ok {
 					allocationIDVal, ok = lr.Attributes().Get("allocation_id")
-				}
-				if !ok {
-					allocationIDVal, ok = lr.Attributes().Get("allocation.id")
-				}
-				if !ok {
-					allocationIDVal, ok = lr.Attributes().Get("nomad.allocation.id")
+					if !ok {
+						allocationIDVal, ok = lr.Attributes().Get("allocation.id")
+						if !ok {
+							allocationIDVal, ok = lr.Attributes().Get("nomad.allocation.id")
+						}
+					}
 				}
 
 				var allocation *api.Allocation
 				allocationID := allocationIDVal.AsString()
 				allocationFromCache, ok := rp.allocationCache.Get(allocationID)
 				if !ok {
-					fmt.Println("cache miss for ", allocationIDVal.AsString())
+					rp.RLock()
 					alloc, _, err := rp.client.Allocations().Info(allocationID, &api.QueryOptions{AllowStale: true})
+					rp.RUnlock()
 					if err != nil {
 						return ld, fmt.Errorf("failed to get allocation: %w", err)
 					}
 					allocation = alloc
 					rp.allocationCache.Add(allocationID, alloc)
 				} else {
-					fmt.Println("cache hit for ", allocationID)
 					allocation = allocationFromCache.(*api.Allocation)
 				}
 
 				lr.Attributes().InsertString("nomad.job.name", *allocation.Job.Name)
 				for key, val := range allocation.Job.Meta {
-					fmt.Println(key, val)
 					lr.Attributes().InsertString("nomad.job.meta."+key, val)
 				}
 			}
 		}
 	}
+
 	return ld, nil
 }
 
-func (s *resourceProcessor) Start(_ context.Context, host component.Host) error {
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
+func (s *resourceProcessor) Start(ctx context.Context, host component.Host) error {
+	s.RLock()
+	defer s.RUnlock()
+
+	if s.watcher != nil {
+		(*s.watcher).Start(ctx)
+		go func() {
+			for range (*s.watcher).EventsCh() {
+				secretID, err := os.ReadFile(*s.tokenFile)
+				if err != nil {
+					panic(err)
+				}
+				s.Lock()
+				s.client.SetSecretID(strings.TrimSpace(string(secretID)))
+				s.Unlock()
+			}
+		}()
+	}
+
 	return nil
 }
 
 func (s *resourceProcessor) Shutdown(context.Context) error {
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
-	fmt.Println("=================================")
+	if s.watcher != nil {
+		(*s.watcher).Stop()
+	}
+
 	return nil
 }
