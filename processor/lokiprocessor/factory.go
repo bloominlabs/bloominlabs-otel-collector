@@ -35,7 +35,7 @@ func NewFactory() component.ProcessorFactory {
 	return component.NewProcessorFactory(
 		typeStr,
 		createDefaultConfig,
-		component.WithLogsProcessor(createLogsProcessor))
+		component.WithLogsProcessor(createLogsProcessor, component.StabilityLevelAlpha))
 }
 
 // Note: This isn't a valid configuration because the processor would do no work.
@@ -46,13 +46,15 @@ func createDefaultConfig() config.Processor {
 }
 
 func createLogsProcessor(
-	_ context.Context,
+	ctx context.Context,
 	set component.ProcessorCreateSettings,
 	cfg config.Processor,
 	nextConsumer consumer.Logs,
 ) (component.LogsProcessor, error) {
 	proc := &resourceProcessor{}
 	return processorhelper.NewLogsProcessor(
+		ctx,
+		set,
 		cfg,
 		nextConsumer,
 		proc.processLogs,

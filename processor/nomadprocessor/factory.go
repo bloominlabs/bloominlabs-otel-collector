@@ -43,7 +43,7 @@ func NewFactory() component.ProcessorFactory {
 	return component.NewProcessorFactory(
 		typeStr,
 		createDefaultConfig,
-		component.WithLogsProcessor(createLogsProcessor))
+		component.WithLogsProcessor(createLogsProcessor, component.StabilityLevelAlpha))
 }
 
 // Note: This isn't a valid configuration because the processor would do no work.
@@ -55,7 +55,7 @@ func createDefaultConfig() config.Processor {
 }
 
 func createLogsProcessor(
-	_ context.Context,
+	ctx context.Context,
 	set component.ProcessorCreateSettings,
 	cfg config.Processor,
 	nextConsumer consumer.Logs,
@@ -84,6 +84,8 @@ func createLogsProcessor(
 	// The method i found was deprecated so idk how to do it rn
 	// https://github.com/open-telemetry/opentelemetry-collector/blob/v0.48.0/component/componenthelper/component.go#L22
 	return processorhelper.NewLogsProcessor(
+		ctx,
+		set,
 		cfg,
 		nextConsumer,
 		proc.processLogs,
