@@ -23,8 +23,8 @@ import (
 	"github.com/hashicorp/nomad/api"
 	"github.com/rs/zerolog/log"
 	"go.opentelemetry.io/collector/component"
-	"go.opentelemetry.io/collector/config"
 	"go.opentelemetry.io/collector/consumer"
+	"go.opentelemetry.io/collector/processor"
 	"go.opentelemetry.io/collector/processor/processorhelper"
 	"k8s.io/utils/lru"
 
@@ -47,19 +47,18 @@ func NewFactory() component.ProcessorFactory {
 }
 
 // Note: This isn't a valid configuration because the processor would do no work.
-func createDefaultConfig() config.Processor {
+func createDefaultConfig() component.Config {
 	return &Config{
-		ProcessorSettings: config.NewProcessorSettings(config.NewComponentID(typeStr)),
-		LRUCacheSize:      1000,
+		LRUCacheSize: 1000,
 	}
 }
 
 func createLogsProcessor(
-	_ context.Context,
-	set component.ProcessorCreateSettings,
-	cfg config.Processor,
+	ctx context.Context,
+	set processor.CreateSettings,
+	cfg component.Config,
 	nextConsumer consumer.Logs,
-) (component.LogsProcessor, error) {
+) (processor.Logs, error) {
 	oCfg := cfg.(*Config)
 
 	client, _ := api.NewClient(api.DefaultConfig())
@@ -83,7 +82,10 @@ func createLogsProcessor(
 	// need to embed a custom start / shutdown function to handle the file NewRateLimitedFileWatcher
 	// The method i found was deprecated so idk how to do it rn
 	// https://github.com/open-telemetry/opentelemetry-collector/blob/v0.48.0/component/componenthelper/component.go#L22
+
 	return processorhelper.NewLogsProcessor(
+		ctx,
+		set,
 		cfg,
 		nextConsumer,
 		proc.processLogs,

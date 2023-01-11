@@ -15,13 +15,13 @@
 package nomadprocessor
 
 import (
-	"go.opentelemetry.io/collector/config"
+	"context"
+
+	"go.opentelemetry.io/collector/component"
 )
 
 // Config defines configuration for Resource processor.
 type Config struct {
-	config.ProcessorSettings `mapstructure:",squash"` // squash ensures fields are correctly decoded in embedded struct
-
 	// The size of the LRU cache for allocation IDs. The nomad processor will
 	// cause opentelemetry to fetch each allocation from the nomad API which can
 	// be expensive depending on log / batch volume.
@@ -37,9 +37,17 @@ type Config struct {
 	Token string `mapstructure:"token"`
 }
 
-var _ config.Processor = (*Config)(nil)
+var _ component.Processor = (*Config)(nil)
 
 // Validate checks if the processor configuration is valid
 func (cfg *Config) Validate() error {
+	return nil
+}
+
+func (cfg *Config) Start(ctx context.Context, host component.Host) error {
+	return nil
+}
+
+func (cfg *Config) Shutdown(ctx context.Context) error {
 	return nil
 }
