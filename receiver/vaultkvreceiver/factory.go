@@ -16,11 +16,10 @@ package vaultkvreceiver // import "github.com/open-telemetry/opentelemetry-colle
 
 import (
 	"context"
-	"time"
 
 	"go.opentelemetry.io/collector/component"
-	"go.opentelemetry.io/collector/config"
 	"go.opentelemetry.io/collector/consumer"
+	"go.opentelemetry.io/collector/receiver"
 	"go.opentelemetry.io/collector/receiver/scraperhelper"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver/internal/metadata"
@@ -28,42 +27,41 @@ import (
 
 const (
 	typeStr = "vaultkv"
+
+	stability = component.StabilityLevelDevelopment
 )
 
-func NewFactory() component.ReceiverFactory {
-	return component.NewReceiverFactory(
+func NewFactory() receiver.Factory {
+	return receiver.NewFactory(
 		typeStr,
 		createDefaultConfig,
-		component.WithMetricsReceiver(createMetricsReceiver))
+		receiver.WithMetrics(createMetricsReceiver, stability))
 }
 
-func createDefaultConfig() config.Receiver {
+func createDefaultConfig() component.Config {
 	return &Config{
-		ScraperControllerSettings: scraperhelper.ScraperControllerSettings{
-			ReceiverSettings:   config.NewReceiverSettings(config.NewComponentID(typeStr)),
-			CollectionInterval: 10 * time.Second,
-		},
-		Mount:   "infra/",
-		Metrics: metadata.DefaultMetricsSettings(),
+		ScraperControllerSettings: scraperhelper.NewDefaultScraperControllerSettings(typeStr),
+		Mount:                     "infra/",
+		Metrics:                   metadata.DefaultMetricsSettings(),
 	}
 }
 
 func createMetricsReceiver(
-	_ context.Context,
-	params component.ReceiverCreateSettings,
-	rConf config.Receiver,
+	ctx context.Context,
+	set receiver.CreateSettings,
+	cfg component.Config,
 	consumer consumer.Metrics,
-) (component.MetricsReceiver, error) {
-	cfg := rConf.(*Config)
+) (receiver.Metrics, error) {
+	rCfg := cfg.(*Config)
 
-	ns := newVaultKVScraper(params, cfg, &defaultClientFactory{})
+	ns := newVaultKVScraper(set, rCfg, &defaultClientFactory{})
 	scraper, err := scraperhelper.NewScraper(typeStr, ns.scrape)
 	if err != nil {
 		return nil, err
 	}
 
 	return scraperhelper.NewScraperControllerReceiver(
-		&cfg.ScraperControllerSettings, params, consumer,
+		&rCfg.ScraperControllerSettings, set, consumer,
 		scraperhelper.AddScraper(scraper),
 	)
 }

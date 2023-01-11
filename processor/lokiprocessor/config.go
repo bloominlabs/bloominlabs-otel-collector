@@ -15,17 +15,26 @@
 package lokiprocessor
 
 import (
-	"go.opentelemetry.io/collector/config"
+	"context"
+
+	"go.opentelemetry.io/collector/component"
 )
 
 // Config defines configuration for Resource processor.
 type Config struct {
-	config.ProcessorSettings `mapstructure:",squash"` // squash ensures fields are correctly decoded in embedded struct
 }
 
-var _ config.Processor = (*Config)(nil)
+var _ component.Component = (*Config)(nil)
 
 // Validate checks if the processor configuration is valid
 func (cfg *Config) Validate() error {
+	return nil
+}
+
+func (cfg *Config) Start(ctx context.Context, host component.Host) error {
+	return nil
+}
+
+func (cfg *Config) Shutdown(ctx context.Context) error {
 	return nil
 }

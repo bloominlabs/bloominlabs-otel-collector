@@ -6,13 +6,34 @@ import (
 	"time"
 
 	"go.opentelemetry.io/collector/component"
+	"go.opentelemetry.io/collector/confmap"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/pmetric"
+	"go.opentelemetry.io/collector/receiver"
 )
 
 // MetricSettings provides common settings for a particular metric.
 type MetricSettings struct {
 	Enabled bool `mapstructure:"enabled"`
+
+	enabledProvidedByUser bool
+}
+
+// IsEnabledProvidedByUser returns true if `enabled` option is explicitly set in user settings to any value.
+func (ms *MetricSettings) IsEnabledProvidedByUser() bool {
+	return ms.enabledProvidedByUser
+}
+
+func (ms *MetricSettings) Unmarshal(parser *confmap.Conf) error {
+	if parser == nil {
+		return nil
+	}
+	err := parser.Unmarshal(ms, confmap.WithErrorUnused())
+	if err != nil {
+		return err
+	}
+	ms.enabledProvidedByUser = parser.IsSet("enabled")
+	return nil
 }
 
 // MetricsSettings provides settings for vaultkvreceiver metrics.
@@ -119,9 +140,9 @@ func (m *metricVaultkvCreatedOn) init() {
 	m.data.SetName("vaultkv.created_on")
 	m.data.SetDescription("The epoch time in seconds the key was created at.")
 	m.data.SetUnit("s")
-	m.data.SetDataType(pmetric.MetricDataTypeSum)
+	m.data.SetEmptySum()
 	m.data.Sum().SetIsMonotonic(true)
-	m.data.Sum().SetAggregationTemporality(pmetric.MetricAggregationTemporalityCumulative)
+	m.data.Sum().SetAggregationTemporality(pmetric.AggregationTemporalityCumulative)
 	m.data.Sum().DataPoints().EnsureCapacity(m.capacity)
 }
 
@@ -132,10 +153,10 @@ func (m *metricVaultkvCreatedOn) recordDataPoint(start pcommon.Timestamp, ts pco
 	dp := m.data.Sum().DataPoints().AppendEmpty()
 	dp.SetStartTimestamp(start)
 	dp.SetTimestamp(ts)
-	dp.SetIntVal(val)
-	dp.Attributes().Insert("key", pcommon.NewValueString(keyAttributeValue))
-	dp.Attributes().Insert("mount", pcommon.NewValueString(mountAttributeValue))
-	dp.Attributes().Insert("type", pcommon.NewValueString(typeAttributeValue))
+	dp.SetIntValue(val)
+	dp.Attributes().PutStr("key", keyAttributeValue)
+	dp.Attributes().PutStr("mount", mountAttributeValue)
+	dp.Attributes().PutStr("type", typeAttributeValue)
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
@@ -174,9 +195,9 @@ func (m *metricVaultkvMetadata) init() {
 	m.data.SetName("vaultkv.metadata")
 	m.data.SetDescription("Metadata about the key.")
 	m.data.SetUnit("1")
-	m.data.SetDataType(pmetric.MetricDataTypeSum)
+	m.data.SetEmptySum()
 	m.data.Sum().SetIsMonotonic(false)
-	m.data.Sum().SetAggregationTemporality(pmetric.MetricAggregationTemporalityCumulative)
+	m.data.Sum().SetAggregationTemporality(pmetric.AggregationTemporalityCumulative)
 	m.data.Sum().DataPoints().EnsureCapacity(m.capacity)
 }
 
@@ -187,11 +208,11 @@ func (m *metricVaultkvMetadata) recordDataPoint(start pcommon.Timestamp, ts pcom
 	dp := m.data.Sum().DataPoints().AppendEmpty()
 	dp.SetStartTimestamp(start)
 	dp.SetTimestamp(ts)
-	dp.SetIntVal(val)
-	dp.Attributes().Insert("key", pcommon.NewValueString(keyAttributeValue))
-	dp.Attributes().Insert("mount", pcommon.NewValueString(mountAttributeValue))
-	dp.Attributes().Insert("versions", pcommon.NewValueString(versionsAttributeValue))
-	dp.Attributes().Insert("current_version", pcommon.NewValueString(currentVersionAttributeValue))
+	dp.SetIntValue(val)
+	dp.Attributes().PutStr("key", keyAttributeValue)
+	dp.Attributes().PutStr("mount", mountAttributeValue)
+	dp.Attributes().PutStr("versions", versionsAttributeValue)
+	dp.Attributes().PutStr("current_version", currentVersionAttributeValue)
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
@@ -230,9 +251,9 @@ func (m *metricVaultkvMetadataError) init() {
 	m.data.SetName("vaultkv.metadata.error")
 	m.data.SetDescription("The epoch time in seconds the key was created at.")
 	m.data.SetUnit("1")
-	m.data.SetDataType(pmetric.MetricDataTypeSum)
+	m.data.SetEmptySum()
 	m.data.Sum().SetIsMonotonic(false)
-	m.data.Sum().SetAggregationTemporality(pmetric.MetricAggregationTemporalityCumulative)
+	m.data.Sum().SetAggregationTemporality(pmetric.AggregationTemporalityCumulative)
 	m.data.Sum().DataPoints().EnsureCapacity(m.capacity)
 }
 
@@ -243,10 +264,10 @@ func (m *metricVaultkvMetadataError) recordDataPoint(start pcommon.Timestamp, ts
 	dp := m.data.Sum().DataPoints().AppendEmpty()
 	dp.SetStartTimestamp(start)
 	dp.SetTimestamp(ts)
-	dp.SetIntVal(val)
-	dp.Attributes().Insert("key", pcommon.NewValueString(keyAttributeValue))
-	dp.Attributes().Insert("mount", pcommon.NewValueString(mountAttributeValue))
-	dp.Attributes().Insert("type", pcommon.NewValueString(metadataErrorTypeAttributeValue))
+	dp.SetIntValue(val)
+	dp.Attributes().PutStr("key", keyAttributeValue)
+	dp.Attributes().PutStr("mount", mountAttributeValue)
+	dp.Attributes().PutStr("metadata_error_type", metadataErrorTypeAttributeValue)
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
@@ -297,14 +318,14 @@ func WithStartTime(startTime pcommon.Timestamp) metricBuilderOption {
 	}
 }
 
-func NewMetricsBuilder(settings MetricsSettings, buildInfo component.BuildInfo, options ...metricBuilderOption) *MetricsBuilder {
+func NewMetricsBuilder(ms MetricsSettings, settings receiver.CreateSettings, options ...metricBuilderOption) *MetricsBuilder {
 	mb := &MetricsBuilder{
 		startTime:                  pcommon.NewTimestampFromTime(time.Now()),
 		metricsBuffer:              pmetric.NewMetrics(),
-		buildInfo:                  buildInfo,
-		metricVaultkvCreatedOn:     newMetricVaultkvCreatedOn(settings.VaultkvCreatedOn),
-		metricVaultkvMetadata:      newMetricVaultkvMetadata(settings.VaultkvMetadata),
-		metricVaultkvMetadataError: newMetricVaultkvMetadataError(settings.VaultkvMetadataError),
+		buildInfo:                  settings.BuildInfo,
+		metricVaultkvCreatedOn:     newMetricVaultkvCreatedOn(ms.VaultkvCreatedOn),
+		metricVaultkvMetadata:      newMetricVaultkvMetadata(ms.VaultkvMetadata),
+		metricVaultkvMetadataError: newMetricVaultkvMetadataError(ms.VaultkvMetadataError),
 	}
 	for _, op := range options {
 		op(mb)
@@ -332,10 +353,10 @@ func WithStartTimeOverride(start pcommon.Timestamp) ResourceMetricsOption {
 		var dps pmetric.NumberDataPointSlice
 		metrics := rm.ScopeMetrics().At(0).Metrics()
 		for i := 0; i < metrics.Len(); i++ {
-			switch metrics.At(i).DataType() {
-			case pmetric.MetricDataTypeGauge:
+			switch metrics.At(i).Type() {
+			case pmetric.MetricTypeGauge:
 				dps = metrics.At(i).Gauge().DataPoints()
-			case pmetric.MetricDataTypeSum:
+			case pmetric.MetricTypeSum:
 				dps = metrics.At(i).Sum().DataPoints()
 			}
 			for j := 0; j < dps.Len(); j++ {

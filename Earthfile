@@ -1,17 +1,18 @@
 # https://github.com/hashicorp/vault/pull/12358
 VERSION 0.6
-FROM golang:1.18
+FROM golang:1.19
 WORKDIR /bloominlabs-otel-collector
 
 deps:
-  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.54.0
+  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.69.0
+  RUN GO111MODULE=on go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/mdatagen@v0.68.0
 
 certs:
   RUN curl -k https://vault.prod.stratos.host:8200/v1/internal/ca/pem > /etc/ssl/certs/internal.pem
   SAVE ARTIFACT /etc/ssl/certs/internal.pem
 
 mc-monitor:
-  FROM itzg/mc-monitor:0.10.6
+  FROM itzg/mc-monitor:0.11.0
   SAVE ARTIFACT mc-monitor
 
 build:
@@ -20,6 +21,7 @@ build:
   COPY receiver receiver
   COPY otelcol-builder.yaml . 
   RUN GO111MODULE=on CGO_ENABLED=0 builder --output-path . --config otelcol-builder.yaml --name bloominlabs-otel-collector --skip-compilation
+  RUN go generate ./...
   SAVE ARTIFACT *.go AS LOCAL ./
 	SAVE ARTIFACT go.mod AS LOCAL go.mod
 	SAVE ARTIFACT go.sum AS LOCAL go.sum
