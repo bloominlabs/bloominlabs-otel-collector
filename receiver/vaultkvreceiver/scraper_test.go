@@ -24,11 +24,11 @@ import (
 
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
-	"go.opentelemetry.io/collector/component/componenttest"
 	"go.opentelemetry.io/collector/pdata/pmetric"
+	"go.opentelemetry.io/collector/receiver/receivertest"
 
-	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/scrapertest"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/scrapertest/golden"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/comparetest"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/comparetest/golden"
 )
 
 func TestUnsuccessfulScrape(t *testing.T) {
@@ -38,11 +38,11 @@ func TestUnsuccessfulScrape(t *testing.T) {
 	cfg := factory.CreateDefaultConfig().(*Config)
 	cfg.Mount = "test/"
 
-	scraper := newVaultKVScraper(componenttest.NewNopReceiverCreateSettings(), cfg, &defaultClientFactory{})
+	scraper := newVaultKVScraper(receivertest.NewNopCreateSettings(), cfg, &defaultClientFactory{})
 	actualMetrics, err := scraper.scrape(context.Background())
 	require.Error(t, err)
 
-	require.NoError(t, scrapertest.CompareMetrics(pmetric.NewMetrics(), actualMetrics))
+	require.NoError(t, comparetest.CompareMetrics(pmetric.NewMetrics(), actualMetrics))
 
 	os.Setenv("VAULT_ADDR", originalVaultAddr)
 }
@@ -90,7 +90,7 @@ func TestScraper(t *testing.T) {
 			factory.initMocks(tC.secrets)
 
 			cfg := createDefaultConfig().(*Config)
-			scraper := newVaultKVScraper(componenttest.NewNopReceiverCreateSettings(), cfg, factory)
+			scraper := newVaultKVScraper(receivertest.NewNopCreateSettings(), cfg, factory)
 
 			actualMetrics, err := scraper.scrape(context.Background())
 			require.NoError(t, err)
@@ -101,7 +101,7 @@ func TestScraper(t *testing.T) {
 			expectedMetrics, err := golden.ReadMetrics(expectedFile)
 			require.NoError(t, err)
 
-			require.NoError(t, scrapertest.CompareMetrics(expectedMetrics, actualMetrics))
+			require.NoError(t, comparetest.CompareMetrics(expectedMetrics, actualMetrics))
 		})
 	}
 }

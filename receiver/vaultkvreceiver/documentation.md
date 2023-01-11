@@ -2,32 +2,61 @@
 
 # vaultkvreceiver
 
-## Metrics
+## Default Metrics
 
-These are the metrics available for this scraper.
-
-| Name | Description | Unit | Type | Attributes |
-| ---- | ----------- | ---- | ---- | ---------- |
-| **vaultkv.created_on** | The epoch time in seconds the key was created at. | s | Sum(Int) | <ul> <li>key</li> <li>mount</li> <li>type</li> </ul> |
-| **vaultkv.metadata** | Metadata about the key. | 1 | Sum(Int) | <ul> <li>key</li> <li>mount</li> <li>versions</li> <li>current_version</li> </ul> |
-| **vaultkv.metadata.error** | The epoch time in seconds the key was created at. | 1 | Sum(Int) | <ul> <li>key</li> <li>mount</li> <li>metadata_error_type</li> </ul> |
-
-**Highlighted metrics** are emitted by default. Other metrics are optional and not emitted by default.
-Any metric can be enabled or disabled with the following scraper configuration:
+The following metrics are emitted by default. Each of them can be disabled by applying the following configuration:
 
 ```yaml
 metrics:
   <metric_name>:
-    enabled: <true|false>
+    enabled: false
 ```
 
-## Metric attributes
+### vaultkv.created_on
+
+The epoch time in seconds the key was created at.
+
+| Unit | Metric Type | Value Type | Aggregation Temporality | Monotonic |
+| ---- | ----------- | ---------- | ----------------------- | --------- |
+| s | Sum | Int | Cumulative | true |
+
+#### Attributes
 
 | Name | Description | Values |
 | ---- | ----------- | ------ |
-| current_version | The key's current version. |  |
-| key | The path to the vault key. |  |
-| metadata_error_type (type) | The type of error encountered when checking the custom metadata of a key. | missing_type, invalid_type |
-| mount | The mount path for the KV store. |  |
-| type (type) | The type of secret for the key sorted in custom metadata. | digitalocean.spaces, digitalocean.api, tailscale.api, consul.encryption, nomad.encryption, discord.webhook, auth0.app_keys |
-| versions | The number of versions for the key. |  |
+| key | The path to the vault key. | Any Str |
+| mount | The mount path for the KV store. | Any Str |
+| type | The type of secret for the key sorted in custom metadata. | Str: ``digitalocean.spaces``, ``digitalocean.api``, ``tailscale.api``, ``consul.encryption``, ``nomad.encryption``, ``discord.webhook``, ``auth0.app_keys`` |
+
+### vaultkv.metadata
+
+Metadata about the key.
+
+| Unit | Metric Type | Value Type | Aggregation Temporality | Monotonic |
+| ---- | ----------- | ---------- | ----------------------- | --------- |
+| 1 | Sum | Int | Cumulative | false |
+
+#### Attributes
+
+| Name | Description | Values |
+| ---- | ----------- | ------ |
+| key | The path to the vault key. | Any Str |
+| mount | The mount path for the KV store. | Any Str |
+| versions | The number of versions for the key. | Any Str |
+| current_version | The key's current version. | Any Str |
+
+### vaultkv.metadata.error
+
+The epoch time in seconds the key was created at.
+
+| Unit | Metric Type | Value Type | Aggregation Temporality | Monotonic |
+| ---- | ----------- | ---------- | ----------------------- | --------- |
+| 1 | Sum | Int | Cumulative | false |
+
+#### Attributes
+
+| Name | Description | Values |
+| ---- | ----------- | ------ |
+| key | The path to the vault key. | Any Str |
+| mount | The mount path for the KV store. | Any Str |
+| metadata_error_type | The type of error encountered when checking the custom metadata of a key. | Str: ``missing_type``, ``invalid_type`` |

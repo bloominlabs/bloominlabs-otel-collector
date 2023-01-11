@@ -3,14 +3,18 @@ name: vaultkvreceiver
 attributes:
   key:
     description: The path to the vault key.
+    type: string
   mount:
     description: The mount path for the KV store.
+    type: string
   versions:
     description: The number of versions for the key.
+    type: string
   current_version:
     description: The key's current version.
+    type: string
   type:
-    value: type
+    type: string
     description: The type of secret for the key sorted in custom metadata.
     enum:
       - digitalocean.spaces
@@ -21,7 +25,7 @@ attributes:
       - discord.webhook
       - auth0.app_keys
   metadata_error_type:
-    value: type
+    type: string
     description: The type of error encountered when checking the custom metadata of a key.
     enum:
       - missing_type

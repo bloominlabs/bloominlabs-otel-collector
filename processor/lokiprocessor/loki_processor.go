@@ -32,7 +32,7 @@ func (rp *resourceProcessor) processLogs(_ context.Context, ld plog.Logs) (plog.
 			logs := ils.LogRecords()
 			for k := 0; k < logs.Len(); k++ {
 				lr := logs.At(k)
-				body := lr.Body().MapVal()
+				body := lr.Body().Map()
 				message, exists := body.Get("MESSAGE")
 				if !exists {
 					continue
@@ -46,9 +46,9 @@ func (rp *resourceProcessor) processLogs(_ context.Context, ld plog.Logs) (plog.
 					continue
 				}
 
-				lr.Body().SetStringVal(message.StringVal())
-				lr.Attributes().Insert("unit", unit)
-				lr.Attributes().Insert("hostname", hostname)
+				lr.Body().SetStr(message.AsString())
+				lr.Attributes().PutStr("unit", unit.AsString())
+				lr.Attributes().PutStr("hostname", hostname.AsString())
 			}
 		}
 	}

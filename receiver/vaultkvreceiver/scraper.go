@@ -19,9 +19,9 @@ import (
 	"time"
 
 	"github.com/hashicorp/vault/api"
-	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/pmetric"
+	"go.opentelemetry.io/collector/receiver"
 	"go.opentelemetry.io/collector/receiver/scrapererror"
 	"go.uber.org/zap"
 
@@ -55,7 +55,7 @@ func (d *defaultClientFactory) getClient(c *Config, mount string) (client, error
 }
 
 func newVaultKVScraper(
-	settings component.ReceiverCreateSettings,
+	settings receiver.CreateSettings,
 	config *Config,
 	clientFactory vaultKVClientFactory,
 ) *vaultKVScraper {
@@ -63,7 +63,7 @@ func newVaultKVScraper(
 		logger:        settings.Logger,
 		config:        config,
 		clientFactory: clientFactory,
-		mb:            metricMetadata.NewMetricsBuilder(config.Metrics, settings.BuildInfo),
+		mb:            metricMetadata.NewMetricsBuilder(config.Metrics, settings),
 	}
 }
 

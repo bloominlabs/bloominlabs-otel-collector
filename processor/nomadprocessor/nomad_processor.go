@@ -76,9 +76,9 @@ func (rp *resourceProcessor) processLogs(_ context.Context, ld plog.Logs) (plog.
 					allocation = allocationFromCache.(*api.Allocation)
 				}
 
-				lr.Attributes().InsertString("nomad.job.name", *allocation.Job.Name)
+				lr.Attributes().PutStr("nomad.job.name", *allocation.Job.Name)
 				for key, val := range allocation.Job.Meta {
-					lr.Attributes().InsertString("nomad.job.meta."+key, val)
+					lr.Attributes().PutStr("nomad.job.meta."+key, val)
 				}
 			}
 		}
