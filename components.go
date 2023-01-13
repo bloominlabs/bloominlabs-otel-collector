@@ -15,6 +15,7 @@ import (
 	ballastextension "go.opentelemetry.io/collector/extension/ballastextension"
 	zpagesextension "go.opentelemetry.io/collector/extension/zpagesextension"
 	pprofextension "github.com/open-telemetry/opentelemetry-collector-contrib/extension/pprofextension"
+	filestorage "github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage"
 	healthcheckextension "github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension"
 	memorylimiterprocessor "go.opentelemetry.io/collector/processor/memorylimiterprocessor"
 	batchprocessor "go.opentelemetry.io/collector/processor/batchprocessor"
@@ -22,8 +23,8 @@ import (
 	resourceprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor"
 	resourcedetectionprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor"
 	lokiprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor"
-	metricstransformprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor"
 	nomadprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor"
+	metricstransformprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor"
 	otlpreceiver "go.opentelemetry.io/collector/receiver/otlpreceiver"
 	filelogreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver"
 	vaultkvreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver"
@@ -43,6 +44,7 @@ func components() (otelcol.Factories, error) {
 		ballastextension.NewFactory(),
 		zpagesextension.NewFactory(),
 		pprofextension.NewFactory(),
+		filestorage.NewFactory(),
 		healthcheckextension.NewFactory(),
 	)
 	if err != nil {
@@ -81,8 +83,8 @@ func components() (otelcol.Factories, error) {
 		resourceprocessor.NewFactory(),
 		resourcedetectionprocessor.NewFactory(),
 		lokiprocessor.NewFactory(),
-		metricstransformprocessor.NewFactory(),
 		nomadprocessor.NewFactory(),
+		metricstransformprocessor.NewFactory(),
 	)
 	if err != nil {
 		return otelcol.Factories{}, err

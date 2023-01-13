@@ -37,7 +37,7 @@ type Config struct {
 	Token string `mapstructure:"token"`
 }
 
-var _ component.Processor = (*Config)(nil)
+var _ component.Component = (*Config)(nil)
 
 // Validate checks if the processor configuration is valid
 func (cfg *Config) Validate() error {

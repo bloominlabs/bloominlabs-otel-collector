@@ -34,16 +34,18 @@ import (
 const (
 	// The value of "type" key in configuration.
 	typeStr = "nomad"
+
+	stability = component.StabilityLevelDevelopment
 )
 
 var processorCapabilities = consumer.Capabilities{MutatesData: true}
 
 // NewFactory returns a new factory for the Resource processor.
-func NewFactory() component.ProcessorFactory {
-	return component.NewProcessorFactory(
+func NewFactory() processor.Factory {
+	return processor.NewFactory(
 		typeStr,
 		createDefaultConfig,
-		component.WithLogsProcessor(createLogsProcessor))
+		processor.WithLogs(createLogsProcessor, stability))
 }
 
 // Note: This isn't a valid configuration because the processor would do no work.
