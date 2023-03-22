@@ -63,7 +63,7 @@ func newVaultKVScraper(
 		logger:        settings.Logger,
 		config:        config,
 		clientFactory: clientFactory,
-		mb:            metricMetadata.NewMetricsBuilder(config.Metrics, settings),
+		mb:            metricMetadata.NewMetricsBuilder(metricMetadata.DefaultMetricsBuilderConfig(), settings),
 	}
 }
 

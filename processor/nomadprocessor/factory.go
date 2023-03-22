@@ -28,7 +28,7 @@ import (
 	"go.opentelemetry.io/collector/processor/processorhelper"
 	"k8s.io/utils/lru"
 
-	bConfig "github.com/bloominlabs/baseplate-go/config"
+	"github.com/bloominlabs/baseplate-go/config/filesystem"
 )
 
 const (
@@ -65,13 +65,16 @@ func createLogsProcessor(
 
 	client, _ := api.NewClient(api.DefaultConfig())
 
-	proc := &resourceProcessor{
+	proc := &nomadProcessor{
 		allocationCache: lru.New(oCfg.LRUCacheSize),
 		client:          client,
 	}
+	if oCfg.Client != nil {
+		proc.client = oCfg.Client
+	}
 
 	if oCfg.TokenFile != "" {
-		w, err := bConfig.NewRateLimitedFileWatcher([]string{oCfg.TokenFile}, log.With().Logger().Output(io.Discard), time.Second)
+		w, err := filesystem.NewRateLimitedFileWatcher([]string{oCfg.TokenFile}, log.With().Logger().Output(io.Discard), time.Second)
 
 		if err != nil {
 			return nil, fmt.Errorf("failed to create file watcher: %w", err)
@@ -80,10 +83,6 @@ func createLogsProcessor(
 		proc.watcher = &w
 		proc.tokenFile = &oCfg.TokenFile
 	}
-
-	// need to embed a custom start / shutdown function to handle the file NewRateLimitedFileWatcher
-	// The method i found was deprecated so idk how to do it rn
-	// https://github.com/open-telemetry/opentelemetry-collector/blob/v0.48.0/component/componenthelper/component.go#L22
 
 	return processorhelper.NewLogsProcessor(
 		ctx,

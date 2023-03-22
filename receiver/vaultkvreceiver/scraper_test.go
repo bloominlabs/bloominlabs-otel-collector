@@ -22,8 +22,11 @@ import (
 	"testing"
 	"time"
 
+	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/coreinternal/golden"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/pmetrictest"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
+	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/receiver/receivertest"
 )
 
@@ -35,10 +38,11 @@ func TestUnsuccessfulScrape(t *testing.T) {
 	cfg.Mount = "test/"
 
 	scraper := newVaultKVScraper(receivertest.NewNopCreateSettings(), cfg, &defaultClientFactory{})
-	_, err := scraper.scrape(context.Background())
+	actualMetrics, err := scraper.scrape(context.Background())
 	require.Error(t, err)
 
-	// require.NoError(t, comparetest.CompareMetrics(pmetric.NewMetrics(), actualMetrics))
+	require.NoError(t, pmetrictest.CompareMetrics(pmetric.NewMetrics(), actualMetrics,
+		pmetrictest.IgnoreMetricDataPointsOrder(), pmetrictest.IgnoreStartTimestamp(), pmetrictest.IgnoreTimestamp()))
 
 	os.Setenv("VAULT_ADDR", originalVaultAddr)
 }
@@ -88,16 +92,17 @@ func TestScraper(t *testing.T) {
 			cfg := createDefaultConfig().(*Config)
 			scraper := newVaultKVScraper(receivertest.NewNopCreateSettings(), cfg, factory)
 
-			_, err := scraper.scrape(context.Background())
+			actualMetrics, err := scraper.scrape(context.Background())
 			require.NoError(t, err)
 
 			safeFileName := strings.ReplaceAll(tC.desc, " ", "_")
-			_ = filepath.Join("testdata", "scraper", "testScraper", safeFileName+".json")
-			// golden.WriteMetrics(expectedFile, actualMetrics)
-			// expectedMetrics, err := golden.ReadMetrics(expectedFile)
+			expectedFile := filepath.Join("testdata", "scraper", "testScraper", safeFileName+".json")
+			// golden.WriteMetrics(t, expectedFile, actualMetrics)
+			expectedMetrics, err := golden.ReadMetrics(expectedFile)
 			require.NoError(t, err)
 
-			// require.NoError(t, comparetest.CompareMetrics(expectedMetrics, actualMetrics))
+			require.NoError(t, pmetrictest.CompareMetrics(actualMetrics, expectedMetrics,
+				pmetrictest.IgnoreMetricDataPointsOrder(), pmetrictest.IgnoreStartTimestamp(), pmetrictest.IgnoreTimestamp()))
 		})
 	}
 }

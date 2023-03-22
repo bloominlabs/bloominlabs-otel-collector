@@ -8,19 +8,7 @@ processors:
   # 3. Remove "redundant-attribute" attribute.
   # There are many more attribute modification actions supported,
   # check processor/attributesprocessor/testdata/config.yaml for reference.
-  resource:
-    attributes:
-    - key: cloud.availability_zone
-      value: zone-1
-      action: upsert
-    - key: k8s.cluster.name
-      from_attribute: k8s-cluster
-      action: insert
-    - key: redundant-attribute
-      action: delete
-  # The following specifies an invalid resource configuration, it has to have at least one action set in attributes field.
-  resource/invalid:
-
+  loki:
 
 exporters:
   nop:
@@ -29,13 +17,5 @@ service:
   pipelines:
     logs:
       receivers: [nop]
-      processors: [resource]
-      exporters: [nop]
-    metrics:
-      receivers: [nop]
-      processors: [resource]
-      exporters: [nop]
-    traces:
-      receivers: [nop]
-      processors: [resource]
+      processors: [loki]
       exporters: [nop]

@@ -17,6 +17,7 @@ package nomadprocessor
 import (
 	"context"
 
+	"github.com/hashicorp/nomad/api"
 	"go.opentelemetry.io/collector/component"
 )
 
@@ -35,6 +36,10 @@ type Config struct {
 	// which overrides the agent's default (empty) token.
 	// Token or Tokenfile are only required if Nomad's ACL System is enabled.
 	Token string `mapstructure:"token"`
+
+	// Client to use when performing requests to nomad. This will be created by
+	// default; however, this allows you to pass in a custom nomad client for testing.
+	Client *api.Client
 }
 
 var _ component.Component = (*Config)(nil)

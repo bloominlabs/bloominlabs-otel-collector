@@ -9,10 +9,10 @@
                      "description": "The epoch time in seconds the key was created at.",
                      "name": "vaultkv.created_on",
                      "sum": {
-                        "aggregationTemporality": "AGGREGATION_TEMPORALITY_CUMULATIVE",
+                        "aggregationTemporality": 2,
                         "dataPoints": [
                            {
-                              "asInt": "1351807721",
+                              "asInt": "-62135596800",
                               "attributes": [
                                  {
                                     "key": "key",
@@ -33,8 +33,8 @@
                                     }
                                  }
                               ],
-                              "startTimeUnixNano": "1653800218967345474",
-                              "timeUnixNano": "1653800218967376583"
+                              "startTimeUnixNano": "1679455773818199060",
+                              "timeUnixNano": "1679455773818304721"
                            }
                         ],
                         "isMonotonic": true
