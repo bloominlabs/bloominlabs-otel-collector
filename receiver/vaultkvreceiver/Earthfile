@@ -7,13 +7,11 @@ deps:
   RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.74.0
   RUN GO111MODULE=on go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/mdatagen@v0.74.0
 
-processor:
-  FROM +deps
-  COPY ./processor/ ./processor/
-
-  SAVE ARTIFACT ./processor/
-
 receiver:
-  FROM +deps 
-  COPY ./receiver/vaultkvreceiver+receiver/ ./receiver/vaultkvreceiver/
-  SAVE ARTIFACT ./receiver/vaultkvreceiver/
+  FROM ../../../bloominlabs-otel-collector+deps
+
+  COPY . .
+  RUN go generate ./...
+
+  SAVE ARTIFACT .
+  SAVE ARTIFACT ./internal/metadata/ AS LOCAL ./internal/
