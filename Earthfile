@@ -15,5 +15,5 @@ processor:
 
 receiver:
   FROM +deps 
-  COPY ./receiver/vaultkvreceiver+receiver/ ./receiver/vaultkvreceiver/
+  COPY ./receiver/vaultkvreceiver+receiver/vaultkvreceiver ./receiver/vaultkvreceiver/
   SAVE ARTIFACT ./receiver/vaultkvreceiver/

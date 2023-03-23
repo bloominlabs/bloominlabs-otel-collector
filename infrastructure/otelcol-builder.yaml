@@ -8,6 +8,9 @@ receivers:
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver v0.74.0"
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.74.0"
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.74.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver v0.74.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/jaegerreceiver v0.74.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.74.0"
 processors:
   - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.74.0
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.74.0"

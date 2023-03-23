@@ -13,5 +13,5 @@ receiver:
   COPY . .
   RUN go generate ./...
 
-  SAVE ARTIFACT .
+  SAVE ARTIFACT . vaultkvreceiver
   SAVE ARTIFACT ./internal/metadata/ AS LOCAL ./internal/

@@ -31,6 +31,9 @@ import (
 	journaldreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver"
 	prometheusreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver"
 	filelogreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver"
+	vaultkvreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver"
+	jaegerreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/jaegerreceiver"
+	postgresqlreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver"
 )
 
 func components() (otelcol.Factories, error) {
@@ -55,6 +58,9 @@ func components() (otelcol.Factories, error) {
 		journaldreceiver.NewFactory(),
 		prometheusreceiver.NewFactory(),
 		filelogreceiver.NewFactory(),
+		vaultkvreceiver.NewFactory(),
+		jaegerreceiver.NewFactory(),
+		postgresqlreceiver.NewFactory(),
 	)
 	if err != nil {
 		return otelcol.Factories{}, err
