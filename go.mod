@@ -11,7 +11,9 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage v0.74.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.74.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor v0.74.0
+	github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.74.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor v0.74.0
+	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor v0.74.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.74.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.74.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.74.0
@@ -250,8 +252,10 @@ require (
 	sigs.k8s.io/yaml v1.3.0 // indirect
 )
 
-replace github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor => ../processor/lokiprocessor
+replace github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor => ./processor/lokiprocessor
 
-replace github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor => ../processor/nomadprocessor
+replace github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor => ./processor/nomadprocessor
 
-replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver => ../receiver/vaultkvreceiver
+replace github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor => ./processor/resourceconversionprocessor
+
+replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver => ./receiver/vaultkvreceiver

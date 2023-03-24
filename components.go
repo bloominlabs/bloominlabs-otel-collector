@@ -20,17 +20,22 @@ import (
 	healthcheckextension "github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension"
 	batchprocessor "go.opentelemetry.io/collector/processor/batchprocessor"
 	resourceprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor"
+	resourceconversionprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor"
 	memorylimiterprocessor "go.opentelemetry.io/collector/processor/memorylimiterprocessor"
 	lokiprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor"
 	resourcedetectionprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor"
 	attributesprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"
 	nomadprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor"
+	metricstransformprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor"
 	prometheusexecreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver"
 	hostmetricsreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver"
 	otlpreceiver "go.opentelemetry.io/collector/receiver/otlpreceiver"
 	journaldreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver"
 	prometheusreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver"
 	filelogreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver"
+	vaultkvreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver"
+	jaegerreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/jaegerreceiver"
+	postgresqlreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver"
 )
 
 func components() (otelcol.Factories, error) {
@@ -55,6 +60,9 @@ func components() (otelcol.Factories, error) {
 		journaldreceiver.NewFactory(),
 		prometheusreceiver.NewFactory(),
 		filelogreceiver.NewFactory(),
+		vaultkvreceiver.NewFactory(),
+		jaegerreceiver.NewFactory(),
+		postgresqlreceiver.NewFactory(),
 	)
 	if err != nil {
 		return otelcol.Factories{}, err
@@ -73,11 +81,13 @@ func components() (otelcol.Factories, error) {
 	factories.Processors, err = processor.MakeFactoryMap(
 		batchprocessor.NewFactory(),
 		resourceprocessor.NewFactory(),
+		resourceconversionprocessor.NewFactory(),
 		memorylimiterprocessor.NewFactory(),
 		lokiprocessor.NewFactory(),
 		resourcedetectionprocessor.NewFactory(),
 		attributesprocessor.NewFactory(),
 		nomadprocessor.NewFactory(),
+		metricstransformprocessor.NewFactory(),
 	)
 	if err != nil {
 		return otelcol.Factories{}, err
