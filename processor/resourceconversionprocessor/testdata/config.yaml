@@ -2,7 +2,7 @@ receivers:
   nop:
 
 processors:
-  nomad:
+  resource:
 
 exporters:
   nop:
@@ -11,5 +11,5 @@ service:
   pipelines:
     logs:
       receivers: [nop]
-      processors: [nomad]
+      processors: [resource]
       exporters: [nop]

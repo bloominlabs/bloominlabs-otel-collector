@@ -1,19 +1,15 @@
-module github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor
+module github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor
 
 go 1.20
 
 require (
-	github.com/bloominlabs/baseplate-go/config/filesystem v0.0.0-20230321070413-b42f57cc2bc1
-	github.com/hashicorp/nomad/api v0.0.0-20230321213807-4d31fd323e61
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/coreinternal v0.74.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest v0.74.0
-	github.com/rs/zerolog v1.29.0
 	github.com/stretchr/testify v1.8.2
 	go.opentelemetry.io/collector v0.74.0
 	go.opentelemetry.io/collector/component v0.74.0
 	go.opentelemetry.io/collector/consumer v0.74.0
 	go.opentelemetry.io/collector/pdata v1.0.0-rc8
-	k8s.io/utils v0.0.0-20230313181309-38a27ef9d749
 )
 
 require (
@@ -31,21 +27,12 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.3 // indirect
 	github.com/google/uuid v1.3.0 // indirect
-	github.com/gorilla/websocket v1.5.0 // indirect
-	github.com/hashicorp/cronexpr v1.1.1 // indirect
-	github.com/hashicorp/errwrap v1.0.0 // indirect
-	github.com/hashicorp/go-cleanhttp v0.5.2 // indirect
-	github.com/hashicorp/go-multierror v1.1.1 // indirect
-	github.com/hashicorp/go-rootcerts v1.0.2 // indirect
 	github.com/inconshreveable/mousetrap v1.0.1 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
 	github.com/knadh/koanf v1.5.0 // indirect
 	github.com/lufia/plan9stats v0.0.0-20211012122336-39d0f177ccd0 // indirect
-	github.com/mattn/go-colorable v0.1.13 // indirect
-	github.com/mattn/go-isatty v0.0.17 // indirect
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/mitchellh/copystructure v1.2.0 // indirect
-	github.com/mitchellh/go-homedir v1.1.0 // indirect
 	github.com/mitchellh/mapstructure v1.5.0 // indirect
 	github.com/mitchellh/reflectwalk v1.0.2 // indirect
 	github.com/modern-go/concurrent v0.0.0-20180306012644-bacd9c7ef1dd // indirect
@@ -85,9 +72,9 @@ require (
 	golang.org/x/sys v0.6.0 // indirect
 	golang.org/x/text v0.8.0 // indirect
 	gonum.org/v1/gonum v0.12.0 // indirect
-	google.golang.org/genproto v0.0.0-20230110181048-76db0878b65f // indirect
-	google.golang.org/grpc v1.53.0 // indirect
-	google.golang.org/protobuf v1.29.1 // indirect
+	google.golang.org/genproto v0.0.0-20230320184635-7606e756e683 // indirect
+	google.golang.org/grpc v1.54.0 // indirect
+	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v2 v2.4.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )

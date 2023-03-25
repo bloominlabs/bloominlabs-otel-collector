@@ -12,29 +12,22 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package nomadprocessor
+package resourceconversionprocessor
 
 import (
 	"context"
-	"fmt"
-	"io"
-	"time"
 
-	"github.com/hashicorp/nomad/api"
-	"github.com/rs/zerolog/log"
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/processor"
 	"go.opentelemetry.io/collector/processor/processorhelper"
-	"k8s.io/utils/lru"
-
-	"github.com/bloominlabs/baseplate-go/config/filesystem"
 )
 
 const (
 	// The value of "type" key in configuration.
-	typeStr = "nomad"
+	typeStr = "resourceconversion"
 
+	// The stability level of the processor.
 	stability = component.StabilityLevelDevelopment
 )
 
@@ -45,52 +38,25 @@ func NewFactory() processor.Factory {
 	return processor.NewFactory(
 		typeStr,
 		createDefaultConfig,
-		processor.WithLogs(createLogsProcessor, stability))
+		processor.WithMetrics(createMetricsProcessor, stability))
 }
 
-// Note: This isn't a valid configuration because the processor would do no work.
 func createDefaultConfig() component.Config {
-	return &Config{
-		LRUCacheSize: 1000,
-	}
+	return &Config{}
 }
 
-func createLogsProcessor(
+func createMetricsProcessor(
 	ctx context.Context,
 	set processor.CreateSettings,
 	cfg component.Config,
-	nextConsumer consumer.Logs,
-) (processor.Logs, error) {
-	oCfg := cfg.(*Config)
-
-	client, _ := api.NewClient(api.DefaultConfig())
-
-	proc := &nomadProcessor{
-		allocationCache: lru.New(oCfg.LRUCacheSize),
-		client:          client,
-	}
-	if oCfg.Client != nil {
-		proc.client = oCfg.Client
-	}
-
-	if oCfg.TokenFile != "" {
-		w, err := filesystem.NewRateLimitedFileWatcher([]string{oCfg.TokenFile}, log.With().Logger().Output(io.Discard), time.Second)
-
-		if err != nil {
-			return nil, fmt.Errorf("failed to create file watcher: %w", err)
-		}
-
-		proc.watcher = &w
-		proc.tokenFile = &oCfg.TokenFile
-	}
-
-	return processorhelper.NewLogsProcessor(
+	nextConsumer consumer.Metrics,
+) (processor.Metrics, error) {
+	proc := &resourceProcessor{}
+	return processorhelper.NewMetricsProcessor(
 		ctx,
 		set,
 		cfg,
 		nextConsumer,
-		proc.processLogs,
-		processorhelper.WithCapabilities(processorCapabilities),
-		processorhelper.WithStart(proc.Start),
-		processorhelper.WithShutdown(proc.Shutdown))
+		proc.processMetrics,
+		processorhelper.WithCapabilities(processorCapabilities))
 }

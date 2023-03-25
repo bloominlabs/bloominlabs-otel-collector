@@ -22,13 +22,12 @@ import (
 	"testing"
 	"time"
 
+	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/coreinternal/golden"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/pmetrictest"
 	"github.com/stretchr/testify/mock"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/receiver/receivertest"
-
-	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/comparetest"
-	"github.com/open-telemetry/opentelemetry-collector-contrib/internal/comparetest/golden"
 )
 
 func TestUnsuccessfulScrape(t *testing.T) {
@@ -42,7 +41,8 @@ func TestUnsuccessfulScrape(t *testing.T) {
 	actualMetrics, err := scraper.scrape(context.Background())
 	require.Error(t, err)
 
-	require.NoError(t, comparetest.CompareMetrics(pmetric.NewMetrics(), actualMetrics))
+	require.NoError(t, pmetrictest.CompareMetrics(pmetric.NewMetrics(), actualMetrics,
+		pmetrictest.IgnoreMetricDataPointsOrder(), pmetrictest.IgnoreStartTimestamp(), pmetrictest.IgnoreTimestamp()))
 
 	os.Setenv("VAULT_ADDR", originalVaultAddr)
 }
@@ -97,11 +97,12 @@ func TestScraper(t *testing.T) {
 
 			safeFileName := strings.ReplaceAll(tC.desc, " ", "_")
 			expectedFile := filepath.Join("testdata", "scraper", "testScraper", safeFileName+".json")
-			// golden.WriteMetrics(expectedFile, actualMetrics)
+			// golden.WriteMetrics(t, expectedFile, actualMetrics)
 			expectedMetrics, err := golden.ReadMetrics(expectedFile)
 			require.NoError(t, err)
 
-			require.NoError(t, comparetest.CompareMetrics(expectedMetrics, actualMetrics))
+			require.NoError(t, pmetrictest.CompareMetrics(actualMetrics, expectedMetrics,
+				pmetrictest.IgnoreMetricDataPointsOrder(), pmetrictest.IgnoreStartTimestamp(), pmetrictest.IgnoreTimestamp()))
 		})
 	}
 }

@@ -9,7 +9,7 @@
                      "description": "The epoch time in seconds the key was created at.",
                      "name": "vaultkv.metadata.error",
                      "sum": {
-                        "aggregationTemporality": "AGGREGATION_TEMPORALITY_CUMULATIVE",
+                        "aggregationTemporality": 2,
                         "dataPoints": [
                            {
                               "asInt": "1",
@@ -27,14 +27,14 @@
                                     }
                                  },
                                  {
-                                    "key": "type",
+                                    "key": "metadata_error_type",
                                     "value": {
                                        "stringValue": "missing_type"
                                     }
                                  }
                               ],
-                              "startTimeUnixNano": "1653800218966171994",
-                              "timeUnixNano": "1653800218966214192"
+                              "startTimeUnixNano": "1679455773787996635",
+                              "timeUnixNano": "1679455773788128199"
                            }
                         ]
                      },

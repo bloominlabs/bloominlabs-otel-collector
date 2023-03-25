@@ -12,34 +12,16 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package nomadprocessor
+package resourceconversionprocessor
 
 import (
 	"context"
 
-	"github.com/hashicorp/nomad/api"
 	"go.opentelemetry.io/collector/component"
 )
 
 // Config defines configuration for Resource processor.
 type Config struct {
-	// The size of the LRU cache for allocation IDs. The nomad processor will
-	// cause opentelemetry to fetch each allocation from the nomad API which can
-	// be expensive depending on log / batch volume.
-	LRUCacheSize int `mapstructure:"cache_size"`
-
-	// TokenFile is a file containing the current token to use for this client.
-	// Token or Tokenfile are only required if Nomad's ACL System is enabled.
-	TokenFile string `mapstructure:"token_file"`
-
-	// Token is used to provide a per-request ACL token
-	// which overrides the agent's default (empty) token.
-	// Token or Tokenfile are only required if Nomad's ACL System is enabled.
-	Token string `mapstructure:"token"`
-
-	// Client to use when performing requests to nomad. This will be created by
-	// default; however, this allows you to pass in a custom nomad client for testing.
-	Client *api.Client
 }
 
 var _ component.Component = (*Config)(nil)
