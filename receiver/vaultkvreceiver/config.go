@@ -28,10 +28,10 @@ const (
 )
 
 type Config struct {
+	Mount                                   string `mapstructure:"mount"`
+	URL                                     string `mapstructure:"url"`
 	scraperhelper.ScraperControllerSettings `mapstructure:",squash"`
-	Mount                                   string                   `mapstructure:"mount"`
-	URL                                     string                   `mapstructure:"url"`
-	Metrics                                 metadata.MetricsSettings `mapstructure:"metrics"`
+	metadata.MetricsBuilderConfig           `mapstructure:",squash"`
 }
 
 func (cfg *Config) Validate() error {

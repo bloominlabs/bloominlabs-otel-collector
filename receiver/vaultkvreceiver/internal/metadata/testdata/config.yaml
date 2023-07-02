@@ -7,7 +7,6 @@ all_set:
       enabled: true
     vaultkv.metadata.error:
       enabled: true
-  resource_attributes:
 none_set:
   metrics:
     vaultkv.created_on:
@@ -16,4 +15,3 @@ none_set:
       enabled: false
     vaultkv.metadata.error:
       enabled: false
-  resource_attributes:

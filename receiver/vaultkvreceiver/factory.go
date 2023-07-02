@@ -40,9 +40,9 @@ func NewFactory() receiver.Factory {
 
 func createDefaultConfig() component.Config {
 	return &Config{
-		ScraperControllerSettings: scraperhelper.NewDefaultScraperControllerSettings(typeStr),
 		Mount:                     "infra/",
-		Metrics:                   metadata.DefaultMetricsSettings(),
+		ScraperControllerSettings: scraperhelper.NewDefaultScraperControllerSettings(typeStr),
+		MetricsBuilderConfig:      metadata.DefaultMetricsBuilderConfig(),
 	}
 }
 

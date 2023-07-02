@@ -1,4 +1,9 @@
-name: vaultkvreceiver
+type: vaultkv
+
+status:
+  class: receiver
+  stability:
+    alpha: [metrics]
 
 attributes:
   key:
@@ -35,7 +40,7 @@ metrics:
   vaultkv.created_on:
     enabled: true
     description: The epoch time in seconds the key was created at.
-    unit: s
+    unit: seconds
     sum:
       value_type: int
       monotonic: true
@@ -43,7 +48,7 @@ metrics:
     attributes: [key, mount, type]
   vaultkv.metadata.error:
     enabled: true
-    description: The epoch time in seconds the key was created at.
+    description: Errors reported while trying to fetch metrics.
     unit: 1
     sum:
       value_type: int
