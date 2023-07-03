@@ -16,6 +16,8 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor v0.80.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.80.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.80.0
+	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver v0.80.0
+	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver v0.80.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.80.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.80.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/jaegerreceiver v0.80.0
@@ -74,7 +76,7 @@ require (
 	github.com/cncf/xds/go v0.0.0-20230607035331-e9ce68804cb4 // indirect
 	github.com/davecgh/go-spew v1.1.2-0.20180830191138-d8f796af33cc // indirect
 	github.com/dennwc/varint v1.0.0 // indirect
-	github.com/digitalocean/godo v1.97.0 // indirect
+	github.com/digitalocean/godo v1.99.0 // indirect
 	github.com/docker/distribution v2.8.2+incompatible // indirect
 	github.com/docker/docker v24.0.2+incompatible // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
@@ -82,6 +84,7 @@ require (
 	github.com/emicklei/go-restful/v3 v3.10.1 // indirect
 	github.com/envoyproxy/go-control-plane v0.11.1-0.20230524094728-9239064ad72f // indirect
 	github.com/envoyproxy/protoc-gen-validate v0.10.1 // indirect
+	github.com/facebook/time v0.0.0-20220713225404-f7a0d7702d50 // indirect
 	github.com/fatih/color v1.14.1 // indirect
 	github.com/felixge/httpsnoop v1.0.3 // indirect
 	github.com/fsnotify/fsnotify v1.6.0 // indirect
@@ -197,9 +200,11 @@ require (
 	github.com/scaleway/scaleway-sdk-go v1.0.0-beta.14 // indirect
 	github.com/shirou/gopsutil/v3 v3.23.5 // indirect
 	github.com/shoenig/go-m1cpu v0.1.6 // indirect
+	github.com/sirupsen/logrus v1.9.0 // indirect
 	github.com/spf13/cobra v1.7.0 // indirect
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
+	github.com/tilinna/clock v1.1.0 // indirect
 	github.com/tklauser/go-sysconf v0.3.11 // indirect
 	github.com/tklauser/numcpus v0.6.0 // indirect
 	github.com/uber/jaeger-client-go v2.30.0+incompatible // indirect
@@ -278,6 +283,8 @@ replace github.com/open-telemetry/opentelemetry-collector-contrib/processor/noma
 replace github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor => ./processor/resourceconversionprocessor
 
 replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver => ./receiver/vaultkvreceiver
+
+replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver => ./receiver/digitaloceanreceiver/
 
 // ambiguous import: found package cloud.google.com/go/compute/metadata in multiple modules
 replace cloud.google.com/go => cloud.google.com/go v0.110.2

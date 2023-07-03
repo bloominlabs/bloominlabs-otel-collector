@@ -1,0 +1,21 @@
+extensions:
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+receivers:
+  digitalocean:
+    token: <token>
+    collection_interval: 1m
+    scrapers:
+      billing:
+
+exporters:
+  logging:
+
+service:
+  pipelines:
+    metrics:
+      receivers: [digitalocean]
+      exporters: [logging]
+
+  extensions: [zpages]

@@ -1,0 +1,8 @@
+type: digitalocean
+
+status:
+  class: receiver
+  stability:
+    beta: [metrics]
+  distributions: [bloominlabs]
+  

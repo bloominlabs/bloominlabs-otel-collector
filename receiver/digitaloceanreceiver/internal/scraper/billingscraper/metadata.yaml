@@ -1,0 +1,26 @@
+type: digitaloceanreceiver/billing
+
+# TODO: next otel release
+# parent: billing
+
+metrics:
+  digitalocean.billing.generate_at:
+    enabled: true
+    description: The time at which balances were most recently generated. 
+    unit: "seconds"
+    gauge:
+      value_type: int
+
+  digitalocean.billing.balance:
+    enabled: true
+    description: Balance as of `digitalocean.billing.generate_at` time.
+    unit: 1
+    gauge:
+      value_type: double
+
+  digitalocean.billing.usage:
+    enabled: true
+    description: Amount used in the current billing period as of the `digitalocean.billing.generate_at` time
+    unit: 1
+    gauge:
+      value_type: double

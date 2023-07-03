@@ -21,6 +21,8 @@ generate:
   COPY otelcol-builder.yaml . 
   COPY ./processor/ ./processor/
   COPY ./receiver/vaultkvreceiver+receiver/vaultkvreceiver ./receiver/vaultkvreceiver/
+  COPY ./receiver/digitaloceanreceiver+receiver/digitaloceanreceiver ./receiver/digitaloceanreceiver/
+
   RUN GO111MODULE=on CGO_ENABLED=0 builder --output-path . --config otelcol-builder.yaml --name bloominlabs-otel-collector --skip-compilation
   SAVE ARTIFACT *.go AS LOCAL ./
   SAVE ARTIFACT ./receiver/vaultkvreceiver/ AS LOCAL ./receiver/vaultkvreceiver/

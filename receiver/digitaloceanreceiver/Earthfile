@@ -9,5 +9,5 @@ receiver:
   COPY . .
   RUN go generate ./...
 
-  SAVE ARTIFACT . vaultkvreceiver
-  SAVE ARTIFACT ./internal/metadata/ AS LOCAL ./internal/
+  SAVE ARTIFACT . digitaloceanreceiver
+  SAVE ARTIFACT ./internal/ AS LOCAL ./internal/
