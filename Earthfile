@@ -31,7 +31,7 @@ mc-monitor:
   SAVE ARTIFACT mc-monitor
 
 generate:
-  FROM +files
+  FROM +deps
   COPY +tools/builder /go/bin/builder
   COPY otelcol-builder.yaml . 
   RUN GO111MODULE=on CGO_ENABLED=0 builder --output-path . --config otelcol-builder.yaml --name bloominlabs-otel-collector --skip-compilation
