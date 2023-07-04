@@ -40,6 +40,14 @@ build:
   RUN CGO_ENABLED=0 go build -ldflags="-s -w -extldflags '-static'" -trimpath -o bloominlabs-otel-collector
   SAVE ARTIFACT ./bloominlabs-otel-collector AS LOCAL ./bin/bloominlabs-otel-collector
 
+release:
+  FROM +build
+  BUILD +docker
+  RUN tar -cvzf bloominlabs-otel-collector_linux_amd64.tar.gz ./bloominlabs-otel-collector
+  RUN sha256sum *.tar.gz > ./SHA256SUMS
+  SAVE ARTIFACT ./SHA256SUMS AS LOCAL ./bin/SHA256SUMS
+  SAVE ARTIFACT *.tar.gz AS LOCAL ./bin/
+
 docker:
   FROM --platform=linux/amd64 gcr.io/distroless/base-debian11:debug-nonroot
   COPY +certs/internal.pem /etc/ssl/certs/internal.pem

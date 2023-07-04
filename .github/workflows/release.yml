@@ -10,21 +10,36 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           fetch-depth: 0
-      - name: Set up Go
-        uses: actions/setup-go@v2
+      - uses: earthly/actions-setup@v1
         with:
-          go-version: '1.20'
-      - name: Run GoReleaser
-        uses: goreleaser/goreleaser-action@v2
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install CA
+        run: 'sudo sh -c "echo \"${{ secrets.VAULT_CA }}\" | base64 -d >> /usr/local/share/ca-certificates/internal.crt" && sudo update-ca-certificates'
+      - name: Authenticate to Tailscale
+        uses: tailscale/github-action@main
         with:
-          # either 'goreleaser' (default) or 'goreleaser-pro'
-          distribution: goreleaser
-          version: latest
-          args: release --rm-dist
+          authkey: ${{ secrets.TAILSCALE_AUTHKEY }}
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v2
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+      - name: build otel-collector docker image
+        run: |
+          earthly --ci --push +release
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # Your GoReleaser Pro key, if you are using the 'goreleaser-pro' distribution
-          # GORELEASER_KEY: ${{ secrets.GORELEASER_KEY }}
+        with:
+          name: Release ${{ github.ref }}
+          draft: false
+          prerelease: true
+          files: |
+            ./bin/*.tar.gz
+            ./bin/SHA256SUMS
