@@ -54,7 +54,7 @@ func (s *scraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 	if err != nil {
 		return s.mb.Emit(), fmt.Errorf("failed to convert month-to-day balance '%s': %w", balance.MonthToDateUsage, err)
 	}
-	s.mb.RecordDigitaloceanBillingGenerateAtDataPoint(now, balance.GeneratedAt.Unix())
+	s.mb.RecordDigitaloceanBillingGeneratedAtDataPoint(now, balance.GeneratedAt.Unix())
 	s.mb.RecordDigitaloceanBillingUsageDataPoint(now, m2dUsage)
 	s.mb.RecordDigitaloceanBillingBalanceDataPoint(now, m2dBalance)
 

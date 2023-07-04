@@ -60,21 +60,21 @@ func newMetricDigitaloceanBillingBalance(cfg MetricConfig) metricDigitaloceanBil
 	return m
 }
 
-type metricDigitaloceanBillingGenerateAt struct {
+type metricDigitaloceanBillingGeneratedAt struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	config   MetricConfig   // metric config provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills digitalocean.billing.generate_at metric with initial data.
-func (m *metricDigitaloceanBillingGenerateAt) init() {
-	m.data.SetName("digitalocean.billing.generate_at")
+// init fills digitalocean.billing.generated_at metric with initial data.
+func (m *metricDigitaloceanBillingGeneratedAt) init() {
+	m.data.SetName("digitalocean.billing.generated_at")
 	m.data.SetDescription("The time at which balances were most recently generated.")
 	m.data.SetUnit("seconds")
 	m.data.SetEmptyGauge()
 }
 
-func (m *metricDigitaloceanBillingGenerateAt) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
+func (m *metricDigitaloceanBillingGeneratedAt) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64) {
 	if !m.config.Enabled {
 		return
 	}
@@ -85,14 +85,14 @@ func (m *metricDigitaloceanBillingGenerateAt) recordDataPoint(start pcommon.Time
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricDigitaloceanBillingGenerateAt) updateCapacity() {
+func (m *metricDigitaloceanBillingGeneratedAt) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricDigitaloceanBillingGenerateAt) emit(metrics pmetric.MetricSlice) {
+func (m *metricDigitaloceanBillingGeneratedAt) emit(metrics pmetric.MetricSlice) {
 	if m.config.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -100,8 +100,8 @@ func (m *metricDigitaloceanBillingGenerateAt) emit(metrics pmetric.MetricSlice) 
 	}
 }
 
-func newMetricDigitaloceanBillingGenerateAt(cfg MetricConfig) metricDigitaloceanBillingGenerateAt {
-	m := metricDigitaloceanBillingGenerateAt{config: cfg}
+func newMetricDigitaloceanBillingGeneratedAt(cfg MetricConfig) metricDigitaloceanBillingGeneratedAt {
+	m := metricDigitaloceanBillingGeneratedAt{config: cfg}
 	if cfg.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -161,14 +161,14 @@ func newMetricDigitaloceanBillingUsage(cfg MetricConfig) metricDigitaloceanBilli
 // MetricsBuilder provides an interface for scrapers to report metrics while taking care of all the transformations
 // required to produce metric representation defined in metadata and user config.
 type MetricsBuilder struct {
-	startTime                           pcommon.Timestamp   // start time that will be applied to all recorded data points.
-	metricsCapacity                     int                 // maximum observed number of metrics per resource.
-	resourceCapacity                    int                 // maximum observed number of resource attributes.
-	metricsBuffer                       pmetric.Metrics     // accumulates metrics data before emitting.
-	buildInfo                           component.BuildInfo // contains version information
-	metricDigitaloceanBillingBalance    metricDigitaloceanBillingBalance
-	metricDigitaloceanBillingGenerateAt metricDigitaloceanBillingGenerateAt
-	metricDigitaloceanBillingUsage      metricDigitaloceanBillingUsage
+	startTime                            pcommon.Timestamp   // start time that will be applied to all recorded data points.
+	metricsCapacity                      int                 // maximum observed number of metrics per resource.
+	resourceCapacity                     int                 // maximum observed number of resource attributes.
+	metricsBuffer                        pmetric.Metrics     // accumulates metrics data before emitting.
+	buildInfo                            component.BuildInfo // contains version information
+	metricDigitaloceanBillingBalance     metricDigitaloceanBillingBalance
+	metricDigitaloceanBillingGeneratedAt metricDigitaloceanBillingGeneratedAt
+	metricDigitaloceanBillingUsage       metricDigitaloceanBillingUsage
 }
 
 // metricBuilderOption applies changes to default metrics builder.
@@ -183,12 +183,12 @@ func WithStartTime(startTime pcommon.Timestamp) metricBuilderOption {
 
 func NewMetricsBuilder(mbc MetricsBuilderConfig, settings receiver.CreateSettings, options ...metricBuilderOption) *MetricsBuilder {
 	mb := &MetricsBuilder{
-		startTime:                           pcommon.NewTimestampFromTime(time.Now()),
-		metricsBuffer:                       pmetric.NewMetrics(),
-		buildInfo:                           settings.BuildInfo,
-		metricDigitaloceanBillingBalance:    newMetricDigitaloceanBillingBalance(mbc.Metrics.DigitaloceanBillingBalance),
-		metricDigitaloceanBillingGenerateAt: newMetricDigitaloceanBillingGenerateAt(mbc.Metrics.DigitaloceanBillingGenerateAt),
-		metricDigitaloceanBillingUsage:      newMetricDigitaloceanBillingUsage(mbc.Metrics.DigitaloceanBillingUsage),
+		startTime:                            pcommon.NewTimestampFromTime(time.Now()),
+		metricsBuffer:                        pmetric.NewMetrics(),
+		buildInfo:                            settings.BuildInfo,
+		metricDigitaloceanBillingBalance:     newMetricDigitaloceanBillingBalance(mbc.Metrics.DigitaloceanBillingBalance),
+		metricDigitaloceanBillingGeneratedAt: newMetricDigitaloceanBillingGeneratedAt(mbc.Metrics.DigitaloceanBillingGeneratedAt),
+		metricDigitaloceanBillingUsage:       newMetricDigitaloceanBillingUsage(mbc.Metrics.DigitaloceanBillingUsage),
 	}
 	for _, op := range options {
 		op(mb)
@@ -238,11 +238,11 @@ func (mb *MetricsBuilder) EmitForResource(rmo ...ResourceMetricsOption) {
 	rm := pmetric.NewResourceMetrics()
 	rm.Resource().Attributes().EnsureCapacity(mb.resourceCapacity)
 	ils := rm.ScopeMetrics().AppendEmpty()
-	ils.Scope().SetName("otelcol/digitaloceanreceiver/billing")
+	ils.Scope().SetName("otelcol/billing")
 	ils.Scope().SetVersion(mb.buildInfo.Version)
 	ils.Metrics().EnsureCapacity(mb.metricsCapacity)
 	mb.metricDigitaloceanBillingBalance.emit(ils.Metrics())
-	mb.metricDigitaloceanBillingGenerateAt.emit(ils.Metrics())
+	mb.metricDigitaloceanBillingGeneratedAt.emit(ils.Metrics())
 	mb.metricDigitaloceanBillingUsage.emit(ils.Metrics())
 
 	for _, op := range rmo {
@@ -269,9 +269,9 @@ func (mb *MetricsBuilder) RecordDigitaloceanBillingBalanceDataPoint(ts pcommon.T
 	mb.metricDigitaloceanBillingBalance.recordDataPoint(mb.startTime, ts, val)
 }
 
-// RecordDigitaloceanBillingGenerateAtDataPoint adds a data point to digitalocean.billing.generate_at metric.
-func (mb *MetricsBuilder) RecordDigitaloceanBillingGenerateAtDataPoint(ts pcommon.Timestamp, val int64) {
-	mb.metricDigitaloceanBillingGenerateAt.recordDataPoint(mb.startTime, ts, val)
+// RecordDigitaloceanBillingGeneratedAtDataPoint adds a data point to digitalocean.billing.generated_at metric.
+func (mb *MetricsBuilder) RecordDigitaloceanBillingGeneratedAtDataPoint(ts pcommon.Timestamp, val int64) {
+	mb.metricDigitaloceanBillingGeneratedAt.recordDataPoint(mb.startTime, ts, val)
 }
 
 // RecordDigitaloceanBillingUsageDataPoint adds a data point to digitalocean.billing.usage metric.

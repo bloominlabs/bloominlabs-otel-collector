@@ -1,13 +1,21 @@
-# https://github.com/hashicorp/vault/pull/12358
 VERSION 0.6
 FROM golang:1.20
 WORKDIR /bloominlabs-otel-collector
 
-receiver:
-  FROM ../../../bloominlabs-otel-collector+deps
+deps:
+  COPY go.mod go.sum ./
+  RUN go mod download
+  # Output these back in case go mod download changes them.
+  SAVE ARTIFACT go.mod AS LOCAL go.mod
+  SAVE ARTIFACT go.sum AS LOCAL go.sum
 
-  COPY . .
-  RUN go generate ./...
+
+receiver:
+  FROM +deps
+  
+  COPY ../../../bloominlabs-otel-collector+tools/mdatagen /go/bin/
+  COPY *.go .
+  COPY internal/ ./internal
 
   SAVE ARTIFACT . digitaloceanreceiver
-  SAVE ARTIFACT ./internal/ AS LOCAL ./internal/
+  SAVE ARTIFACT ./internal/* AS LOCAL ./internal/

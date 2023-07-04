@@ -23,28 +23,28 @@ func (ms *MetricConfig) Unmarshal(parser *confmap.Conf) error {
 	return nil
 }
 
-// MetricsConfig provides config for digitaloceanreceiver/billing metrics.
+// MetricsConfig provides config for vaultkv metrics.
 type MetricsConfig struct {
-	DigitaloceanBillingBalance     MetricConfig `mapstructure:"digitalocean.billing.balance"`
-	DigitaloceanBillingGeneratedAt MetricConfig `mapstructure:"digitalocean.billing.generated_at"`
-	DigitaloceanBillingUsage       MetricConfig `mapstructure:"digitalocean.billing.usage"`
+	VaultkvCreatedOn     MetricConfig `mapstructure:"vaultkv.created_on"`
+	VaultkvMetadata      MetricConfig `mapstructure:"vaultkv.metadata"`
+	VaultkvMetadataError MetricConfig `mapstructure:"vaultkv.metadata.error"`
 }
 
 func DefaultMetricsConfig() MetricsConfig {
 	return MetricsConfig{
-		DigitaloceanBillingBalance: MetricConfig{
+		VaultkvCreatedOn: MetricConfig{
 			Enabled: true,
 		},
-		DigitaloceanBillingGeneratedAt: MetricConfig{
+		VaultkvMetadata: MetricConfig{
 			Enabled: true,
 		},
-		DigitaloceanBillingUsage: MetricConfig{
+		VaultkvMetadataError: MetricConfig{
 			Enabled: true,
 		},
 	}
 }
 
-// MetricsBuilderConfig is a configuration for digitaloceanreceiver/billing metrics builder.
+// MetricsBuilderConfig is a configuration for vaultkv metrics builder.
 type MetricsBuilderConfig struct {
 	Metrics MetricsConfig `mapstructure:"metrics"`
 }

@@ -4,7 +4,7 @@ type: digitaloceanreceiver/billing
 # parent: billing
 
 metrics:
-  digitalocean.billing.generate_at:
+  digitalocean.billing.generated_at:
     enabled: true
     description: The time at which balances were most recently generated. 
     unit: "seconds"

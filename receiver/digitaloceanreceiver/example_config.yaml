@@ -8,6 +8,7 @@ receivers:
     collection_interval: 1m
     scrapers:
       billing:
+      droplet:
 
 exporters:
   logging:

@@ -56,15 +56,7 @@ func TestMetricsBuilder(t *testing.T) {
 
 			defaultMetricsCount++
 			allMetricsCount++
-			mb.RecordDigitaloceanBillingBalanceDataPoint(ts, 1)
-
-			defaultMetricsCount++
-			allMetricsCount++
-			mb.RecordDigitaloceanBillingGeneratedAtDataPoint(ts, 1)
-
-			defaultMetricsCount++
-			allMetricsCount++
-			mb.RecordDigitaloceanBillingUsageDataPoint(ts, 1)
+			mb.RecordDigitaloceanDropletUpDataPoint(ts, 1, "attr-val", "attr-val", "attr-val")
 
 			metrics := mb.Emit()
 
@@ -91,42 +83,27 @@ func TestMetricsBuilder(t *testing.T) {
 			validatedMetrics := make(map[string]bool)
 			for i := 0; i < ms.Len(); i++ {
 				switch ms.At(i).Name() {
-				case "digitalocean.billing.balance":
-					assert.False(t, validatedMetrics["digitalocean.billing.balance"], "Found a duplicate in the metrics slice: digitalocean.billing.balance")
-					validatedMetrics["digitalocean.billing.balance"] = true
+				case "digitalocean.droplet.up":
+					assert.False(t, validatedMetrics["digitalocean.droplet.up"], "Found a duplicate in the metrics slice: digitalocean.droplet.up")
+					validatedMetrics["digitalocean.droplet.up"] = true
 					assert.Equal(t, pmetric.MetricTypeGauge, ms.At(i).Type())
 					assert.Equal(t, 1, ms.At(i).Gauge().DataPoints().Len())
-					assert.Equal(t, "Balance as of `digitalocean.billing.generate_at` time.", ms.At(i).Description())
+					assert.Equal(t, "If 1 the droplet is up and running, 0 otherwise", ms.At(i).Description())
 					assert.Equal(t, "1", ms.At(i).Unit())
-					dp := ms.At(i).Gauge().DataPoints().At(0)
-					assert.Equal(t, start, dp.StartTimestamp())
-					assert.Equal(t, ts, dp.Timestamp())
-					assert.Equal(t, pmetric.NumberDataPointValueTypeDouble, dp.ValueType())
-					assert.Equal(t, float64(1), dp.DoubleValue())
-				case "digitalocean.billing.generated_at":
-					assert.False(t, validatedMetrics["digitalocean.billing.generated_at"], "Found a duplicate in the metrics slice: digitalocean.billing.generated_at")
-					validatedMetrics["digitalocean.billing.generated_at"] = true
-					assert.Equal(t, pmetric.MetricTypeGauge, ms.At(i).Type())
-					assert.Equal(t, 1, ms.At(i).Gauge().DataPoints().Len())
-					assert.Equal(t, "The time at which balances were most recently generated.", ms.At(i).Description())
-					assert.Equal(t, "seconds", ms.At(i).Unit())
 					dp := ms.At(i).Gauge().DataPoints().At(0)
 					assert.Equal(t, start, dp.StartTimestamp())
 					assert.Equal(t, ts, dp.Timestamp())
 					assert.Equal(t, pmetric.NumberDataPointValueTypeInt, dp.ValueType())
 					assert.Equal(t, int64(1), dp.IntValue())
-				case "digitalocean.billing.usage":
-					assert.False(t, validatedMetrics["digitalocean.billing.usage"], "Found a duplicate in the metrics slice: digitalocean.billing.usage")
-					validatedMetrics["digitalocean.billing.usage"] = true
-					assert.Equal(t, pmetric.MetricTypeGauge, ms.At(i).Type())
-					assert.Equal(t, 1, ms.At(i).Gauge().DataPoints().Len())
-					assert.Equal(t, "Amount used in the current billing period as of the `digitalocean.billing.generate_at` time", ms.At(i).Description())
-					assert.Equal(t, "1", ms.At(i).Unit())
-					dp := ms.At(i).Gauge().DataPoints().At(0)
-					assert.Equal(t, start, dp.StartTimestamp())
-					assert.Equal(t, ts, dp.Timestamp())
-					assert.Equal(t, pmetric.NumberDataPointValueTypeDouble, dp.ValueType())
-					assert.Equal(t, float64(1), dp.DoubleValue())
+					attrVal, ok := dp.Attributes().Get("id")
+					assert.True(t, ok)
+					assert.EqualValues(t, "attr-val", attrVal.Str())
+					attrVal, ok = dp.Attributes().Get("name")
+					assert.True(t, ok)
+					assert.EqualValues(t, "attr-val", attrVal.Str())
+					attrVal, ok = dp.Attributes().Get("region")
+					assert.True(t, ok)
+					assert.EqualValues(t, "attr-val", attrVal.Str())
 				}
 			}
 		})

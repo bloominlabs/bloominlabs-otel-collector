@@ -20,7 +20,7 @@ Balance as of `digitalocean.billing.generate_at` time.
 | ---- | ----------- | ---------- |
 | 1 | Gauge | Double |
 
-### digitalocean.billing.generate_at
+### digitalocean.billing.generated_at
 
 The time at which balances were most recently generated.
 

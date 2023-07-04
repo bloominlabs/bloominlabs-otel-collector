@@ -23,28 +23,20 @@ func (ms *MetricConfig) Unmarshal(parser *confmap.Conf) error {
 	return nil
 }
 
-// MetricsConfig provides config for digitaloceanreceiver/billing metrics.
+// MetricsConfig provides config for digitaloceanreceiver/droplet metrics.
 type MetricsConfig struct {
-	DigitaloceanBillingBalance     MetricConfig `mapstructure:"digitalocean.billing.balance"`
-	DigitaloceanBillingGeneratedAt MetricConfig `mapstructure:"digitalocean.billing.generated_at"`
-	DigitaloceanBillingUsage       MetricConfig `mapstructure:"digitalocean.billing.usage"`
+	DigitaloceanDropletUp MetricConfig `mapstructure:"digitalocean.droplet.up"`
 }
 
 func DefaultMetricsConfig() MetricsConfig {
 	return MetricsConfig{
-		DigitaloceanBillingBalance: MetricConfig{
-			Enabled: true,
-		},
-		DigitaloceanBillingGeneratedAt: MetricConfig{
-			Enabled: true,
-		},
-		DigitaloceanBillingUsage: MetricConfig{
+		DigitaloceanDropletUp: MetricConfig{
 			Enabled: true,
 		},
 	}
 }
 
-// MetricsBuilderConfig is a configuration for digitaloceanreceiver/billing metrics builder.
+// MetricsBuilderConfig is a configuration for digitaloceanreceiver/droplet metrics builder.
 type MetricsBuilderConfig struct {
 	Metrics MetricsConfig `mapstructure:"metrics"`
 }

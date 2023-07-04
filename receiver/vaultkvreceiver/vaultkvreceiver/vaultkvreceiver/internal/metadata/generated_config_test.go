@@ -26,9 +26,9 @@ func TestMetricsBuilderConfig(t *testing.T) {
 			name: "all_set",
 			want: MetricsBuilderConfig{
 				Metrics: MetricsConfig{
-					DigitaloceanBillingBalance:     MetricConfig{Enabled: true},
-					DigitaloceanBillingGeneratedAt: MetricConfig{Enabled: true},
-					DigitaloceanBillingUsage:       MetricConfig{Enabled: true},
+					VaultkvCreatedOn:     MetricConfig{Enabled: true},
+					VaultkvMetadata:      MetricConfig{Enabled: true},
+					VaultkvMetadataError: MetricConfig{Enabled: true},
 				},
 			},
 		},
@@ -36,9 +36,9 @@ func TestMetricsBuilderConfig(t *testing.T) {
 			name: "none_set",
 			want: MetricsBuilderConfig{
 				Metrics: MetricsConfig{
-					DigitaloceanBillingBalance:     MetricConfig{Enabled: false},
-					DigitaloceanBillingGeneratedAt: MetricConfig{Enabled: false},
-					DigitaloceanBillingUsage:       MetricConfig{Enabled: false},
+					VaultkvCreatedOn:     MetricConfig{Enabled: false},
+					VaultkvMetadata:      MetricConfig{Enabled: false},
+					VaultkvMetadataError: MetricConfig{Enabled: false},
 				},
 			},
 		},
