@@ -7,7 +7,7 @@ attributes:
   id:
     enabled: true
     description: The ID of the droplet
-    type: string
+    type: int
   name:
     enabled: true
     description: The human-readable name of the droplet

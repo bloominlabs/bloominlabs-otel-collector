@@ -56,7 +56,7 @@ func TestMetricsBuilder(t *testing.T) {
 
 			defaultMetricsCount++
 			allMetricsCount++
-			mb.RecordDigitaloceanDropletUpDataPoint(ts, 1, "attr-val", "attr-val", "attr-val")
+			mb.RecordDigitaloceanDropletUpDataPoint(ts, 1, 1, "attr-val", "attr-val")
 
 			metrics := mb.Emit()
 
@@ -97,7 +97,7 @@ func TestMetricsBuilder(t *testing.T) {
 					assert.Equal(t, int64(1), dp.IntValue())
 					attrVal, ok := dp.Attributes().Get("id")
 					assert.True(t, ok)
-					assert.EqualValues(t, "attr-val", attrVal.Str())
+					assert.EqualValues(t, 1, attrVal.Int())
 					attrVal, ok = dp.Attributes().Get("name")
 					assert.True(t, ok)
 					assert.EqualValues(t, "attr-val", attrVal.Str())

@@ -15,6 +15,7 @@ import (
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver/internal"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver/internal/metadata"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver/internal/scraper/accountscraper"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver/internal/scraper/billingscraper"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver/internal/scraper/dropletscraper"
 )
@@ -22,6 +23,7 @@ import (
 // This file implements Factory for Digitalocean receiver.
 var (
 	scraperFactories = map[string]internal.ScraperFactory{
+		accountscraper.TypeStr: &accountscraper.Factory{},
 		billingscraper.TypeStr: &billingscraper.Factory{},
 		dropletscraper.TypeStr: &dropletscraper.Factory{},
 	}

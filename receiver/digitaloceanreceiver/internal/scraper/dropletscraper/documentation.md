@@ -24,6 +24,6 @@ If 1 the droplet is up and running, 0 otherwise
 
 | Name | Description | Values |
 | ---- | ----------- | ------ |
-| id | The ID of the droplet | Any Str |
+| id | The ID of the droplet | Any Int |
 | name | The human-readable name of the droplet | Any Str |
 | region | DigitalOcean region the droplet is registered in | Any Str |

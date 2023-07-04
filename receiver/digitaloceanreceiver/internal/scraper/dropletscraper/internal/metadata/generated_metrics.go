@@ -26,7 +26,7 @@ func (m *metricDigitaloceanDropletUp) init() {
 	m.data.Gauge().DataPoints().EnsureCapacity(m.capacity)
 }
 
-func (m *metricDigitaloceanDropletUp) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64, idAttributeValue string, nameAttributeValue string, regionAttributeValue string) {
+func (m *metricDigitaloceanDropletUp) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64, idAttributeValue int64, nameAttributeValue string, regionAttributeValue string) {
 	if !m.config.Enabled {
 		return
 	}
@@ -34,7 +34,7 @@ func (m *metricDigitaloceanDropletUp) recordDataPoint(start pcommon.Timestamp, t
 	dp.SetStartTimestamp(start)
 	dp.SetTimestamp(ts)
 	dp.SetIntValue(val)
-	dp.Attributes().PutStr("id", idAttributeValue)
+	dp.Attributes().PutInt("id", idAttributeValue)
 	dp.Attributes().PutStr("name", nameAttributeValue)
 	dp.Attributes().PutStr("region", regionAttributeValue)
 }
@@ -140,7 +140,7 @@ func (mb *MetricsBuilder) EmitForResource(rmo ...ResourceMetricsOption) {
 	rm := pmetric.NewResourceMetrics()
 	rm.Resource().Attributes().EnsureCapacity(mb.resourceCapacity)
 	ils := rm.ScopeMetrics().AppendEmpty()
-	ils.Scope().SetName("otelcol/droplet")
+	ils.Scope().SetName("otelcol/digitaloceanreceiver/droplet")
 	ils.Scope().SetVersion(mb.buildInfo.Version)
 	ils.Metrics().EnsureCapacity(mb.metricsCapacity)
 	mb.metricDigitaloceanDropletUp.emit(ils.Metrics())
@@ -165,7 +165,7 @@ func (mb *MetricsBuilder) Emit(rmo ...ResourceMetricsOption) pmetric.Metrics {
 }
 
 // RecordDigitaloceanDropletUpDataPoint adds a data point to digitalocean.droplet.up metric.
-func (mb *MetricsBuilder) RecordDigitaloceanDropletUpDataPoint(ts pcommon.Timestamp, val int64, idAttributeValue string, nameAttributeValue string, regionAttributeValue string) {
+func (mb *MetricsBuilder) RecordDigitaloceanDropletUpDataPoint(ts pcommon.Timestamp, val int64, idAttributeValue int64, nameAttributeValue string, regionAttributeValue string) {
 	mb.metricDigitaloceanDropletUp.recordDataPoint(mb.startTime, ts, val, idAttributeValue, nameAttributeValue, regionAttributeValue)
 }
 

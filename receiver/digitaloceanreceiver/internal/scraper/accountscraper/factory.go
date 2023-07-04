@@ -17,7 +17,7 @@ import (
 
 const (
 	// TypeStr the value of "type" key in configuration.
-	TypeStr = "droplet"
+	TypeStr = "account"
 )
 
 // Factory is the Factory for scraper.

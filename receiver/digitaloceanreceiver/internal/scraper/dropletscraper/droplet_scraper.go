@@ -73,7 +73,7 @@ func (s *scraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 		if droplet.Status != "active" {
 			val = 0
 		}
-		s.mb.RecordDigitaloceanDropletUpDataPoint(now, int64(val), strconv.Itoa(droplet.ID), droplet.Name, droplet.Region.Slug)
+		s.mb.RecordDigitaloceanDropletUpDataPoint(now, int64(val), int64(droplet.ID), droplet.Name, droplet.Region.Slug)
 	}
 
 	return s.mb.Emit(), nil
