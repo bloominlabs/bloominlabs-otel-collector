@@ -9,13 +9,13 @@ deps:
   SAVE ARTIFACT go.mod AS LOCAL go.mod
   SAVE ARTIFACT go.sum AS LOCAL go.sum
 
+
 receiver:
   FROM +deps
-
-  COPY ../../../bloominlabs-otel-collector+tools/mdatagen /go/bin/mdatagen
-
+  
+  COPY ../../../bloominlabs-otel-collector+tools/mdatagen /go/bin/
   COPY *.go .
-  COPY internal ./internal
+  COPY internal/ ./internal
 
-  SAVE ARTIFACT . vaultkvreceiver
+  SAVE ARTIFACT . digitaloceanreceiver
   SAVE ARTIFACT ./internal/* AS LOCAL ./internal/

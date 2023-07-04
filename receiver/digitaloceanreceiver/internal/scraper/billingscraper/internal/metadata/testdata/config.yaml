@@ -1,0 +1,17 @@
+default:
+all_set:
+  metrics:
+    digitalocean.billing.balance:
+      enabled: true
+    digitalocean.billing.generated_at:
+      enabled: true
+    digitalocean.billing.usage:
+      enabled: true
+none_set:
+  metrics:
+    digitalocean.billing.balance:
+      enabled: false
+    digitalocean.billing.generated_at:
+      enabled: false
+    digitalocean.billing.usage:
+      enabled: false

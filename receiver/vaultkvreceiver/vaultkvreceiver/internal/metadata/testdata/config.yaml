@@ -1,0 +1,17 @@
+default:
+all_set:
+  metrics:
+    vaultkv.created_on:
+      enabled: true
+    vaultkv.metadata:
+      enabled: true
+    vaultkv.metadata.error:
+      enabled: true
+none_set:
+  metrics:
+    vaultkv.created_on:
+      enabled: false
+    vaultkv.metadata:
+      enabled: false
+    vaultkv.metadata.error:
+      enabled: false
