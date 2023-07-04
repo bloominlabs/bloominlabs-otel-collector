@@ -5,7 +5,6 @@ package dropletscraper // import "github.com/open-telemetry/opentelemetry-collec
 
 import (
 	"context"
-	"strconv"
 	"time"
 
 	"go.opentelemetry.io/collector/component"

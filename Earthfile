@@ -26,10 +26,6 @@ certs:
   RUN curl -k https://vault.prod.stratos.host:8200/v1/internal/ca/pem > /etc/ssl/certs/internal.pem
   SAVE ARTIFACT /etc/ssl/certs/internal.pem
 
-mc-monitor:
-  FROM itzg/mc-monitor:0.11.2
-  SAVE ARTIFACT mc-monitor
-
 generate:
   FROM +deps
   COPY +tools/builder /go/bin/builder
@@ -46,11 +42,9 @@ build:
 
 docker:
   FROM --platform=linux/amd64 gcr.io/distroless/base-debian11:debug-nonroot
-  COPY +mc-monitor/mc-monitor /usr/bin/mc-monitor
   COPY +certs/internal.pem /etc/ssl/certs/internal.pem
   COPY +build/bloominlabs-otel-collector .
   ENTRYPOINT ["./bloominlabs-otel-collector"]
-  SAVE IMAGE infrastructure-otel-collector:latest
   SAVE IMAGE --push ghcr.io/bloominlabs/otel-collector:latest
 
 # if we need to break it out into multiple different distributions
