@@ -9,6 +9,7 @@ receivers:
     scrapers:
       billing:
       droplet:
+      account:
 
 exporters:
   logging:
