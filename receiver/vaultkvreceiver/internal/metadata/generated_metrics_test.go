@@ -56,17 +56,19 @@ func TestMetricsBuilder(t *testing.T) {
 
 			defaultMetricsCount++
 			allMetricsCount++
-			mb.RecordVaultkvCreatedOnDataPoint(ts, 1, "attr-val", "attr-val", AttributeType(1))
+			mb.RecordVaultkvCreatedOnDataPoint(ts, 1, "key-val", "mount-val", AttributeTypeDigitaloceanSpaces)
 
 			defaultMetricsCount++
 			allMetricsCount++
-			mb.RecordVaultkvMetadataDataPoint(ts, 1, "attr-val", "attr-val", "attr-val", "attr-val")
+			mb.RecordVaultkvMetadataDataPoint(ts, 1, "key-val", "mount-val", "versions-val", "current_version-val")
 
 			defaultMetricsCount++
 			allMetricsCount++
-			mb.RecordVaultkvMetadataErrorDataPoint(ts, 1, "attr-val", "attr-val", AttributeMetadataErrorType(1))
+			mb.RecordVaultkvMetadataErrorDataPoint(ts, 1, "key-val", "mount-val", AttributeMetadataErrorTypeMissingType)
 
-			metrics := mb.Emit()
+			res := pcommon.NewResource()
+			res.Attributes().PutStr("k1", "v1")
+			metrics := mb.Emit(WithResource(res))
 
 			if test.configSet == testSetNone {
 				assert.Equal(t, 0, metrics.ResourceMetrics().Len())
@@ -75,11 +77,7 @@ func TestMetricsBuilder(t *testing.T) {
 
 			assert.Equal(t, 1, metrics.ResourceMetrics().Len())
 			rm := metrics.ResourceMetrics().At(0)
-			attrCount := 0
-			enabledAttrCount := 0
-			assert.Equal(t, enabledAttrCount, rm.Resource().Attributes().Len())
-			assert.Equal(t, attrCount, 0)
-
+			assert.Equal(t, res, rm.Resource())
 			assert.Equal(t, 1, rm.ScopeMetrics().Len())
 			ms := rm.ScopeMetrics().At(0).Metrics()
 			if test.configSet == testSetDefault {
@@ -107,13 +105,13 @@ func TestMetricsBuilder(t *testing.T) {
 					assert.Equal(t, int64(1), dp.IntValue())
 					attrVal, ok := dp.Attributes().Get("key")
 					assert.True(t, ok)
-					assert.EqualValues(t, "attr-val", attrVal.Str())
+					assert.EqualValues(t, "key-val", attrVal.Str())
 					attrVal, ok = dp.Attributes().Get("mount")
 					assert.True(t, ok)
-					assert.EqualValues(t, "attr-val", attrVal.Str())
+					assert.EqualValues(t, "mount-val", attrVal.Str())
 					attrVal, ok = dp.Attributes().Get("type")
 					assert.True(t, ok)
-					assert.Equal(t, "digitalocean.spaces", attrVal.Str())
+					assert.EqualValues(t, "digitalocean.spaces", attrVal.Str())
 				case "vaultkv.metadata":
 					assert.False(t, validatedMetrics["vaultkv.metadata"], "Found a duplicate in the metrics slice: vaultkv.metadata")
 					validatedMetrics["vaultkv.metadata"] = true
@@ -130,23 +128,23 @@ func TestMetricsBuilder(t *testing.T) {
 					assert.Equal(t, int64(1), dp.IntValue())
 					attrVal, ok := dp.Attributes().Get("key")
 					assert.True(t, ok)
-					assert.EqualValues(t, "attr-val", attrVal.Str())
+					assert.EqualValues(t, "key-val", attrVal.Str())
 					attrVal, ok = dp.Attributes().Get("mount")
 					assert.True(t, ok)
-					assert.EqualValues(t, "attr-val", attrVal.Str())
+					assert.EqualValues(t, "mount-val", attrVal.Str())
 					attrVal, ok = dp.Attributes().Get("versions")
 					assert.True(t, ok)
-					assert.EqualValues(t, "attr-val", attrVal.Str())
+					assert.EqualValues(t, "versions-val", attrVal.Str())
 					attrVal, ok = dp.Attributes().Get("current_version")
 					assert.True(t, ok)
-					assert.EqualValues(t, "attr-val", attrVal.Str())
+					assert.EqualValues(t, "current_version-val", attrVal.Str())
 				case "vaultkv.metadata.error":
 					assert.False(t, validatedMetrics["vaultkv.metadata.error"], "Found a duplicate in the metrics slice: vaultkv.metadata.error")
 					validatedMetrics["vaultkv.metadata.error"] = true
 					assert.Equal(t, pmetric.MetricTypeSum, ms.At(i).Type())
 					assert.Equal(t, 1, ms.At(i).Sum().DataPoints().Len())
-					assert.Equal(t, "The epoch time in seconds the key was created at.", ms.At(i).Description())
-					assert.Equal(t, "seconds", ms.At(i).Unit())
+					assert.Equal(t, "Errors reported while trying to fetch metrics.", ms.At(i).Description())
+					assert.Equal(t, "1", ms.At(i).Unit())
 					assert.Equal(t, false, ms.At(i).Sum().IsMonotonic())
 					assert.Equal(t, pmetric.AggregationTemporalityCumulative, ms.At(i).Sum().AggregationTemporality())
 					dp := ms.At(i).Sum().DataPoints().At(0)
@@ -156,13 +154,13 @@ func TestMetricsBuilder(t *testing.T) {
 					assert.Equal(t, int64(1), dp.IntValue())
 					attrVal, ok := dp.Attributes().Get("key")
 					assert.True(t, ok)
-					assert.EqualValues(t, "attr-val", attrVal.Str())
+					assert.EqualValues(t, "key-val", attrVal.Str())
 					attrVal, ok = dp.Attributes().Get("mount")
 					assert.True(t, ok)
-					assert.EqualValues(t, "attr-val", attrVal.Str())
+					assert.EqualValues(t, "mount-val", attrVal.Str())
 					attrVal, ok = dp.Attributes().Get("metadata_error_type")
 					assert.True(t, ok)
-					assert.Equal(t, "missing_type", attrVal.Str())
+					assert.EqualValues(t, "missing_type", attrVal.Str())
 				}
 			}
 		})

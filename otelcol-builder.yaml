@@ -2,39 +2,39 @@
 #
 # for more details
 receivers:
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.80.0"
-  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.80.0
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/jaegerreceiver v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver v0.80.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.82.0"
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.82.0
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/jaegerreceiver v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver v0.82.0"
 processors:
-  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.80.0
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor v0.80.0"
-  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.80.0
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.80.0"
+  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.82.0
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor v0.82.0"
+  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.82.0
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.82.0"
 exporters:
-  - gomod: go.opentelemetry.io/collector/exporter/loggingexporter v0.80.0
-  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.80.0
-  - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.80.0
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/lokiexporter v0.80.0"
+  - gomod: go.opentelemetry.io/collector/exporter/loggingexporter v0.82.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.82.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.82.0
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/lokiexporter v0.82.0"
 extensions:
-  - gomod: "go.opentelemetry.io/collector/extension/ballastextension v0.80.0"
-  - gomod: "go.opentelemetry.io/collector/extension/zpagesextension v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/pprofextension v0.80.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage v0.80.0"
+  - gomod: "go.opentelemetry.io/collector/extension/ballastextension v0.82.0"
+  - gomod: "go.opentelemetry.io/collector/extension/zpagesextension v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/pprofextension v0.82.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage v0.82.0"
     import: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.80.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.82.0"
 replaces:
   - github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor => ./processor/lokiprocessor
   - github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor => ./processor/nomadprocessor
