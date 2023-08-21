@@ -582,6 +582,8 @@ github.com/BurntSushi/toml v1.2.0 h1:Rt8g24XnyGTyglgET/PRUNlrUeu9F5L+7FilkXfZgs0
 github.com/BurntSushi/xgb v0.0.0-20160522181843-27f122750802/go.mod h1:IVnqGOEym/WlBOVXweHU+Q+/VP0lqqI8lqeDx9IjBqo=
 github.com/DataDog/datadog-go v3.2.0+incompatible h1:qSG2N4FghB1He/r2mFrWKCaL7dXCilEuNEeAn20fdD4=
 github.com/DataDog/datadog-go v3.2.0+incompatible/go.mod h1:LButxg5PwREeZtORoXG3tL4fMGNddJ+vMq1mwgfaqoQ=
+github.com/GehirnInc/crypt v0.0.0-20200316065508-bb7000b8a962 h1:KeNholpO2xKjgaaSyd+DyQRrsQjhbSeS7qe4nEw8aQw=
+github.com/GehirnInc/crypt v0.0.0-20200316065508-bb7000b8a962/go.mod h1:kC29dT1vFpj7py2OvG1khBdQpo3kInWP+6QipLbdngo=
 github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.18.0 h1:ugYJK/neZQtQeh2jc5xNoDFiMQojlAkoqJMRb7vTu1U=
 github.com/GoogleCloudPlatform/opentelemetry-operations-go/detectors/gcp v1.18.0/go.mod h1:Xx0VKh7GJ4si3rmElbh19Mejxz68ibWg/J30ZOMrqzU=
 github.com/HdrHistogram/hdrhistogram-go v1.1.2 h1:5IcZpTvzydCQeHzK4Ef/D5rrSqwxob0t8PQPMybUNFM=
@@ -1206,6 +1208,8 @@ github.com/onsi/gomega v1.27.4 h1:Z2AnStgsdSayCMDiCU42qIz+HLqEPcgiOCXjAU/w+8E=
 github.com/open-telemetry/opentelemetry-collector-contrib/exporter/lokiexporter v0.83.0 h1:EAf9vESuhjRLBTtm7qfTwUCXf/b8YIsmu4DbagyJlaM=
 github.com/open-telemetry/opentelemetry-collector-contrib/exporter/lokiexporter v0.83.0/go.mod h1:Ahzek7W+VMauBHfJUqQipFdHWP93qxvFdiqY5sxnsZM=
 github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusremotewriteexporter v0.83.0 h1:980Ae/Y7mZndgWhngpEi8u5KIVFYQIF4NFpkLEqCZEI=
+github.com/open-telemetry/opentelemetry-collector-contrib/extension/basicauthextension v0.83.0 h1:ObQJrvMPG8JyJR6xytkA3aIlpVXx1WXWtRSU+prrmP8=
+github.com/open-telemetry/opentelemetry-collector-contrib/extension/basicauthextension v0.83.0/go.mod h1:EPXuHJKLXovWGgQ5lJ8LacfU3jEE5kEHOycSnzLrAH8=
 github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.83.0 h1:Kjh+MVsvlV/vmgwnN667ln57kQiz6ZfYxyk+IONS5lA=
 github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.83.0/go.mod h1:CMhTUJ14v2P/roC9GrV7fdVS7MCtXwOjw+JprJrfFKM=
 github.com/open-telemetry/opentelemetry-collector-contrib/extension/pprofextension v0.83.0 h1:zrwghw5g2Ma5u+mGo/PyodymkAQiAcPLs4Quq4MAZoU=
@@ -1421,6 +1425,8 @@ github.com/stvp/go-udp-testing v0.0.0-20201019212854-469649b16807/go.mod h1:7jxm
 github.com/subosito/gotenv v1.4.1 h1:jyEFiXpy21Wm81FBN71l9VoMMV8H8jG+qIK3GCpY6Qs=
 github.com/tencentcloud/tencentcloud-sdk-go v1.0.162 h1:8fDzz4GuVg4skjY2B0nMN7h6uN61EDVkuLyI2+qGHhI=
 github.com/testcontainers/testcontainers-go v0.23.0 h1:ERYTSikX01QczBLPZpqsETTBO7lInqEP349phDOVJVs=
+github.com/tg123/go-htpasswd v1.2.1 h1:i4wfsX1KvvkyoMiHZzjS0VzbAPWfxzI8INcZAKtutoU=
+github.com/tg123/go-htpasswd v1.2.1/go.mod h1:erHp1B86KXdwQf1X5ZrLb7erXZnWueEQezb2dql4q58=
 github.com/tidwall/gjson v1.10.2 h1:APbLGOM0rrEkd8WBw9C24nllro4ajFuJu0Sc9hRz8Bo=
 github.com/tidwall/match v1.1.1 h1:+Ho715JplO36QYgwN9PGYNhgZvoUSc9X2c80KVTi+GA=
 github.com/tidwall/pretty v1.2.0 h1:RWIZEg2iJ8/g6fDDYzMpobmaoGh5OLl4AXtGUGPcqCs=
