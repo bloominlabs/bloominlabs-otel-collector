@@ -4,8 +4,8 @@ FROM golang:1.20
 WORKDIR /bloominlabs-otel-collector
 
 tools:
-  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.80.0
-  RUN GO111MODULE=on go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/mdatagen@v0.80.0
+  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.83.0
+  RUN GO111MODULE=on go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/mdatagen@v0.83.0
   SAVE ARTIFACT /go/bin/builder
   SAVE ARTIFACT /go/bin/mdatagen
 
