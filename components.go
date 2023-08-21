@@ -13,6 +13,7 @@ import (
 	otlpexporter "go.opentelemetry.io/collector/exporter/otlpexporter"
 	otlphttpexporter "go.opentelemetry.io/collector/exporter/otlphttpexporter"
 	lokiexporter "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/lokiexporter"
+	prometheusremotewriteexporter "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusremotewriteexporter"
 	ballastextension "go.opentelemetry.io/collector/extension/ballastextension"
 	zpagesextension "go.opentelemetry.io/collector/extension/zpagesextension"
 	basicauthextension "github.com/open-telemetry/opentelemetry-collector-contrib/extension/basicauthextension"
@@ -79,6 +80,7 @@ func components() (otelcol.Factories, error) {
 		otlpexporter.NewFactory(),
 		otlphttpexporter.NewFactory(),
 		lokiexporter.NewFactory(),
+		prometheusremotewriteexporter.NewFactory(),
 	)
 	if err != nil {
 		return otelcol.Factories{}, err
