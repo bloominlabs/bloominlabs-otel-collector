@@ -1,0 +1,20 @@
+type: userstats
+
+status:
+  class: receiver
+  stability:
+    alpha: [metrics]
+
+attributes:
+  user.id:
+    description: The stratos.host user the metric belongs to
+    type: string
+
+metrics:
+  backups.total_size:
+    enabled: true
+    description: The total size of the user's backups
+    unit: bytes
+    gauge:
+      value_type: int
+    attributes: [user.id]

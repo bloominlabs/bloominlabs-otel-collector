@@ -1,0 +1,53 @@
+{
+   "resourceMetrics": [
+      {
+         "resource": {},
+         "scopeMetrics": [
+            {
+               "metrics": [
+                  {
+                     "description": "The epoch time in seconds the key was created at.",
+                     "name": "vaultkv.created_on",
+                     "sum": {
+                        "aggregationTemporality": 2,
+                        "dataPoints": [
+                           {
+                              "asInt": "-62135596800",
+                              "attributes": [
+                                 {
+                                    "key": "key",
+                                    "value": {
+                                       "stringValue": "infra/key1"
+                                    }
+                                 },
+                                 {
+                                    "key": "mount",
+                                    "value": {
+                                       "stringValue": "infra/"
+                                    }
+                                 },
+                                 {
+                                    "key": "type",
+                                    "value": {
+                                       "stringValue": "digitalocean.api"
+                                    }
+                                 }
+                              ],
+                              "startTimeUnixNano": "1679455773818199060",
+                              "timeUnixNano": "1679455773818304721"
+                           }
+                        ],
+                        "isMonotonic": true
+                     },
+                     "unit": "s"
+                  }
+               ],
+               "scope": {
+                  "name": "otelcol/userstatsreceiver",
+                  "version": "latest"
+               }
+            }
+         ]
+      }
+   ]
+}

@@ -1,0 +1,25 @@
+receivers:
+  userstats:
+    collection_interval: 1m
+    bucket_name: "dev-stratos-server-backups"
+    access_key_id: <access-key-id>
+    secret_access_key: <secret-access-key>
+
+processors:
+  batch:
+
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 64
+
+exporters:
+  logging:
+    verbosity: detailed
+
+service:
+  extensions: []
+  pipelines:
+    metrics:
+      receivers: [userstats]
+      processors: [memory_limiter, batch]
+      exporters: [logging]
