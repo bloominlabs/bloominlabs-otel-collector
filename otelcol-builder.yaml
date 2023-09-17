@@ -13,7 +13,7 @@ receivers:
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.85.0"
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver v0.85.0"
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver v0.85.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver v0.85.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver v0.85.0"
 processors:
   - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.85.0
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.85.0"
@@ -46,4 +46,4 @@ replaces:
   - github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor => ./processor/resourceconversionprocessor
   - github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver => ./receiver/vaultkvreceiver
   - github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver => ./receiver/digitaloceanreceiver/
-  - github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver => ./receiver/backuputilizationreceiver/
+  - github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver => ./receiver/userstatsreceiver/

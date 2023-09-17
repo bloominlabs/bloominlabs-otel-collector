@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package backuputilizationreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver"
+package userstatsreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver"
 
 import (
 	"context"
@@ -27,18 +27,18 @@ import (
 	"go.opentelemetry.io/collector/receiver/scrapererror"
 	"go.uber.org/zap"
 
-	metricMetadata "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver/internal/metadata"
+	metricMetadata "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver/internal/metadata"
 )
 
-type backupsUtilizationScraper struct {
+type userStatsScraper struct {
 	logger        *zap.Logger
 	rConfig       *Config
 	s3Config      *spaces.DigitalOceanSpacesConfig
-	clientFactory backupsUtilizationClientFactory
+	clientFactory userStatsClientFactory
 	mb            *metricMetadata.MetricsBuilder
 }
 
-type backupsUtilizationClientFactory interface {
+type userStatsClientFactory interface {
 	getClient(c *s3.Client, bucketName string) (client, error)
 }
 
@@ -51,9 +51,9 @@ func (d *defaultClientFactory) getClient(c *s3.Client, bucketName string) (clien
 func newBackupsUtilizationScraper(
 	settings receiver.CreateSettings,
 	config *Config,
-	clientFactory backupsUtilizationClientFactory,
-) *backupsUtilizationScraper {
-	return &backupsUtilizationScraper{
+	clientFactory userStatsClientFactory,
+) *userStatsScraper {
+	return &userStatsScraper{
 		logger:  settings.Logger,
 		rConfig: config,
 		s3Config: &spaces.DigitalOceanSpacesConfig{
@@ -68,7 +68,7 @@ func newBackupsUtilizationScraper(
 }
 
 // scrape scrapes the metric stats, transforms them and attributes them into a metric slices.
-func (p *backupsUtilizationScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
+func (p *userStatsScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 	s3Client, err := p.s3Config.GetClient()
 
 	if err != nil {
@@ -91,7 +91,7 @@ func (p *backupsUtilizationScraper) scrape(ctx context.Context) (pmetric.Metrics
 	}
 
 	for userID, size := range backupsMap {
-		p.mb.RecordBackupsutilizationSizeDataPoint(
+		p.mb.RecordBackupsTotalSizeDataPoint(
 			now,
 			size,
 			userID,

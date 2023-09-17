@@ -23,20 +23,20 @@ func (ms *MetricConfig) Unmarshal(parser *confmap.Conf) error {
 	return nil
 }
 
-// MetricsConfig provides config for backupsutilization metrics.
+// MetricsConfig provides config for userstats metrics.
 type MetricsConfig struct {
-	BackupsutilizationSize MetricConfig `mapstructure:"backupsutilization.size"`
+	BackupsTotalSize MetricConfig `mapstructure:"backups.total_size"`
 }
 
 func DefaultMetricsConfig() MetricsConfig {
 	return MetricsConfig{
-		BackupsutilizationSize: MetricConfig{
+		BackupsTotalSize: MetricConfig{
 			Enabled: true,
 		},
 	}
 }
 
-// MetricsBuilderConfig is a configuration for backupsutilization metrics builder.
+// MetricsBuilderConfig is a configuration for userstats metrics builder.
 type MetricsBuilderConfig struct {
 	Metrics MetricsConfig `mapstructure:"metrics"`
 }

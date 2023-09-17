@@ -29,12 +29,12 @@
                                  {
                                     "key": "metadata_error_type",
                                     "value": {
-                                       "stringValue": "invalid_type"
+                                       "stringValue": "missing_type"
                                     }
                                  }
                               ],
-                              "startTimeUnixNano": "1679455773816863612",
-                              "timeUnixNano": "1679455773816984512"
+                              "startTimeUnixNano": "1679455773787996635",
+                              "timeUnixNano": "1679455773788128199"
                            }
                         ]
                      },
@@ -42,7 +42,7 @@
                   }
                ],
                "scope": {
-                  "name": "otelcol/backuputilizationreceiver",
+                  "name": "otelcol/userstatsreceiver",
                   "version": "latest"
                }
             }

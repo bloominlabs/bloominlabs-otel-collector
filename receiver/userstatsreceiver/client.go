@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package backuputilizationreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver"
+package userstatsreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver"
 
 // https://github.com/FalcoSuessgott/vkv
 
@@ -31,21 +31,21 @@ type client interface {
 	listBackupsByUser(ctx context.Context) (map[string]int64, error)
 }
 
-type backupsUtilizationClient struct {
+type userStatsClient struct {
 	client *s3.Client
 	bucket string
 }
 
-var _ client = (*backupsUtilizationClient)(nil)
+var _ client = (*userStatsClient)(nil)
 
-func newBackupsUtilizationClient(client *s3.Client, bucket string) (*backupsUtilizationClient, error) {
-	return &backupsUtilizationClient{
+func newBackupsUtilizationClient(client *s3.Client, bucket string) (*userStatsClient, error) {
+	return &userStatsClient{
 		client,
 		bucket,
 	}, nil
 }
 
-func (c *backupsUtilizationClient) listBackupsByUser(ctx context.Context) (map[string]int64, error) {
+func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]int64, error) {
 	backupsMap := make(map[string]int64)
 	client := c.client
 

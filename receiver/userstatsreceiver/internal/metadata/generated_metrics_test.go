@@ -56,7 +56,7 @@ func TestMetricsBuilder(t *testing.T) {
 
 			defaultMetricsCount++
 			allMetricsCount++
-			mb.RecordBackupsutilizationSizeDataPoint(ts, 1, "user.id-val")
+			mb.RecordBackupsTotalSizeDataPoint(ts, 1, "user.id-val")
 
 			res := pcommon.NewResource()
 			metrics := mb.Emit(WithResource(res))
@@ -80,9 +80,9 @@ func TestMetricsBuilder(t *testing.T) {
 			validatedMetrics := make(map[string]bool)
 			for i := 0; i < ms.Len(); i++ {
 				switch ms.At(i).Name() {
-				case "backupsutilization.size":
-					assert.False(t, validatedMetrics["backupsutilization.size"], "Found a duplicate in the metrics slice: backupsutilization.size")
-					validatedMetrics["backupsutilization.size"] = true
+				case "backups.total_size":
+					assert.False(t, validatedMetrics["backups.total_size"], "Found a duplicate in the metrics slice: backups.total_size")
+					validatedMetrics["backups.total_size"] = true
 					assert.Equal(t, pmetric.MetricTypeGauge, ms.At(i).Type())
 					assert.Equal(t, 1, ms.At(i).Gauge().DataPoints().Len())
 					assert.Equal(t, "The total size of the user's backups", ms.At(i).Description())

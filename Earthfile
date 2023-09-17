@@ -13,7 +13,7 @@ files:
   COPY ./processor/ ./processor/
   COPY ./receiver/vaultkvreceiver+receiver/vaultkvreceiver ./receiver/vaultkvreceiver/
   COPY ./receiver/digitaloceanreceiver+receiver/digitaloceanreceiver ./receiver/digitaloceanreceiver/
-  COPY ./receiver/backuputilizationreceiver+receiver/backuputilizationreceiver ./receiver/backuputilizationreceiver/
+  COPY ./receiver/userstatsreceiver+receiver/userstatsreceiver ./receiver/userstatsreceiver/
 
 deps:
   FROM +files

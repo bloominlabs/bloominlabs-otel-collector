@@ -1,4 +1,4 @@
-module github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver
+module github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver
 
 go 1.20
 

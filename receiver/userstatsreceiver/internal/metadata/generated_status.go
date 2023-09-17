@@ -7,6 +7,6 @@ import (
 )
 
 const (
-	Type             = "backupsutilization"
+	Type             = "userstats"
 	MetricsStability = component.StabilityLevelAlpha
 )

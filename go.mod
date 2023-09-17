@@ -19,7 +19,6 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.85.0
-	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.85.0
@@ -29,6 +28,7 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver v0.82.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.85.0
+	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver v0.85.0
 	github.com/stretchr/testify v1.8.4
 	go.opentelemetry.io/collector v0.85.0
@@ -341,7 +341,7 @@ replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vault
 
 replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver => ./receiver/digitaloceanreceiver/
 
-replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver => ./receiver/backuputilizationreceiver/
+replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver => ./receiver/userstatsreceiver/
 
 // ambiguous import: found package cloud.google.com/go/compute/metadata in multiple modules
 replace cloud.google.com/go => cloud.google.com/go v0.110.2

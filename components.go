@@ -41,7 +41,7 @@ import (
 	postgresqlreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver"
 	chronyreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver"
 	digitaloceanreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver"
-	backuputilizationreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver"
+	userstatsreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver"
 )
 
 func components() (otelcol.Factories, error) {
@@ -72,7 +72,7 @@ func components() (otelcol.Factories, error) {
 		postgresqlreceiver.NewFactory(),
 		chronyreceiver.NewFactory(),
 		digitaloceanreceiver.NewFactory(),
-		backuputilizationreceiver.NewFactory(),
+		userstatsreceiver.NewFactory(),
 	)
 	if err != nil {
 		return otelcol.Factories{}, err

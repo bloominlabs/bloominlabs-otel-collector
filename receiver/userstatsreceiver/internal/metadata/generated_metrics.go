@@ -11,22 +11,22 @@ import (
 	"go.opentelemetry.io/collector/receiver"
 )
 
-type metricBackupsutilizationSize struct {
+type metricBackupsTotalSize struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	config   MetricConfig   // metric config provided by user.
 	capacity int            // max observed number of data points added to the metric.
 }
 
-// init fills backupsutilization.size metric with initial data.
-func (m *metricBackupsutilizationSize) init() {
-	m.data.SetName("backupsutilization.size")
+// init fills backups.total_size metric with initial data.
+func (m *metricBackupsTotalSize) init() {
+	m.data.SetName("backups.total_size")
 	m.data.SetDescription("The total size of the user's backups")
 	m.data.SetUnit("bytes")
 	m.data.SetEmptyGauge()
 	m.data.Gauge().DataPoints().EnsureCapacity(m.capacity)
 }
 
-func (m *metricBackupsutilizationSize) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64, userIDAttributeValue string) {
+func (m *metricBackupsTotalSize) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64, userIDAttributeValue string) {
 	if !m.config.Enabled {
 		return
 	}
@@ -38,14 +38,14 @@ func (m *metricBackupsutilizationSize) recordDataPoint(start pcommon.Timestamp, 
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
-func (m *metricBackupsutilizationSize) updateCapacity() {
+func (m *metricBackupsTotalSize) updateCapacity() {
 	if m.data.Gauge().DataPoints().Len() > m.capacity {
 		m.capacity = m.data.Gauge().DataPoints().Len()
 	}
 }
 
 // emit appends recorded metric data to a metrics slice and prepares it for recording another set of data points.
-func (m *metricBackupsutilizationSize) emit(metrics pmetric.MetricSlice) {
+func (m *metricBackupsTotalSize) emit(metrics pmetric.MetricSlice) {
 	if m.config.Enabled && m.data.Gauge().DataPoints().Len() > 0 {
 		m.updateCapacity()
 		m.data.MoveTo(metrics.AppendEmpty())
@@ -53,8 +53,8 @@ func (m *metricBackupsutilizationSize) emit(metrics pmetric.MetricSlice) {
 	}
 }
 
-func newMetricBackupsutilizationSize(cfg MetricConfig) metricBackupsutilizationSize {
-	m := metricBackupsutilizationSize{config: cfg}
+func newMetricBackupsTotalSize(cfg MetricConfig) metricBackupsTotalSize {
+	m := metricBackupsTotalSize{config: cfg}
 	if cfg.Enabled {
 		m.data = pmetric.NewMetric()
 		m.init()
@@ -65,12 +65,12 @@ func newMetricBackupsutilizationSize(cfg MetricConfig) metricBackupsutilizationS
 // MetricsBuilder provides an interface for scrapers to report metrics while taking care of all the transformations
 // required to produce metric representation defined in metadata and user config.
 type MetricsBuilder struct {
-	config                       MetricsBuilderConfig // config of the metrics builder.
-	startTime                    pcommon.Timestamp    // start time that will be applied to all recorded data points.
-	metricsCapacity              int                  // maximum observed number of metrics per resource.
-	metricsBuffer                pmetric.Metrics      // accumulates metrics data before emitting.
-	buildInfo                    component.BuildInfo  // contains version information.
-	metricBackupsutilizationSize metricBackupsutilizationSize
+	config                 MetricsBuilderConfig // config of the metrics builder.
+	startTime              pcommon.Timestamp    // start time that will be applied to all recorded data points.
+	metricsCapacity        int                  // maximum observed number of metrics per resource.
+	metricsBuffer          pmetric.Metrics      // accumulates metrics data before emitting.
+	buildInfo              component.BuildInfo  // contains version information.
+	metricBackupsTotalSize metricBackupsTotalSize
 }
 
 // metricBuilderOption applies changes to default metrics builder.
@@ -85,11 +85,11 @@ func WithStartTime(startTime pcommon.Timestamp) metricBuilderOption {
 
 func NewMetricsBuilder(mbc MetricsBuilderConfig, settings receiver.CreateSettings, options ...metricBuilderOption) *MetricsBuilder {
 	mb := &MetricsBuilder{
-		config:                       mbc,
-		startTime:                    pcommon.NewTimestampFromTime(time.Now()),
-		metricsBuffer:                pmetric.NewMetrics(),
-		buildInfo:                    settings.BuildInfo,
-		metricBackupsutilizationSize: newMetricBackupsutilizationSize(mbc.Metrics.BackupsutilizationSize),
+		config:                 mbc,
+		startTime:              pcommon.NewTimestampFromTime(time.Now()),
+		metricsBuffer:          pmetric.NewMetrics(),
+		buildInfo:              settings.BuildInfo,
+		metricBackupsTotalSize: newMetricBackupsTotalSize(mbc.Metrics.BackupsTotalSize),
 	}
 	for _, op := range options {
 		op(mb)
@@ -143,10 +143,10 @@ func WithStartTimeOverride(start pcommon.Timestamp) ResourceMetricsOption {
 func (mb *MetricsBuilder) EmitForResource(rmo ...ResourceMetricsOption) {
 	rm := pmetric.NewResourceMetrics()
 	ils := rm.ScopeMetrics().AppendEmpty()
-	ils.Scope().SetName("otelcol/backuputilizationreceiver")
+	ils.Scope().SetName("otelcol/userstatsreceiver")
 	ils.Scope().SetVersion(mb.buildInfo.Version)
 	ils.Metrics().EnsureCapacity(mb.metricsCapacity)
-	mb.metricBackupsutilizationSize.emit(ils.Metrics())
+	mb.metricBackupsTotalSize.emit(ils.Metrics())
 
 	for _, op := range rmo {
 		op(rm)
@@ -167,9 +167,9 @@ func (mb *MetricsBuilder) Emit(rmo ...ResourceMetricsOption) pmetric.Metrics {
 	return metrics
 }
 
-// RecordBackupsutilizationSizeDataPoint adds a data point to backupsutilization.size metric.
-func (mb *MetricsBuilder) RecordBackupsutilizationSizeDataPoint(ts pcommon.Timestamp, val int64, userIDAttributeValue string) {
-	mb.metricBackupsutilizationSize.recordDataPoint(mb.startTime, ts, val, userIDAttributeValue)
+// RecordBackupsTotalSizeDataPoint adds a data point to backups.total_size metric.
+func (mb *MetricsBuilder) RecordBackupsTotalSizeDataPoint(ts pcommon.Timestamp, val int64, userIDAttributeValue string) {
+	mb.metricBackupsTotalSize.recordDataPoint(mb.startTime, ts, val, userIDAttributeValue)
 }
 
 // Reset resets metrics builder to its initial state. It should be used when external metrics source is restarted,

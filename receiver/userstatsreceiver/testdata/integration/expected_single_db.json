@@ -4,7 +4,7 @@
          "scopeMetrics": [
             {
                "scope": {
-                  "name": "otelcol/backuputilizationreceiver",
+                  "name": "otelcol/userstatsreceiver",
                   "version": "latest"
                },
                "metrics": [

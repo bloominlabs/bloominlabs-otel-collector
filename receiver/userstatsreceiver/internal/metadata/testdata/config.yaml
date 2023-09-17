@@ -1,9 +1,9 @@
 default:
 all_set:
   metrics:
-    backupsutilization.size:
+    backups.total_size:
       enabled: true
 none_set:
   metrics:
-    backupsutilization.size:
+    backups.total_size:
       enabled: false

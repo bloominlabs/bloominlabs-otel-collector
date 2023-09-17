@@ -12,7 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-package backuputilizationreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver"
+package userstatsreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver"
 
 import (
 	"context"
@@ -22,11 +22,11 @@ import (
 	"go.opentelemetry.io/collector/receiver"
 	"go.opentelemetry.io/collector/receiver/scraperhelper"
 
-	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver/internal/metadata"
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver/internal/metadata"
 )
 
 const (
-	typeStr = "backupsutilization"
+	typeStr = "userstats"
 
 	stability = component.StabilityLevelDevelopment
 )

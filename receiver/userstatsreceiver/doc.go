@@ -14,4 +14,4 @@
 
 //go:generate mdatagen metadata.yaml
 
-package backuputilizationreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver"
+package userstatsreceiver // import "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver"

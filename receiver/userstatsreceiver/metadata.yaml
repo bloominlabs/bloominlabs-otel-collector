@@ -1,4 +1,4 @@
-type: backupsutilization
+type: userstats
 
 status:
   class: receiver
@@ -7,11 +7,11 @@ status:
 
 attributes:
   user.id:
-    description: The user the backup(s) are associated to
+    description: The stratos.host user the metric belongs to
     type: string
 
 metrics:
-  backupsutilization.size:
+  backups.total_size:
     enabled: true
     description: The total size of the user's backups
     unit: bytes

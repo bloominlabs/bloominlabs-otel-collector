@@ -17,5 +17,5 @@ receiver:
   COPY *.go .
   COPY internal ./internal
 
-  SAVE ARTIFACT . backuputilizationreceiver
+  SAVE ARTIFACT . userstatsreceiver
   SAVE ARTIFACT ./internal/* AS LOCAL ./internal/
