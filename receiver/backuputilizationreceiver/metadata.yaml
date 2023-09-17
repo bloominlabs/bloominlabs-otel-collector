@@ -1,0 +1,20 @@
+type: backupsutilization
+
+status:
+  class: receiver
+  stability:
+    alpha: [metrics]
+
+attributes:
+  user.id:
+    description: The user the backup(s) are associated to
+    type: string
+
+metrics:
+  backupsutilization.size:
+    enabled: true
+    description: The total size of the user's backups
+    unit: bytes
+    gauge:
+      value_type: int
+    attributes: [user.id]

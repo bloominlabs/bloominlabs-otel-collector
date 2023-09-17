@@ -24,6 +24,7 @@ import (
 	resourceprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor"
 	resourceconversionprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor"
 	memorylimiterprocessor "go.opentelemetry.io/collector/processor/memorylimiterprocessor"
+	filterprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor"
 	lokiprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor"
 	resourcedetectionprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor"
 	attributesprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"
@@ -40,6 +41,7 @@ import (
 	postgresqlreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver"
 	chronyreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver"
 	digitaloceanreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver"
+	backuputilizationreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/backuputilizationreceiver"
 )
 
 func components() (otelcol.Factories, error) {
@@ -70,6 +72,7 @@ func components() (otelcol.Factories, error) {
 		postgresqlreceiver.NewFactory(),
 		chronyreceiver.NewFactory(),
 		digitaloceanreceiver.NewFactory(),
+		backuputilizationreceiver.NewFactory(),
 	)
 	if err != nil {
 		return otelcol.Factories{}, err
@@ -91,6 +94,7 @@ func components() (otelcol.Factories, error) {
 		resourceprocessor.NewFactory(),
 		resourceconversionprocessor.NewFactory(),
 		memorylimiterprocessor.NewFactory(),
+		filterprocessor.NewFactory(),
 		lokiprocessor.NewFactory(),
 		resourcedetectionprocessor.NewFactory(),
 		attributesprocessor.NewFactory(),
