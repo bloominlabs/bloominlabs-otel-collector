@@ -1102,7 +1102,6 @@ github.com/julienschmidt/httprouter v1.2.0/go.mod h1:SYymIcj16QtmaHHD7aYtjjsJG7V
 github.com/julienschmidt/httprouter v1.3.0/go.mod h1:JR6WtHb+2LUe8TCKY3cZOxFyyO8IZAc4RVcycCCAKdM=
 github.com/jung-kurt/gofpdf v1.0.0/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
 github.com/jung-kurt/gofpdf v1.0.3-0.20190309125859-24315acbbda5/go.mod h1:7Id9E/uU8ce6rXgefFLlgrJj/GYY22cpxn+r32jIOes=
-github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 h1:Z9n2FFNUXsshfwJMBgNA0RU6/i7WVaAegv3PtuIHPMs=
 github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51/go.mod h1:CzGEWj7cYgsdH8dAjBGEr58BoE7ScuLd+fwFZ44+/x8=
 github.com/kelseyhightower/envconfig v1.4.0 h1:Im6hONhd3pLkfDFsbRgu68RDNkGF1r3dvMUtDTo2cv8=
 github.com/kisielk/errcheck v1.5.0/go.mod h1:pFxgyoBC7bSaBwPgfKdkLd5X25qrDl4LWUI2bnpBCr8=
@@ -1280,8 +1279,6 @@ github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldrecei
 github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver v0.85.0/go.mod h1:hD4b11EzkstO4PKr6Zg2xyoOgyCq4s/Tqj4lyvGH6yU=
 github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.85.0 h1:erkPyiATxWl6F74WIXSXtsW27tGUb0pYX90jD1euoZI=
 github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.85.0/go.mod h1:FENI24AOJ/3omxWIhjgb9NpOP4/19fVmm3biOpauB/A=
-github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver v0.82.0 h1:vIAY6LFS+r+hZSqUeSLe96gHpjhDt3QvdoPMkEWWyPw=
-github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver v0.82.0/go.mod h1:A6SBmIJDW+DnhVR3UHNhdRbIy28oWfzppgtUDTKbQsI=
 github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.85.0 h1:8jlK2ASLOVtSkepS2go85uO6lpkijNB57JRFRE/Krd4=
 github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.85.0/go.mod h1:K9xVwBx7BnCJAE0xY7iUvpUKCfQ1d2p4VD/m1ejeKV0=
 github.com/opencontainers/go-digest v1.0.0 h1:apOUWs51W5PlhuyGyz9FCeeBIOUDA/6nW8Oi/yOhh5U=

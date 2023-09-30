@@ -1,0 +1,21 @@
+VERSION 0.6
+FROM golang:1.20
+WORKDIR /bloominlabs-otel-collector
+
+deps:
+  COPY go.mod go.sum ./
+  RUN go mod download
+  # Output these back in case go mod download changes them.
+  SAVE ARTIFACT go.mod AS LOCAL go.mod
+  SAVE ARTIFACT go.sum AS LOCAL go.sum
+
+receiver:
+  FROM +deps
+
+  COPY ../../../bloominlabs-otel-collector+tools/mdatagen /go/bin/mdatagen
+
+  COPY *.go .
+  COPY internal ./internal
+
+  SAVE ARTIFACT . certificatesreceiver
+  SAVE ARTIFACT ./internal/* AS LOCAL ./internal/

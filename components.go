@@ -30,7 +30,6 @@ import (
 	attributesprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor"
 	nomadprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor"
 	metricstransformprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor"
-	prometheusexecreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver"
 	hostmetricsreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver"
 	otlpreceiver "go.opentelemetry.io/collector/receiver/otlpreceiver"
 	journaldreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver"
@@ -42,6 +41,7 @@ import (
 	chronyreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver"
 	digitaloceanreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver"
 	userstatsreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver"
+	certificatesreceiver "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/certificatesreceiver"
 )
 
 func components() (otelcol.Factories, error) {
@@ -61,7 +61,6 @@ func components() (otelcol.Factories, error) {
 	}
 
 	factories.Receivers, err = receiver.MakeFactoryMap(
-		prometheusexecreceiver.NewFactory(),
 		hostmetricsreceiver.NewFactory(),
 		otlpreceiver.NewFactory(),
 		journaldreceiver.NewFactory(),
@@ -73,6 +72,7 @@ func components() (otelcol.Factories, error) {
 		chronyreceiver.NewFactory(),
 		digitaloceanreceiver.NewFactory(),
 		userstatsreceiver.NewFactory(),
+		certificatesreceiver.NewFactory(),
 	)
 	if err != nil {
 		return otelcol.Factories{}, err

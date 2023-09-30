@@ -1,0 +1,26 @@
+receivers:
+  certificates:
+    collection_interval: 1m
+    certificate_include_globs: 
+      - "*.pem"
+    certificate_exclude_globs:
+      - "key.pem"
+
+processors:
+  batch:
+
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 64
+
+exporters:
+  logging:
+    verbosity: detailed
+
+service:
+  extensions: []
+  pipelines:
+    metrics:
+      receivers: [certificates]
+      processors: [memory_limiter, batch]
+      exporters: [logging]

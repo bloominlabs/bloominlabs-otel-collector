@@ -19,6 +19,7 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.85.0
+	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/certificatesreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.85.0
@@ -26,7 +27,6 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/jaegerreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.85.0
-	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver v0.82.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver v0.85.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver v0.85.0
@@ -180,7 +180,6 @@ require (
 	github.com/josharian/intern v1.0.0 // indirect
 	github.com/jpillora/backoff v1.0.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51 // indirect
 	github.com/klauspost/compress v1.16.7 // indirect
 	github.com/knadh/koanf/maps v0.1.1 // indirect
 	github.com/knadh/koanf/providers/confmap v0.1.0 // indirect
@@ -342,6 +341,8 @@ replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vault
 replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver => ./receiver/digitaloceanreceiver/
 
 replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver => ./receiver/userstatsreceiver/
+
+replace github.com/open-telemetry/opentelemetry-collector-contrib/receiver/certificatesreceiver => ./receiver/certificatesreceiver/
 
 // ambiguous import: found package cloud.google.com/go/compute/metadata in multiple modules
 replace cloud.google.com/go => cloud.google.com/go v0.110.2

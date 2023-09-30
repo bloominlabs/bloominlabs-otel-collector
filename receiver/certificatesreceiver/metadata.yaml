@@ -1,0 +1,26 @@
+type: certificates
+
+status:
+  class: receiver
+  stability:
+    alpha: [metrics]
+
+attributes:
+  filename:
+    description: The full path to the certificates being scraped
+    type: string
+  host.name:
+    description: The hostname being scraped
+    type: string
+  cn:
+    description: The name embedded into the certificates
+    type: string
+
+metrics:
+  certs.expires_in_seconds:
+    enabled: true
+    description: The duration until the certificates expires
+    unit: seconds
+    gauge:
+      value_type: int
+    attributes: [filename, host.name, cn]

@@ -2,7 +2,6 @@
 #
 # for more details
 receivers:
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusexecreceiver v0.82.0"
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.85.0"
   - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.85.0
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver v0.85.0"
@@ -14,6 +13,7 @@ receivers:
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver v0.85.0"
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver v0.85.0"
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver v0.85.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/certificatesreceiver v0.85.0"
 processors:
   - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.85.0
   - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.85.0"
@@ -47,3 +47,4 @@ replaces:
   - github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver => ./receiver/vaultkvreceiver
   - github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver => ./receiver/digitaloceanreceiver/
   - github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver => ./receiver/userstatsreceiver/
+  - github.com/open-telemetry/opentelemetry-collector-contrib/receiver/certificatesreceiver => ./receiver/certificatesreceiver/
