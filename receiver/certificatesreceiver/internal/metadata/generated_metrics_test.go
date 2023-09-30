@@ -56,7 +56,7 @@ func TestMetricsBuilder(t *testing.T) {
 
 			defaultMetricsCount++
 			allMetricsCount++
-			mb.RecordCertsExpiresInSecondsDataPoint(ts, 1, "filename-val", "host.name-val", "cn-val")
+			mb.RecordCertificatesCertExpiresInSecondsDataPoint(ts, 1, "filename-val", "host.name-val", "cn-val")
 
 			res := pcommon.NewResource()
 			metrics := mb.Emit(WithResource(res))
@@ -80,9 +80,9 @@ func TestMetricsBuilder(t *testing.T) {
 			validatedMetrics := make(map[string]bool)
 			for i := 0; i < ms.Len(); i++ {
 				switch ms.At(i).Name() {
-				case "certs.expires_in_seconds":
-					assert.False(t, validatedMetrics["certs.expires_in_seconds"], "Found a duplicate in the metrics slice: certs.expires_in_seconds")
-					validatedMetrics["certs.expires_in_seconds"] = true
+				case "certificates.cert_expires_in_seconds":
+					assert.False(t, validatedMetrics["certificates.cert_expires_in_seconds"], "Found a duplicate in the metrics slice: certificates.cert_expires_in_seconds")
+					validatedMetrics["certificates.cert_expires_in_seconds"] = true
 					assert.Equal(t, pmetric.MetricTypeGauge, ms.At(i).Type())
 					assert.Equal(t, 1, ms.At(i).Gauge().DataPoints().Len())
 					assert.Equal(t, "The duration until the certificates expires", ms.At(i).Description())

@@ -14,7 +14,7 @@ files:
   COPY ./receiver/vaultkvreceiver+receiver/vaultkvreceiver ./receiver/vaultkvreceiver/
   COPY ./receiver/digitaloceanreceiver+receiver/digitaloceanreceiver ./receiver/digitaloceanreceiver/
   COPY ./receiver/userstatsreceiver+receiver/userstatsreceiver ./receiver/userstatsreceiver/
-  COPY ./receiver/certificatereceiver+receiver/userstatsreceiver ./receiver/certificatereceiver/
+  COPY ./receiver/certificatesreceiver+receiver/certificatesreceiver ./receiver/certificatesreceiver/
 
 deps:
   FROM +files

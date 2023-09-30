@@ -12,7 +12,7 @@ metrics:
     enabled: false
 ```
 
-### certs.expires_in_seconds
+### certificates.cert_expires_in_seconds
 
 The duration until the certificates expires
 

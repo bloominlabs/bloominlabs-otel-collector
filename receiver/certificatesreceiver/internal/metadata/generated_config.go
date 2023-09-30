@@ -25,12 +25,12 @@ func (ms *MetricConfig) Unmarshal(parser *confmap.Conf) error {
 
 // MetricsConfig provides config for certificates metrics.
 type MetricsConfig struct {
-	CertsExpiresInSeconds MetricConfig `mapstructure:"certs.expires_in_seconds"`
+	CertificatesCertExpiresInSeconds MetricConfig `mapstructure:"certificates.cert_expires_in_seconds"`
 }
 
 func DefaultMetricsConfig() MetricsConfig {
 	return MetricsConfig{
-		CertsExpiresInSeconds: MetricConfig{
+		CertificatesCertExpiresInSeconds: MetricConfig{
 			Enabled: true,
 		},
 	}

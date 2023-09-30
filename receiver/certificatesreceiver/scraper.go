@@ -76,7 +76,7 @@ func (p *certificatesScraper) scrape(ctx context.Context) (pmetric.Metrics, erro
 		}
 
 		for _, result := range results {
-			p.mb.RecordCertsExpiresInSecondsDataPoint(now, int64(result.durationUntilExpiry), match, hostname, result.cn)
+			p.mb.RecordCertificatesCertExpiresInSecondsDataPoint(now, int64(result.durationUntilExpiry), match, hostname, result.cn)
 		}
 	}
 

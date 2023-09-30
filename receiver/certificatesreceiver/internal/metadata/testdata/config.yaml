@@ -1,9 +1,9 @@
 default:
 all_set:
   metrics:
-    certs.expires_in_seconds:
+    certificates.cert_expires_in_seconds:
       enabled: true
 none_set:
   metrics:
-    certs.expires_in_seconds:
+    certificates.cert_expires_in_seconds:
       enabled: false

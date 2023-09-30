@@ -17,7 +17,7 @@ attributes:
     type: string
 
 metrics:
-  certs.expires_in_seconds:
+  certificates.cert_expires_in_seconds:
     enabled: true
     description: The duration until the certificates expires
     unit: seconds
