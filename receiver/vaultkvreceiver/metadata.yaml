@@ -44,7 +44,7 @@ metrics:
     sum:
       value_type: int
       monotonic: true
-      aggregation: cumulative
+      aggregation_temporality: cumulative
     attributes: [key, mount, type]
   vaultkv.metadata.error:
     enabled: true
@@ -53,7 +53,7 @@ metrics:
     sum:
       value_type: int
       monotonic: false
-      aggregation: cumulative
+      aggregation_temporality: cumulative
     attributes: [key, mount, metadata_error_type]
   vaultkv.metadata:
     enabled: true
@@ -62,5 +62,5 @@ metrics:
     sum:
       value_type: int
       monotonic: false
-      aggregation: cumulative
+      aggregation_temporality: cumulative
     attributes: [key, mount, versions, current_version]

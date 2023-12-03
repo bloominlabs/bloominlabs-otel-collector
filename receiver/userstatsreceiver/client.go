@@ -70,9 +70,23 @@ func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]int
 		}
 
 		for _, version := range output.Versions {
+			if version.Key == nil {
+				pageErrors = multierror.Append(
+					pageErrors,
+					fmt.Errorf("version.Key was nil on page %d from '%s'. could not safely index", pageNum, c.bucket),
+				)
+				continue
+			}
 			userID := filepath.Dir(*version.Key)
 			// serverID := strings.Split(filepath.Base(*version.Key), ".")[0]
-			backupsMap[userID] += version.Size
+			if version.Size == nil {
+				pageErrors = multierror.Append(
+					pageErrors,
+					fmt.Errorf("version.Size was nil on page %d from '%s'. could not safely index", pageNum, c.bucket),
+				)
+				continue
+			}
+			backupsMap[userID] += *version.Size
 		}
 	}
 

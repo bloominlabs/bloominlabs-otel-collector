@@ -1,4 +1,4 @@
-VERSION=0.0.9
+VERSION=0.0.19
 
 earthly +build && \
   cp ./bin/bloominlabs-otel-collector ./bin/bloominlabs-otel-collector-linux-amd64 && \
