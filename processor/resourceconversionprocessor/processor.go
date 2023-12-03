@@ -36,6 +36,14 @@ func (rp *resourceProcessor) processMetrics(_ context.Context, md pmetric.Metric
 		if ok {
 			attributesMap.PutStr("service.name", serviceName.AsString())
 		}
+		nomadAllocID, ok := resource.Attributes().Get("nomad.alloc.id")
+		if ok {
+			attributesMap.PutStr("nomad.alloc.id", nomadAllocID.AsString())
+		}
+		nomadJobName, ok := resource.Attributes().Get("nomad.job.name")
+		if ok {
+			attributesMap.PutStr("nomad.job.name", nomadJobName.AsString())
+		}
 
 		ilms := rms.At(i).ScopeMetrics()
 		for j := 0; j < ilms.Len(); j++ {
