@@ -38,8 +38,11 @@ func (s *scraper) start(context.Context, component.Host) error {
 func (s *scraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 	now := pcommon.NewTimestampFromTime(time.Now())
 	account, _, err := s.config.Client.Account.Get(ctx)
-	s.mb.RecordDigitaloceanAccountDropletLimitDataPoint(now, int64(account.DropletLimit))
-	s.mb.RecordDigitaloceanAccountVolumeLimitDataPoint(now, int64(account.VolumeLimit))
+
+	if account != nil {
+		s.mb.RecordDigitaloceanAccountDropletLimitDataPoint(now, int64(account.DropletLimit))
+		s.mb.RecordDigitaloceanAccountVolumeLimitDataPoint(now, int64(account.VolumeLimit))
+	}
 
 	return s.mb.Emit(), err
 }

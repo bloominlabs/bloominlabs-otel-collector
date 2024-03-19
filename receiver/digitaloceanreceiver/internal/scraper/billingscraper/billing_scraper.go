@@ -46,17 +46,19 @@ func (s *scraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 	if err != nil {
 		return s.mb.Emit(), err
 	}
-	m2dUsage, err := strconv.ParseFloat(balance.MonthToDateUsage, 32)
-	if err != nil {
-		return s.mb.Emit(), fmt.Errorf("failed to convert month-to-day usage '%s': %w", balance.MonthToDateUsage, err)
+	if balance != nil {
+		m2dUsage, err := strconv.ParseFloat(balance.MonthToDateUsage, 32)
+		if err != nil {
+			return s.mb.Emit(), fmt.Errorf("failed to convert month-to-day usage '%s': %w", balance.MonthToDateUsage, err)
+		}
+		m2dBalance, err := strconv.ParseFloat(balance.MonthToDateBalance, 32)
+		if err != nil {
+			return s.mb.Emit(), fmt.Errorf("failed to convert month-to-day balance '%s': %w", balance.MonthToDateUsage, err)
+		}
+		s.mb.RecordDigitaloceanBillingGeneratedAtDataPoint(now, balance.GeneratedAt.Unix())
+		s.mb.RecordDigitaloceanBillingUsageDataPoint(now, m2dUsage)
+		s.mb.RecordDigitaloceanBillingBalanceDataPoint(now, m2dBalance)
 	}
-	m2dBalance, err := strconv.ParseFloat(balance.MonthToDateBalance, 32)
-	if err != nil {
-		return s.mb.Emit(), fmt.Errorf("failed to convert month-to-day balance '%s': %w", balance.MonthToDateUsage, err)
-	}
-	s.mb.RecordDigitaloceanBillingGeneratedAtDataPoint(now, balance.GeneratedAt.Unix())
-	s.mb.RecordDigitaloceanBillingUsageDataPoint(now, m2dUsage)
-	s.mb.RecordDigitaloceanBillingBalanceDataPoint(now, m2dBalance)
 
 	return s.mb.Emit(), nil
 }

@@ -26,7 +26,7 @@ const (
 // Config defines configuration for digitalocean receiver.
 type Config struct {
 	scraperhelper.ScraperControllerSettings `mapstructure:",squash"`
-	Scrapers                                map[string]internal.Config `mapstructure:"-"`
+	Scrapers                                map[string]internal.Config `mapstructure:"scrapers"`
 
 	// Token is used to provide a per-request ACL token
 	// which overrides the agent's default (empty) token.
@@ -64,9 +64,6 @@ func (cfg *Config) Unmarshal(componentParser *confmap.Conf) error {
 	if err != nil {
 		return err
 	}
-
-	// dynamically load the individual collector configs based on the key name
-	cfg.Scrapers = map[string]internal.Config{}
 
 	scrapersSection, err := componentParser.Sub(scrapersKey)
 	if err != nil {
