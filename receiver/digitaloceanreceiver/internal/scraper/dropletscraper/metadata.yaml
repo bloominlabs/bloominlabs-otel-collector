@@ -1,8 +1,7 @@
 type: digitaloceanreceiver/droplet
 
-# TODO: next otel release
-# parent: billing
-# id, name, region
+parent: digitalocean
+
 attributes:
   id:
     enabled: true

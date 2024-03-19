@@ -1,7 +1,6 @@
 type: digitaloceanreceiver/billing
 
-# TODO: next otel release
-# parent: billing
+parent: digitalocean
 
 metrics:
   digitalocean.billing.generated_at:

@@ -2,6 +2,8 @@
 
 # digitaloceanreceiver/account
 
+**Parent Component:** digitalocean
+
 ## Default Metrics
 
 The following metrics are emitted by default. Each of them can be disabled by applying the following configuration:

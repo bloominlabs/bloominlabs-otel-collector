@@ -1,5 +1,7 @@
 type: digitaloceanreceiver/account
 
+parent: digitalocean
+
 metrics:
   digitalocean.account.droplet_limit:
     enabled: true
