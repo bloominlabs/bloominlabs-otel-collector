@@ -26,9 +26,11 @@ import (
 )
 
 const (
-	typeStr = "userstats"
-
 	stability = component.StabilityLevelDevelopment
+)
+
+var (
+	typeStr = component.MustNewType("userstats")
 )
 
 func NewFactory() receiver.Factory {
@@ -59,7 +61,7 @@ func createMetricsReceiver(
 	rCfg := cfg.(*Config)
 
 	ns := newBackupsUtilizationScraper(set, rCfg, &defaultClientFactory{})
-	scraper, err := scraperhelper.NewScraper(typeStr, ns.scrape)
+	scraper, err := scraperhelper.NewScraper(typeStr.String(), ns.scrape)
 	if err != nil {
 		return nil, err
 	}

@@ -32,10 +32,12 @@ import (
 )
 
 const (
-	// The value of "type" key in configuration.
-	typeStr = "nomad"
-
 	stability = component.StabilityLevelDevelopment
+)
+
+var (
+	// The value of "type" key in configuration.
+	typeStr = component.MustNewType("nomad")
 )
 
 var processorCapabilities = consumer.Capabilities{MutatesData: true}

@@ -26,9 +26,11 @@ import (
 )
 
 const (
-	typeStr = "certificates"
-
 	stability = component.StabilityLevelDevelopment
+)
+
+var (
+	typeStr = component.MustNewType("certificates")
 )
 
 func NewFactory() receiver.Factory {
@@ -56,7 +58,7 @@ func createMetricsReceiver(
 	rCfg := cfg.(*Config)
 
 	ns := newCertificatesScraper(set, rCfg)
-	scraper, err := scraperhelper.NewScraper(typeStr, ns.scrape)
+	scraper, err := scraperhelper.NewScraper(typeStr.String(), ns.scrape)
 	if err != nil {
 		return nil, err
 	}

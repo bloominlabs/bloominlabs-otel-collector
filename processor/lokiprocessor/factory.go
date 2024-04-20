@@ -24,11 +24,13 @@ import (
 )
 
 const (
-	// The value of "type" key in configuration.
-	typeStr = "loki"
-
 	// The stability level of the processor.
 	stability = component.StabilityLevelDevelopment
+)
+
+var (
+	// The value of "type" key in configuration.
+	typeStr = component.MustNewType("loki")
 )
 
 var processorCapabilities = consumer.Capabilities{MutatesData: true}

@@ -26,9 +26,11 @@ import (
 )
 
 const (
-	typeStr = "vaultkv"
-
 	stability = component.StabilityLevelDevelopment
+)
+
+var (
+	typeStr = component.MustNewType("vaultkv")
 )
 
 func NewFactory() receiver.Factory {
@@ -55,7 +57,7 @@ func createMetricsReceiver(
 	rCfg := cfg.(*Config)
 
 	ns := newVaultKVScraper(set, rCfg, &defaultClientFactory{})
-	scraper, err := scraperhelper.NewScraper(typeStr, ns.scrape)
+	scraper, err := scraperhelper.NewScraper(typeStr.String(), ns.scrape)
 	if err != nil {
 		return nil, err
 	}

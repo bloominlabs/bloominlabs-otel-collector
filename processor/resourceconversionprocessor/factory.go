@@ -24,11 +24,13 @@ import (
 )
 
 const (
-	// The value of "type" key in configuration.
-	typeStr = "resourceconversion"
-
 	// The stability level of the processor.
 	stability = component.StabilityLevelDevelopment
+)
+
+var (
+	// The value of "type" key in configuration.
+	typeStr = component.MustNewType("resourceconversion")
 )
 
 var processorCapabilities = consumer.Capabilities{MutatesData: true}

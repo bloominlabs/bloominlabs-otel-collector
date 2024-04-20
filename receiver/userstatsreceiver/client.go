@@ -19,8 +19,8 @@ package userstatsreceiver // import "github.com/open-telemetry/opentelemetry-col
 import (
 	"context"
 	"fmt"
-	"path/filepath"
-	// "strings"
+	"strings"
+
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
@@ -77,7 +77,11 @@ func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]int
 				)
 				continue
 			}
-			userID := filepath.Dir(*version.Key)
+			fullPath := strings.Split(*version.Key, "/")
+			userID := fullPath[0]
+			if len(fullPath) > 2 {
+				userID += "-restic"
+			}
 			// serverID := strings.Split(filepath.Base(*version.Key), ".")[0]
 			if version.Size == nil {
 				pageErrors = multierror.Append(
