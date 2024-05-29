@@ -25,10 +25,12 @@ import (
 
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/hashicorp/go-multierror"
+
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver/internal/metadata"
 )
 
 type client interface {
-	listBackupsByUser(ctx context.Context) (map[string]int64, error)
+	listBackupsByUser(ctx context.Context) (map[string]map[metadata.AttributeType]int64, error)
 }
 
 type userStatsClient struct {
@@ -45,8 +47,8 @@ func newBackupsUtilizationClient(client *s3.Client, bucket string) (*userStatsCl
 	}, nil
 }
 
-func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]int64, error) {
-	backupsMap := make(map[string]int64)
+func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]map[metadata.AttributeType]int64, error) {
+	backupsMap := make(map[string]map[metadata.AttributeType]int64)
 	client := c.client
 
 	params := &s3.ListObjectVersionsInput{
@@ -79,8 +81,9 @@ func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]int
 			}
 			fullPath := strings.Split(*version.Key, "/")
 			userID := fullPath[0]
+			backupType := metadata.AttributeTypeLegacy
 			if len(fullPath) > 2 {
-				userID += "-restic"
+				backupType = metadata.AttributeTypeRestic
 			}
 			// serverID := strings.Split(filepath.Base(*version.Key), ".")[0]
 			if version.Size == nil {
@@ -90,7 +93,10 @@ func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]int
 				)
 				continue
 			}
-			backupsMap[userID] += *version.Size
+			if backupsMap[userID] == nil {
+				backupsMap[userID] = make(map[metadata.AttributeType]int64)
+			}
+			backupsMap[userID][backupType] += *version.Size
 		}
 	}
 

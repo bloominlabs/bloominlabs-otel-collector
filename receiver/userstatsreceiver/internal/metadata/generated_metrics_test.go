@@ -57,7 +57,7 @@ func TestMetricsBuilder(t *testing.T) {
 
 			defaultMetricsCount++
 			allMetricsCount++
-			mb.RecordBackupsTotalSizeDataPoint(ts, 1, "user.id-val")
+			mb.RecordBackupsTotalSizeDataPoint(ts, 1, "user.id-val", AttributeTypeLegacy)
 
 			res := pcommon.NewResource()
 			metrics := mb.Emit(WithResource(res))
@@ -96,6 +96,9 @@ func TestMetricsBuilder(t *testing.T) {
 					attrVal, ok := dp.Attributes().Get("user.id")
 					assert.True(t, ok)
 					assert.EqualValues(t, "user.id-val", attrVal.Str())
+					attrVal, ok = dp.Attributes().Get("type")
+					assert.True(t, ok)
+					assert.EqualValues(t, "legacy", attrVal.Str())
 				}
 			}
 		})

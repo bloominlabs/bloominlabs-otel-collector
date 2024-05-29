@@ -90,12 +90,15 @@ func (p *userStatsScraper) scrape(ctx context.Context) (pmetric.Metrics, error) 
 		return pmetric.NewMetrics(), err
 	}
 
-	for userID, size := range backupsMap {
-		p.mb.RecordBackupsTotalSizeDataPoint(
-			now,
-			size,
-			userID,
-		)
+	for userID, sizeByType := range backupsMap {
+		for backupType, size := range sizeByType {
+			p.mb.RecordBackupsTotalSizeDataPoint(
+				now,
+				size,
+				userID,
+				backupType,
+			)
+		}
 	}
 
 	return p.mb.Emit(), errors.Combine()

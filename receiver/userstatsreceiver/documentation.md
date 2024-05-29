@@ -25,3 +25,4 @@ The total size of the user's backups
 | Name | Description | Values |
 | ---- | ----------- | ------ |
 | user.id | The stratos.host user the metric belongs to | Any Str |
+| type | The type of backup | Str: ``legacy``, ``restic`` |

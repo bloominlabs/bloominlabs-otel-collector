@@ -11,6 +11,32 @@ import (
 	"go.opentelemetry.io/collector/receiver"
 )
 
+// AttributeType specifies the a value type attribute.
+type AttributeType int
+
+const (
+	_ AttributeType = iota
+	AttributeTypeLegacy
+	AttributeTypeRestic
+)
+
+// String returns the string representation of the AttributeType.
+func (av AttributeType) String() string {
+	switch av {
+	case AttributeTypeLegacy:
+		return "legacy"
+	case AttributeTypeRestic:
+		return "restic"
+	}
+	return ""
+}
+
+// MapAttributeType is a helper map of string to AttributeType attribute value.
+var MapAttributeType = map[string]AttributeType{
+	"legacy": AttributeTypeLegacy,
+	"restic": AttributeTypeRestic,
+}
+
 type metricBackupsTotalSize struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	config   MetricConfig   // metric config provided by user.
@@ -26,7 +52,7 @@ func (m *metricBackupsTotalSize) init() {
 	m.data.Gauge().DataPoints().EnsureCapacity(m.capacity)
 }
 
-func (m *metricBackupsTotalSize) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64, userIDAttributeValue string) {
+func (m *metricBackupsTotalSize) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64, userIDAttributeValue string, typeAttributeValue string) {
 	if !m.config.Enabled {
 		return
 	}
@@ -35,6 +61,7 @@ func (m *metricBackupsTotalSize) recordDataPoint(start pcommon.Timestamp, ts pco
 	dp.SetTimestamp(ts)
 	dp.SetIntValue(val)
 	dp.Attributes().PutStr("user.id", userIDAttributeValue)
+	dp.Attributes().PutStr("type", typeAttributeValue)
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
@@ -168,8 +195,8 @@ func (mb *MetricsBuilder) Emit(rmo ...ResourceMetricsOption) pmetric.Metrics {
 }
 
 // RecordBackupsTotalSizeDataPoint adds a data point to backups.total_size metric.
-func (mb *MetricsBuilder) RecordBackupsTotalSizeDataPoint(ts pcommon.Timestamp, val int64, userIDAttributeValue string) {
-	mb.metricBackupsTotalSize.recordDataPoint(mb.startTime, ts, val, userIDAttributeValue)
+func (mb *MetricsBuilder) RecordBackupsTotalSizeDataPoint(ts pcommon.Timestamp, val int64, userIDAttributeValue string, typeAttributeValue AttributeType) {
+	mb.metricBackupsTotalSize.recordDataPoint(mb.startTime, ts, val, userIDAttributeValue, typeAttributeValue.String())
 }
 
 // Reset resets metrics builder to its initial state. It should be used when external metrics source is restarted,
