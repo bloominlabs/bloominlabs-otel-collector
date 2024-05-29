@@ -2,44 +2,43 @@
 #
 # for more details
 receivers:
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.96.0"
-  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.96.0
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/jaegerreceiver v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/certificatesreceiver v0.96.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/hostmetricsreceiver v0.101.0"
+  - gomod: go.opentelemetry.io/collector/receiver/otlpreceiver v0.101.0
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/journaldreceiver v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/prometheusreceiver v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/filelogreceiver v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/jaegerreceiver v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/postgresqlreceiver v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/chronyreceiver v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/certificatesreceiver v0.101.0"
 processors:
-  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.96.0
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor v0.96.0"
-  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.96.0
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.96.0"
+  - gomod: go.opentelemetry.io/collector/processor/batchprocessor v0.101.0
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor v0.101.0"
+  - gomod: go.opentelemetry.io/collector/processor/memorylimiterprocessor v0.101.0
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/filterprocessor v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourcedetectionprocessor v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/attributesprocessor v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/processor/metricstransformprocessor v0.101.0"
 exporters:
-  - gomod: go.opentelemetry.io/collector/exporter/loggingexporter v0.96.0
-  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.96.0
-  - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.96.0
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/lokiexporter v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusremotewriteexporter v0.96.0"
+  - gomod: go.opentelemetry.io/collector/exporter/loggingexporter v0.101.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlpexporter v0.101.0
+  - gomod: go.opentelemetry.io/collector/exporter/otlphttpexporter v0.101.0
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/lokiexporter v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusremotewriteexporter v0.101.0"
 extensions:
-  - gomod: "go.opentelemetry.io/collector/extension/ballastextension v0.96.0"
-  - gomod: "go.opentelemetry.io/collector/extension/zpagesextension v0.96.0"
+  - gomod: "go.opentelemetry.io/collector/extension/ballastextension v0.101.0"
+  - gomod: "go.opentelemetry.io/collector/extension/zpagesextension v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/basicauthextension v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/pprofextension v0.101.0"
+  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.101.0"
+  - gomod: github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage v0.101.0
 
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/basicauthextension v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/pprofextension v0.96.0"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage v0.96.0"
-    import: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage"
-  - gomod: "github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.96.0"
 replaces:
   - github.com/open-telemetry/opentelemetry-collector-contrib/processor/lokiprocessor => ./processor/lokiprocessor
   - github.com/open-telemetry/opentelemetry-collector-contrib/processor/nomadprocessor => ./processor/nomadprocessor

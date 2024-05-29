@@ -18,8 +18,8 @@ import (
 	zpagesextension "go.opentelemetry.io/collector/extension/zpagesextension"
 	basicauthextension "github.com/open-telemetry/opentelemetry-collector-contrib/extension/basicauthextension"
 	pprofextension "github.com/open-telemetry/opentelemetry-collector-contrib/extension/pprofextension"
-	filestorage "github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage"
 	healthcheckextension "github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension"
+	filestorage "github.com/open-telemetry/opentelemetry-collector-contrib/extension/storage/filestorage"
 	batchprocessor "go.opentelemetry.io/collector/processor/batchprocessor"
 	resourceprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceprocessor"
 	resourceconversionprocessor "github.com/open-telemetry/opentelemetry-collector-contrib/processor/resourceconversionprocessor"
@@ -53,8 +53,8 @@ func components() (otelcol.Factories, error) {
 		zpagesextension.NewFactory(),
 		basicauthextension.NewFactory(),
 		pprofextension.NewFactory(),
-		filestorage.NewFactory(),
 		healthcheckextension.NewFactory(),
+		filestorage.NewFactory(),
 	)
 	if err != nil {
 		return otelcol.Factories{}, err

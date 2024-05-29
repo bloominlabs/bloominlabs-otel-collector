@@ -25,7 +25,7 @@ const (
 
 // Config defines configuration for digitalocean receiver.
 type Config struct {
-	scraperhelper.ScraperControllerSettings `mapstructure:",squash"`
+	scraperhelper.ControllerConfig `mapstructure:",squash"`
 	Scrapers                                map[string]internal.Config `mapstructure:"scrapers"`
 
 	// Token is used to provide a per-request ACL token

@@ -42,10 +42,10 @@ func NewFactory() receiver.Factory {
 
 func createDefaultConfig() component.Config {
 	return &Config{
-		CertificateIncludeGlobs:   []string{"/etc/*/tls/*.pem"},
-		CertificateExcludeGlobs:   []string{"/etc/*/tls/*.key.pem"},
-		ScraperControllerSettings: scraperhelper.NewDefaultScraperControllerSettings(typeStr),
-		MetricsBuilderConfig:      metadata.DefaultMetricsBuilderConfig(),
+		CertificateIncludeGlobs: []string{"/etc/*/tls/*.pem"},
+		CertificateExcludeGlobs: []string{"/etc/*/tls/*.key.pem"},
+		ControllerConfig:        scraperhelper.NewDefaultControllerConfig(),
+		MetricsBuilderConfig:    metadata.DefaultMetricsBuilderConfig(),
 	}
 }
 
@@ -64,7 +64,7 @@ func createMetricsReceiver(
 	}
 
 	return scraperhelper.NewScraperControllerReceiver(
-		&rCfg.ScraperControllerSettings, set, consumer,
+		&rCfg.ControllerConfig, set, consumer,
 		scraperhelper.AddScraper(scraper),
 	)
 }

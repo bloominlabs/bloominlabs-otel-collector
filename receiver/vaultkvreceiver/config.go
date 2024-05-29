@@ -30,7 +30,7 @@ const (
 type Config struct {
 	Mount                                   string `mapstructure:"mount"`
 	URL                                     string `mapstructure:"url"`
-	scraperhelper.ScraperControllerSettings `mapstructure:",squash"`
+	scraperhelper.ControllerConfig `mapstructure:",squash"`
 	metadata.MetricsBuilderConfig           `mapstructure:",squash"`
 }
 

@@ -32,7 +32,7 @@ type Config struct {
 	AccessKeyID                             string `mapstructure:"access_key_id"`
 	SecretAccessKey                         string `mapstructure:"secret_access_key"`
 	Bucket                                  string `mapstructure:"bucket_name"`
-	scraperhelper.ScraperControllerSettings `mapstructure:",squash"`
+	scraperhelper.ControllerConfig `mapstructure:",squash"`
 	metadata.MetricsBuilderConfig           `mapstructure:",squash"`
 }
 

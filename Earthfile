@@ -1,13 +1,14 @@
 # https://github.com/hashicorp/vault/pull/12358
-VERSION 0.6
-FROM golang:1.21
+VERSION 0.8
+FROM golang:1.22
 WORKDIR /bloominlabs-otel-collector
 
 tools:
-  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.96.0
-  RUN GO111MODULE=on go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/mdatagen@v0.96.0
+  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.101.0
+  # https://github.com/open-telemetry/opentelemetry-collector/issues/9281
+  # RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/mdatagen@v0.101.0
   SAVE ARTIFACT /go/bin/builder
-  SAVE ARTIFACT /go/bin/mdatagen
+  # SAVE ARTIFACT /go/bin/mdatagen
 
 files:
   COPY ./processor/ ./processor/
