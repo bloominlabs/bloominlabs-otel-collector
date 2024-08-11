@@ -25,7 +25,6 @@ deps:
   SAVE ARTIFACT go.sum AS LOCAL go.sum
 
 certs:
-  LOCALLY
   RUN curl -k https://vault.prod.stratos.host:8200/v1/internal/ca/pem > internal.pem
   SAVE ARTIFACT internal.pem
 
