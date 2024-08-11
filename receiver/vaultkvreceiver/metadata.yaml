@@ -49,7 +49,7 @@ metrics:
   vaultkv.metadata.error:
     enabled: true
     description: Errors reported while trying to fetch metrics.
-    unit: 1
+    unit: "1"
     sum:
       value_type: int
       monotonic: false
@@ -58,7 +58,7 @@ metrics:
   vaultkv.metadata:
     enabled: true
     description: Metadata about the key.
-    unit: 1
+    unit: "1"
     sum:
       value_type: int
       monotonic: false

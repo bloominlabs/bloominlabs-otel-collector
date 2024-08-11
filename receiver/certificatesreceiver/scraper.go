@@ -43,7 +43,7 @@ type certificatesScraper struct {
 type defaultClientFactory struct{}
 
 func newCertificatesScraper(
-	settings receiver.CreateSettings,
+	settings receiver.Settings,
 	config *Config,
 ) *certificatesScraper {
 	return &certificatesScraper{

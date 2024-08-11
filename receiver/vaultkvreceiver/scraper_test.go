@@ -37,7 +37,7 @@ func TestUnsuccessfulScrape(t *testing.T) {
 	cfg := factory.CreateDefaultConfig().(*Config)
 	cfg.Mount = "test/"
 
-	scraper := newVaultKVScraper(receivertest.NewNopCreateSettings(), cfg, &defaultClientFactory{})
+	scraper := newVaultKVScraper(receivertest.NewNopSettings(), cfg, &defaultClientFactory{})
 	actualMetrics, err := scraper.scrape(context.Background())
 	require.Error(t, err)
 
@@ -90,7 +90,7 @@ func TestScraper(t *testing.T) {
 			factory.initMocks(tC.secrets)
 
 			cfg := createDefaultConfig().(*Config)
-			scraper := newVaultKVScraper(receivertest.NewNopCreateSettings(), cfg, factory)
+			scraper := newVaultKVScraper(receivertest.NewNopSettings(), cfg, factory)
 
 			actualMetrics, err := scraper.scrape(context.Background())
 			require.NoError(t, err)

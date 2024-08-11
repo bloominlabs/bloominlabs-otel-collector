@@ -11,6 +11,36 @@ import (
 	"go.opentelemetry.io/collector/receiver"
 )
 
+// AttributeType specifies the a value type attribute.
+type AttributeType int
+
+const (
+	_ AttributeType = iota
+	AttributeTypeLegacy
+	AttributeTypeRestic
+	AttributeTypeKopia
+)
+
+// String returns the string representation of the AttributeType.
+func (av AttributeType) String() string {
+	switch av {
+	case AttributeTypeLegacy:
+		return "legacy"
+	case AttributeTypeRestic:
+		return "restic"
+	case AttributeTypeKopia:
+		return "kopia"
+	}
+	return ""
+}
+
+// MapAttributeType is a helper map of string to AttributeType attribute value.
+var MapAttributeType = map[string]AttributeType{
+	"legacy": AttributeTypeLegacy,
+	"restic": AttributeTypeRestic,
+	"kopia":  AttributeTypeKopia,
+}
+
 type metricBackupsTotalSize struct {
 	data     pmetric.Metric // data buffer for generated metric.
 	config   MetricConfig   // metric config provided by user.
@@ -26,7 +56,7 @@ func (m *metricBackupsTotalSize) init() {
 	m.data.Gauge().DataPoints().EnsureCapacity(m.capacity)
 }
 
-func (m *metricBackupsTotalSize) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64, userIDAttributeValue string) {
+func (m *metricBackupsTotalSize) recordDataPoint(start pcommon.Timestamp, ts pcommon.Timestamp, val int64, userIDAttributeValue string, typeAttributeValue string) {
 	if !m.config.Enabled {
 		return
 	}
@@ -35,6 +65,7 @@ func (m *metricBackupsTotalSize) recordDataPoint(start pcommon.Timestamp, ts pco
 	dp.SetTimestamp(ts)
 	dp.SetIntValue(val)
 	dp.Attributes().PutStr("user.id", userIDAttributeValue)
+	dp.Attributes().PutStr("type", typeAttributeValue)
 }
 
 // updateCapacity saves max length of data point slices that will be used for the slice capacity.
@@ -83,7 +114,7 @@ func WithStartTime(startTime pcommon.Timestamp) metricBuilderOption {
 	}
 }
 
-func NewMetricsBuilder(mbc MetricsBuilderConfig, settings receiver.CreateSettings, options ...metricBuilderOption) *MetricsBuilder {
+func NewMetricsBuilder(mbc MetricsBuilderConfig, settings receiver.Settings, options ...metricBuilderOption) *MetricsBuilder {
 	mb := &MetricsBuilder{
 		config:                 mbc,
 		startTime:              pcommon.NewTimestampFromTime(time.Now()),
@@ -91,6 +122,7 @@ func NewMetricsBuilder(mbc MetricsBuilderConfig, settings receiver.CreateSetting
 		buildInfo:              settings.BuildInfo,
 		metricBackupsTotalSize: newMetricBackupsTotalSize(mbc.Metrics.BackupsTotalSize),
 	}
+
 	for _, op := range options {
 		op(mb)
 	}
@@ -143,7 +175,7 @@ func WithStartTimeOverride(start pcommon.Timestamp) ResourceMetricsOption {
 func (mb *MetricsBuilder) EmitForResource(rmo ...ResourceMetricsOption) {
 	rm := pmetric.NewResourceMetrics()
 	ils := rm.ScopeMetrics().AppendEmpty()
-	ils.Scope().SetName("otelcol/userstatsreceiver")
+	ils.Scope().SetName("github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver")
 	ils.Scope().SetVersion(mb.buildInfo.Version)
 	ils.Metrics().EnsureCapacity(mb.metricsCapacity)
 	mb.metricBackupsTotalSize.emit(ils.Metrics())
@@ -151,6 +183,7 @@ func (mb *MetricsBuilder) EmitForResource(rmo ...ResourceMetricsOption) {
 	for _, op := range rmo {
 		op(rm)
 	}
+
 	if ils.Metrics().Len() > 0 {
 		mb.updateCapacity(rm)
 		rm.MoveTo(mb.metricsBuffer.ResourceMetrics().AppendEmpty())
@@ -168,8 +201,8 @@ func (mb *MetricsBuilder) Emit(rmo ...ResourceMetricsOption) pmetric.Metrics {
 }
 
 // RecordBackupsTotalSizeDataPoint adds a data point to backups.total_size metric.
-func (mb *MetricsBuilder) RecordBackupsTotalSizeDataPoint(ts pcommon.Timestamp, val int64, userIDAttributeValue string) {
-	mb.metricBackupsTotalSize.recordDataPoint(mb.startTime, ts, val, userIDAttributeValue)
+func (mb *MetricsBuilder) RecordBackupsTotalSizeDataPoint(ts pcommon.Timestamp, val int64, userIDAttributeValue string, typeAttributeValue AttributeType) {
+	mb.metricBackupsTotalSize.recordDataPoint(mb.startTime, ts, val, userIDAttributeValue, typeAttributeValue.String())
 }
 
 // Reset resets metrics builder to its initial state. It should be used when external metrics source is restarted,

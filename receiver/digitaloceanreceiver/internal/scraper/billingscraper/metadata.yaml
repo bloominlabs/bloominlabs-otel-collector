@@ -13,13 +13,13 @@ metrics:
   digitalocean.billing.balance:
     enabled: true
     description: Balance as of `digitalocean.billing.generate_at` time.
-    unit: 1
+    unit: "1"
     gauge:
       value_type: double
 
   digitalocean.billing.usage:
     enabled: true
     description: Amount used in the current billing period as of the `digitalocean.billing.generate_at` time
-    unit: 1
+    unit: "1"
     gauge:
       value_type: double

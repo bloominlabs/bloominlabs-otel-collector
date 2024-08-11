@@ -13,7 +13,7 @@ deps:
 receiver:
   FROM +deps
   
-  COPY ../../../bloominlabs-otel-collector+tools/mdatagen /go/bin/
+  # COPY ../../../bloominlabs-otel-collector+tools/mdatagen /go/bin/
   COPY *.go .
   COPY internal/ ./internal
 

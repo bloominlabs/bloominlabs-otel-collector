@@ -9,6 +9,10 @@ attributes:
   user.id:
     description: The stratos.host user the metric belongs to
     type: string
+  type:
+    description: The type of backup
+    type: string
+    enum: [legacy, restic, kopia]
 
 metrics:
   backups.total_size:
@@ -17,4 +21,4 @@ metrics:
     unit: bytes
     gauge:
       value_type: int
-    attributes: [user.id]
+    attributes: [user.id, type]

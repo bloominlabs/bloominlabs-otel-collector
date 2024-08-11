@@ -23,12 +23,15 @@ import (
 
 	"time"
 
+	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/hashicorp/go-multierror"
+
+	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver/internal/metadata"
 )
 
 type client interface {
-	listBackupsByUser(ctx context.Context) (map[string]int64, error)
+	listBackupsByUser(ctx context.Context) (map[string]map[metadata.AttributeType]int64, error)
 }
 
 type userStatsClient struct {
@@ -45,21 +48,26 @@ func newBackupsUtilizationClient(client *s3.Client, bucket string) (*userStatsCl
 	}, nil
 }
 
-func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]int64, error) {
-	backupsMap := make(map[string]int64)
+func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]map[metadata.AttributeType]int64, error) {
+	backupsMap := make(map[string]map[metadata.AttributeType]int64)
 	client := c.client
 
 	params := &s3.ListObjectVersionsInput{
-		Bucket: &c.bucket,
+		Bucket:  &c.bucket,
+		MaxKeys: aws.Int32(1000),
 	}
 
 	maxPages := 1000
-	pageNum := 0
+	pageNum := -1
 	p := s3.NewListObjectVersionsPaginator(client, params)
 	var pageErrors error
 	for p.HasMorePages() && pageNum < maxPages {
-		ctx, cancel := context.WithTimeout(ctx, time.Second*5)
-		output, err := p.NextPage(ctx)
+		if ctx.Err() != nil {
+			return backupsMap, pageErrors
+		}
+		pageNum = pageNum + 1
+		pageCtx, cancel := context.WithTimeout(ctx, time.Second*2)
+		output, err := p.NextPage(pageCtx)
 		cancel()
 		if err != nil {
 			pageErrors = multierror.Append(
@@ -77,12 +85,13 @@ func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]int
 				)
 				continue
 			}
-			fullPath := strings.Split(*version.Key, "/")
-			userID := fullPath[0]
-			if len(fullPath) > 2 {
-				userID += "-restic"
+			fullPath := strings.Split(strings.TrimSuffix(*version.Key, "/"), "/")
+			if len(fullPath) < 3 {
+				continue
 			}
-			// serverID := strings.Split(filepath.Base(*version.Key), ".")[0]
+			userID := fullPath[0]
+			// serverID := fullPath[1]
+			backupType := metadata.MapAttributeType[strings.Split(fullPath[2], ".")[0]] // rmeove any .tar.gz prefix
 			if version.Size == nil {
 				pageErrors = multierror.Append(
 					pageErrors,
@@ -90,7 +99,10 @@ func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]int
 				)
 				continue
 			}
-			backupsMap[userID] += *version.Size
+			if backupsMap[userID] == nil {
+				backupsMap[userID] = make(map[metadata.AttributeType]int64)
+			}
+			backupsMap[userID][backupType] += *version.Size
 		}
 	}
 

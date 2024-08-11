@@ -36,12 +36,12 @@ jobs:
       - name: build bloominlabs-otel-collector
         if: github.event_name == 'pull_request'
         run: |
-          earthly --ci +release
+          earthly --use-inline-cache --save-inline-cache +release
       - name: build bloominlabs-otel-collector (push)
         if: github.event_name == 'push' && (github.ref == 'refs/heads/main' || startsWith(github.ref, 'refs/tags/'))
         run: |
           # cannot use --ci since it implies --no-output which wouldn't allow the release 
-          earthly --use-inline-cache --save-inline-cache --strict --push +release
+          earthly --use-inline-cache --save-inline-cache --push +release
       - name: Create Release
         if: startsWith(github.ref, 'refs/tags/')
         id: create_release
