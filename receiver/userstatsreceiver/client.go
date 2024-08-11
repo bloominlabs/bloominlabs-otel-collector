@@ -69,11 +69,6 @@ func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]map
 		pageCtx, cancel := context.WithTimeout(ctx, time.Second*2)
 		output, err := p.NextPage(pageCtx)
 		cancel()
-		if output != nil {
-			fmt.Println(p.HasMorePages(), pageNum, len(output.Versions), len(output.DeleteMarkers))
-		} else {
-			fmt.Println(p.HasMorePages(), pageNum, err)
-		}
 		if err != nil {
 			pageErrors = multierror.Append(
 				pageErrors,
