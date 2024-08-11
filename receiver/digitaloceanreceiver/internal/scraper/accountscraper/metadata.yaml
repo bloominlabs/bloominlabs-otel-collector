@@ -6,13 +6,13 @@ metrics:
   digitalocean.account.droplet_limit:
     enabled: true
     description: Number of droplets the account is allowed to have
-    unit: 1
+    unit: "1"
     gauge:
       value_type: int
 
   digitalocean.account.volume_limit:
     enabled: true
     description: Number of volumes the account is allowed to have
-    unit: 1
+    unit: "1"
     gauge:
       value_type: int

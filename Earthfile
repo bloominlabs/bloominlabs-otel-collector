@@ -1,13 +1,13 @@
 # https://github.com/hashicorp/vault/pull/12358
-VERSION 0.6
-FROM golang:1.21
+VERSION 0.8
+FROM golang:1.22
 WORKDIR /bloominlabs-otel-collector
 
 tools:
-  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.96.0
-  RUN GO111MODULE=on go install github.com/open-telemetry/opentelemetry-collector-contrib/cmd/mdatagen@v0.96.0
+  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.106.1
+  # RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/mdatagen@v0.98.0
   SAVE ARTIFACT /go/bin/builder
-  SAVE ARTIFACT /go/bin/mdatagen
+  # SAVE ARTIFACT /go/bin/mdatagen
 
 files:
   COPY ./processor/ ./processor/
@@ -25,8 +25,9 @@ deps:
   SAVE ARTIFACT go.sum AS LOCAL go.sum
 
 certs:
-  RUN curl -k https://vault.prod.stratos.host:8200/v1/internal/ca/pem > /etc/ssl/certs/internal.pem
-  SAVE ARTIFACT /etc/ssl/certs/internal.pem
+  LOCALLY
+  RUN curl -k https://vault.prod.stratos.host:8200/v1/internal/ca/pem > internal.pem
+  SAVE ARTIFACT internal.pem
 
 generate:
   FROM +deps
@@ -51,7 +52,7 @@ release:
   SAVE ARTIFACT SHA256SUMS AS LOCAL ./bin/SHA256SUMS
 
 docker:
-  FROM --platform=linux/amd64 gcr.io/distroless/base-debian11:debug-nonroot
+  FROM --platform=linux/amd64 gcr.io/distroless/base-debian12:debug-nonroot
   COPY +certs/internal.pem /etc/ssl/certs/internal.pem
   COPY +build/bloominlabs-otel-collector .
   ENTRYPOINT ["./bloominlabs-otel-collector"]

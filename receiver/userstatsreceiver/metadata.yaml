@@ -12,7 +12,7 @@ attributes:
   type:
     description: The type of backup
     type: string
-    enum: [legacy, restic]
+    enum: [legacy, restic, kopia]
 
 metrics:
   backups.total_size:

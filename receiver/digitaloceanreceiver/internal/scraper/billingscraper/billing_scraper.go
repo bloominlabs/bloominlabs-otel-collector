@@ -21,13 +21,13 @@ import (
 
 // scraper for Billing Metrics
 type scraper struct {
-	settings receiver.CreateSettings
+	settings receiver.Settings
 	config   *Config
 	mb       *metadata.MetricsBuilder
 }
 
 // newBillingScraper creates a set of billing related metrics
-func newBillingScraper(_ context.Context, settings receiver.CreateSettings, cfg *Config) *scraper {
+func newBillingScraper(_ context.Context, settings receiver.Settings, cfg *Config) *scraper {
 	return &scraper{
 		settings: settings,
 		config:   cfg,

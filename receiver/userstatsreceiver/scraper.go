@@ -49,7 +49,7 @@ func (d *defaultClientFactory) getClient(c *s3.Client, bucketName string) (clien
 }
 
 func newBackupsUtilizationScraper(
-	settings receiver.CreateSettings,
+	settings receiver.Settings,
 	config *Config,
 	clientFactory userStatsClientFactory,
 ) *userStatsScraper {
@@ -69,6 +69,7 @@ func newBackupsUtilizationScraper(
 
 // scrape scrapes the metric stats, transforms them and attributes them into a metric slices.
 func (p *userStatsScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
+	p.logger.Info("starting scrape")
 	s3Client, err := p.s3Config.GetClient()
 
 	if err != nil {
@@ -84,7 +85,10 @@ func (p *userStatsScraper) scrape(ctx context.Context) (pmetric.Metrics, error) 
 	now := pcommon.NewTimestampFromTime(time.Now())
 
 	var errors scrapererror.ScrapeErrors
+	p.logger.Info("starting about to list backups")
 	backupsMap, err := client.listBackupsByUser(ctx)
+	p.logger.Info("stopping list backups")
+
 	if err != nil {
 		p.logger.Error("failed to list backups", zap.Error(err))
 		return pmetric.NewMetrics(), err

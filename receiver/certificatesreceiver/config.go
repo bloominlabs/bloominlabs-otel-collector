@@ -27,7 +27,7 @@ const (
 )
 
 type Config struct {
-	scraperhelper.ScraperControllerSettings `mapstructure:",squash"`
+	scraperhelper.ControllerConfig `mapstructure:",squash"`
 	metadata.MetricsBuilderConfig           `mapstructure:",squash"`
 
 	CertificateIncludeGlobs []string `mapstructure:"certificate_include_globs"`

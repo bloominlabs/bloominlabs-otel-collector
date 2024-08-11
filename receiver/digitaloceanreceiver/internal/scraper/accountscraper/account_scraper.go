@@ -17,13 +17,13 @@ import (
 
 // scraper for Account Metrics
 type scraper struct {
-	settings receiver.CreateSettings
+	settings receiver.Settings
 	config   *Config
 	mb       *metadata.MetricsBuilder
 }
 
 // newDropletScraper creates a set of account related metrics
-func newDropletScraper(_ context.Context, settings receiver.CreateSettings, cfg *Config) *scraper {
+func newDropletScraper(_ context.Context, settings receiver.Settings, cfg *Config) *scraper {
 	return &scraper{
 		settings: settings,
 		config:   cfg,

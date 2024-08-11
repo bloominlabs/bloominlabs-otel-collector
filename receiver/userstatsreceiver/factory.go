@@ -42,19 +42,19 @@ func NewFactory() receiver.Factory {
 
 func createDefaultConfig() component.Config {
 	return &Config{
-		Endpoint:                  "digitaloceanspaces.com",
-		Region:                    "sfo3",
-		AccessKeyID:               "",
-		SecretAccessKey:           "",
-		Bucket:                    "dev-stratos-server-backups",
-		ScraperControllerSettings: scraperhelper.NewDefaultScraperControllerSettings(typeStr),
-		MetricsBuilderConfig:      metadata.DefaultMetricsBuilderConfig(),
+		Endpoint:             "digitaloceanspaces.com",
+		Region:               "sfo3",
+		AccessKeyID:          "",
+		SecretAccessKey:      "",
+		Bucket:               "dev-stratos-server-backups",
+		ControllerConfig:     scraperhelper.NewDefaultControllerConfig(),
+		MetricsBuilderConfig: metadata.DefaultMetricsBuilderConfig(),
 	}
 }
 
 func createMetricsReceiver(
 	ctx context.Context,
-	set receiver.CreateSettings,
+	set receiver.Settings,
 	cfg component.Config,
 	consumer consumer.Metrics,
 ) (receiver.Metrics, error) {
@@ -67,7 +67,7 @@ func createMetricsReceiver(
 	}
 
 	return scraperhelper.NewScraperControllerReceiver(
-		&rCfg.ScraperControllerSettings, set, consumer,
+		&rCfg.ControllerConfig, set, consumer,
 		scraperhelper.AddScraper(scraper),
 	)
 }

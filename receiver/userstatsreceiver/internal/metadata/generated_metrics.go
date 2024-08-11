@@ -18,6 +18,7 @@ const (
 	_ AttributeType = iota
 	AttributeTypeLegacy
 	AttributeTypeRestic
+	AttributeTypeKopia
 )
 
 // String returns the string representation of the AttributeType.
@@ -27,6 +28,8 @@ func (av AttributeType) String() string {
 		return "legacy"
 	case AttributeTypeRestic:
 		return "restic"
+	case AttributeTypeKopia:
+		return "kopia"
 	}
 	return ""
 }
@@ -35,6 +38,7 @@ func (av AttributeType) String() string {
 var MapAttributeType = map[string]AttributeType{
 	"legacy": AttributeTypeLegacy,
 	"restic": AttributeTypeRestic,
+	"kopia":  AttributeTypeKopia,
 }
 
 type metricBackupsTotalSize struct {
@@ -110,7 +114,7 @@ func WithStartTime(startTime pcommon.Timestamp) metricBuilderOption {
 	}
 }
 
-func NewMetricsBuilder(mbc MetricsBuilderConfig, settings receiver.CreateSettings, options ...metricBuilderOption) *MetricsBuilder {
+func NewMetricsBuilder(mbc MetricsBuilderConfig, settings receiver.Settings, options ...metricBuilderOption) *MetricsBuilder {
 	mb := &MetricsBuilder{
 		config:                 mbc,
 		startTime:              pcommon.NewTimestampFromTime(time.Now()),
@@ -118,6 +122,7 @@ func NewMetricsBuilder(mbc MetricsBuilderConfig, settings receiver.CreateSetting
 		buildInfo:              settings.BuildInfo,
 		metricBackupsTotalSize: newMetricBackupsTotalSize(mbc.Metrics.BackupsTotalSize),
 	}
+
 	for _, op := range options {
 		op(mb)
 	}
@@ -170,7 +175,7 @@ func WithStartTimeOverride(start pcommon.Timestamp) ResourceMetricsOption {
 func (mb *MetricsBuilder) EmitForResource(rmo ...ResourceMetricsOption) {
 	rm := pmetric.NewResourceMetrics()
 	ils := rm.ScopeMetrics().AppendEmpty()
-	ils.Scope().SetName("otelcol/userstatsreceiver")
+	ils.Scope().SetName("github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver")
 	ils.Scope().SetVersion(mb.buildInfo.Version)
 	ils.Metrics().EnsureCapacity(mb.metricsCapacity)
 	mb.metricBackupsTotalSize.emit(ils.Metrics())
@@ -178,6 +183,7 @@ func (mb *MetricsBuilder) EmitForResource(rmo ...ResourceMetricsOption) {
 	for _, op := range rmo {
 		op(rm)
 	}
+
 	if ils.Metrics().Len() > 0 {
 		mb.updateCapacity(rm)
 		rm.MoveTo(mb.metricsBuffer.ResourceMetrics().AppendEmpty())
