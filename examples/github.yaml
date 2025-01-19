@@ -1,0 +1,21 @@
+receivers:
+    github:
+        webhook:
+          endpoint: localhost:19418
+          path: /events
+          health_path: /health
+          secret: ${env:GITHUB_WEBHOOK_SECRET}
+
+processors:
+
+exporters:
+  debug:
+    verbosity: detailed
+
+service:
+  extensions: []
+  pipelines:
+    traces:
+      receivers: [github]
+      processors: []
+      exporters: [debug]

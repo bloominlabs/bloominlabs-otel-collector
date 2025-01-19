@@ -14,7 +14,7 @@ processors:
     limit_mib: 64
 
 exporters:
-  logging:
+  debug:
     verbosity: detailed
 
 service:
@@ -23,4 +23,4 @@ service:
     metrics:
       receivers: [certificates]
       processors: [memory_limiter, batch]
-      exporters: [logging]
+      exporters: [debug]

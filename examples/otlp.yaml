@@ -1,0 +1,39 @@
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: "127.0.0.1:4317"
+        tls:
+          ca_file: "/tmp/flagd/ca.cert.pem"
+          cert_file: "/tmp/flagd/server.cert.pem"
+          key_file: "/tmp/flagd/server.key.pem"
+          reload_interval: "5m"
+        # tls:
+        #   ca_file: "/tmp/flagd/baremetal-otel-collector.ca.pem"
+        #   cert_file: "/tmp/flagd/baremetal-otel-collector.cert.pem"
+        #   key_file: "/tmp/flagd/baremetal-otel-collector.key.pem"
+        #   reload_interval: "5m"
+
+
+processors:
+  batch:
+
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 64
+
+exporters:
+  debug:
+    verbosity: detailed
+
+service:
+  extensions: []
+  pipelines:
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [debug]

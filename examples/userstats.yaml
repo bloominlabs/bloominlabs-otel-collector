@@ -1,9 +1,9 @@
 receivers:
   userstats:
     collection_interval: 1m
-    bucket_name: "dev-stratos-server-backups"
-    access_key_id: <access-key-id>
-    secret_access_key: <secret-access-key>
+    bucket_name: "prod-stratos-server-backups"
+    access_key_id: ${env:SPACES_ACCESS_KEY_ID}
+    secret_access_key: ${env:SPACES_SECRET_ACCESS_KEY}
 
 processors:
   batch:
@@ -13,7 +13,7 @@ processors:
     limit_mib: 64
 
 exporters:
-  logging:
+  debug:
     verbosity: detailed
 
 service:
@@ -22,4 +22,4 @@ service:
     metrics:
       receivers: [userstats]
       processors: [memory_limiter, batch]
-      exporters: [logging]
+      exporters: [debug]
