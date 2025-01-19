@@ -22,7 +22,7 @@ import (
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/receiver"
-	"go.opentelemetry.io/collector/receiver/scrapererror"
+	"go.opentelemetry.io/collector/scraper/scrapererror"
 	"go.uber.org/zap"
 
 	metricMetadata "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver/internal/metadata"
@@ -89,10 +89,10 @@ func (p *vaultKVScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 }
 
 func (p *vaultKVScraper) collectCreatedTime(
-	ctx context.Context,
+	_ context.Context,
 	now pcommon.Timestamp,
 	secretMetadata Secrets,
-	errors scrapererror.ScrapeErrors,
+	_ scrapererror.ScrapeErrors,
 ) {
 	// Metrics can be partially collected (non-nil) even if there were partial errors reported
 	if secretMetadata == nil {

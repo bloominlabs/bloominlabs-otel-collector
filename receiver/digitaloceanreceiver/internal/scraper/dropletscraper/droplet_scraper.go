@@ -19,26 +19,26 @@ import (
 )
 
 // scraper for Billing Metrics
-type scraper struct {
+type dropletScraper struct {
 	settings receiver.Settings
 	config   *Config
 	mb       *metadata.MetricsBuilder
 }
 
 // newDropletScraper creates a set of billing related metrics
-func newDropletScraper(_ context.Context, settings receiver.Settings, cfg *Config) *scraper {
-	return &scraper{
+func newDropletScraper(_ context.Context, settings receiver.Settings, cfg *Config) *dropletScraper {
+	return &dropletScraper{
 		settings: settings,
 		config:   cfg,
 	}
 }
 
-func (s *scraper) start(context.Context, component.Host) error {
+func (s *dropletScraper) start(context.Context, component.Host) error {
 	s.mb = metadata.NewMetricsBuilder(s.config.MetricsBuilderConfig, s.settings, metadata.WithStartTime(pcommon.Timestamp(time.Now().Unix())))
 	return nil
 }
 
-func (s *scraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
+func (s *dropletScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 	now := pcommon.NewTimestampFromTime(time.Now())
 
 	list := []godo.Droplet{}

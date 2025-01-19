@@ -30,9 +30,7 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/plogtest"
 )
 
-var (
-	cfg = &Config{}
-)
+var cfg = &Config{}
 
 type testLogMessage struct {
 	body         pcommon.Value
@@ -86,7 +84,7 @@ func TestLogsTransformProcessor(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			tln := new(consumertest.LogsSink)
 			factory := NewFactory()
-			ltp, err := factory.CreateLogsProcessor(context.Background(), processortest.NewNopCreateSettings(), tt.config, tln)
+			ltp, err := factory.CreateLogs(context.Background(), processortest.NewNopSettings(), tt.config, tln)
 			require.NoError(t, err)
 			assert.True(t, ltp.Capabilities().MutatesData)
 

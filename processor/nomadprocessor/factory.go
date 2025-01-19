@@ -35,10 +35,8 @@ const (
 	stability = component.StabilityLevelDevelopment
 )
 
-var (
-	// The value of "type" key in configuration.
-	typeStr = component.MustNewType("nomad")
-)
+// The value of "type" key in configuration.
+var typeStr = component.MustNewType("nomad")
 
 var processorCapabilities = consumer.Capabilities{MutatesData: true}
 
@@ -77,7 +75,6 @@ func createLogsProcessor(
 
 	if oCfg.TokenFile != "" {
 		w, err := filesystem.NewRateLimitedFileWatcher([]string{oCfg.TokenFile}, log.With().Logger().Output(io.Discard), time.Second)
-
 		if err != nil {
 			return nil, fmt.Errorf("failed to create file watcher: %w", err)
 		}
@@ -86,7 +83,7 @@ func createLogsProcessor(
 		proc.tokenFile = &oCfg.TokenFile
 	}
 
-	return processorhelper.NewLogsProcessor(
+	return processorhelper.NewLogs(
 		ctx,
 		set,
 		cfg,

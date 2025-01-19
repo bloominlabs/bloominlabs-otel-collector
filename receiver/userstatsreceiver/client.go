@@ -20,7 +20,6 @@ import (
 	"context"
 	"fmt"
 	"strings"
-
 	"time"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
@@ -54,6 +53,7 @@ func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]map
 
 	params := &s3.ListObjectVersionsInput{
 		Bucket:  &c.bucket,
+		Prefix:  aws.String("cbsve87jkert/lf68chdgzu9s"),
 		MaxKeys: aws.Int32(1000),
 	}
 
@@ -103,6 +103,8 @@ func (c *userStatsClient) listBackupsByUser(ctx context.Context) (map[string]map
 				backupsMap[userID] = make(map[metadata.AttributeType]int64)
 			}
 			backupsMap[userID][backupType] += *version.Size
+
+			fmt.Printf("-> %s %s %t %d\n", *version.Key, *version.VersionId, *version.IsLatest, backupsMap[userID][backupType])
 		}
 	}
 

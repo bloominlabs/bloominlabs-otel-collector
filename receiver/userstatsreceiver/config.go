@@ -17,7 +17,7 @@ package userstatsreceiver // import "github.com/open-telemetry/opentelemetry-col
 import (
 	"fmt"
 
-	"go.opentelemetry.io/collector/receiver/scraperhelper"
+	"go.opentelemetry.io/collector/scraper/scraperhelper"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver/internal/metadata"
 )
@@ -27,13 +27,13 @@ const (
 )
 
 type Config struct {
-	Endpoint                                string `mapstructure:"endpoint"`
-	Region                                  string `mapstructure:"region"`
-	AccessKeyID                             string `mapstructure:"access_key_id"`
-	SecretAccessKey                         string `mapstructure:"secret_access_key"`
-	Bucket                                  string `mapstructure:"bucket_name"`
+	Endpoint                       string `mapstructure:"endpoint"`
+	Region                         string `mapstructure:"region"`
+	AccessKeyID                    string `mapstructure:"access_key_id"`
+	SecretAccessKey                string `mapstructure:"secret_access_key"`
+	Bucket                         string `mapstructure:"bucket_name"`
 	scraperhelper.ControllerConfig `mapstructure:",squash"`
-	metadata.MetricsBuilderConfig           `mapstructure:",squash"`
+	metadata.MetricsBuilderConfig  `mapstructure:",squash"`
 }
 
 func (cfg *Config) Validate() error {

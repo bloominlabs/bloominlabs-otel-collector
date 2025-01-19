@@ -36,9 +36,7 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatatest/plogtest"
 )
 
-var (
-	cfg = &Config{}
-)
+var cfg = &Config{}
 
 func createNomadTestHarness(t *testing.T) (*httptest.Server, *http.ServeMux, *api.Client) {
 	t.Helper()
@@ -168,7 +166,7 @@ func TestLogsTransformProcessor(t *testing.T) {
 
 			tln := new(consumertest.LogsSink)
 			factory := NewFactory()
-			ltp, err := factory.CreateLogsProcessor(context.Background(), processortest.NewNopCreateSettings(), tt.config, tln)
+			ltp, err := factory.CreateLogs(context.Background(), processortest.NewNopSettings(), tt.config, tln)
 			require.NoError(t, err)
 			assert.True(t, ltp.Capabilities().MutatesData)
 

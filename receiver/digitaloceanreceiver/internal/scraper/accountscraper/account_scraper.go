@@ -16,26 +16,26 @@ import (
 )
 
 // scraper for Account Metrics
-type scraper struct {
+type accountScraper struct {
 	settings receiver.Settings
 	config   *Config
 	mb       *metadata.MetricsBuilder
 }
 
 // newDropletScraper creates a set of account related metrics
-func newDropletScraper(_ context.Context, settings receiver.Settings, cfg *Config) *scraper {
-	return &scraper{
+func newDropletScraper(_ context.Context, settings receiver.Settings, cfg *Config) *accountScraper {
+	return &accountScraper{
 		settings: settings,
 		config:   cfg,
 	}
 }
 
-func (s *scraper) start(context.Context, component.Host) error {
+func (s *accountScraper) start(context.Context, component.Host) error {
 	s.mb = metadata.NewMetricsBuilder(s.config.MetricsBuilderConfig, s.settings, metadata.WithStartTime(pcommon.Timestamp(time.Now().Unix())))
 	return nil
 }
 
-func (s *scraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
+func (s *accountScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 	now := pcommon.NewTimestampFromTime(time.Now())
 	account, _, err := s.config.Client.Account.Get(ctx)
 

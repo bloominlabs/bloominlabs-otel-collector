@@ -7,7 +7,7 @@ import (
 	"context"
 
 	"go.opentelemetry.io/collector/receiver"
-	"go.opentelemetry.io/collector/receiver/scraperhelper"
+	"go.opentelemetry.io/collector/scraper"
 
 	"github.com/digitalocean/godo"
 )
@@ -19,7 +19,7 @@ type ScraperFactory interface {
 
 	// CreateMetricsScraper creates a scraper based on this config.
 	// If the config is not valid, error will be returned instead.
-	CreateMetricsScraper(ctx context.Context, settings receiver.Settings, cfg Config) (scraperhelper.Scraper, error)
+	CreateMetricsScraper(ctx context.Context, settings receiver.Settings, cfg Config) (scraper.Metrics, error)
 }
 
 // Config is the configuration of a scraper.

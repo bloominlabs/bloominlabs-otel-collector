@@ -27,7 +27,7 @@ import (
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/receiver"
-	"go.opentelemetry.io/collector/receiver/scrapererror"
+	"go.opentelemetry.io/collector/scraper/scrapererror"
 	"go.uber.org/zap"
 	"golang.org/x/crypto/pkcs12"
 
@@ -184,7 +184,7 @@ func parseAsPKCS(certBytes []byte) (bool, []certMetric, error) {
 	for _, block := range blocks {
 		cert, err := x509.ParseCertificate(block.Bytes)
 		if err == nil {
-			var metric = getCertificatesMetrics(cert)
+			metric := getCertificatesMetrics(cert)
 			metrics = append(metrics, metric)
 		} else {
 			last_err = err
@@ -217,7 +217,7 @@ func parseAsPEM(certBytes []byte) (bool, []certMetric, error) {
 		if err != nil {
 			return true, metrics, err
 		}
-		var metric = getCertificatesMetrics(cert)
+		metric := getCertificatesMetrics(cert)
 		metrics = append(metrics, metric)
 	}
 	return true, metrics, nil

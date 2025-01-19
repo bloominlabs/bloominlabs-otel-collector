@@ -28,10 +28,8 @@ const (
 	stability = component.StabilityLevelDevelopment
 )
 
-var (
-	// The value of "type" key in configuration.
-	typeStr = component.MustNewType("loki")
-)
+// The value of "type" key in configuration.
+var typeStr = component.MustNewType("loki")
 
 var processorCapabilities = consumer.Capabilities{MutatesData: true}
 
@@ -54,7 +52,7 @@ func createLogsProcessor(
 	nextConsumer consumer.Logs,
 ) (processor.Logs, error) {
 	proc := &resourceProcessor{}
-	return processorhelper.NewLogsProcessor(
+	return processorhelper.NewLogs(
 		ctx,
 		set,
 		cfg,

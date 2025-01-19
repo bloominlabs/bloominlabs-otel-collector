@@ -38,11 +38,11 @@ func TestNewProcessor(t *testing.T) {
 			// Prepare
 			factory := NewFactory()
 
-			creationParams := processortest.NewNopCreateSettings()
+			creationParams := processortest.NewNopSettings()
 			cfg := factory.CreateDefaultConfig().(*Config)
 
 			// Test
-			logProcessor, err := factory.CreateLogsProcessor(context.Background(), creationParams, cfg, consumertest.NewNop())
+			logProcessor, err := factory.CreateLogs(context.Background(), creationParams, cfg, consumertest.NewNop())
 
 			// Verify
 			assert.NoError(t, err)

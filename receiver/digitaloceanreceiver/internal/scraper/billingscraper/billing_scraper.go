@@ -20,26 +20,26 @@ import (
 )
 
 // scraper for Billing Metrics
-type scraper struct {
+type billingScraper struct {
 	settings receiver.Settings
 	config   *Config
 	mb       *metadata.MetricsBuilder
 }
 
 // newBillingScraper creates a set of billing related metrics
-func newBillingScraper(_ context.Context, settings receiver.Settings, cfg *Config) *scraper {
-	return &scraper{
+func newBillingScraper(_ context.Context, settings receiver.Settings, cfg *Config) *billingScraper {
+	return &billingScraper{
 		settings: settings,
 		config:   cfg,
 	}
 }
 
-func (s *scraper) start(context.Context, component.Host) error {
+func (s *billingScraper) start(context.Context, component.Host) error {
 	s.mb = metadata.NewMetricsBuilder(s.config.MetricsBuilderConfig, s.settings, metadata.WithStartTime(pcommon.Timestamp(time.Now().Unix())))
 	return nil
 }
 
-func (s *scraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
+func (s *billingScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 	now := pcommon.NewTimestampFromTime(time.Now())
 
 	balance, _, err := s.config.Client.Balance.Get(ctx)
