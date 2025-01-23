@@ -764,6 +764,8 @@ github.com/leodido/ragel-machinery v0.0.0-20190525184631-5f46317e436b h1:11UHH39
 github.com/leodido/ragel-machinery v0.0.0-20190525184631-5f46317e436b/go.mod h1:WZxr2/6a/Ar9bMDc2rN/LJrE/hF6bXE4LPyDSIxwAfg=
 github.com/lib/pq v1.10.9 h1:YXG7RB+JIjhP29X+OtkiDnYaXQwpS4JEWq7dtCCRUEw=
 github.com/lib/pq v1.10.9/go.mod h1:AlVN5x4E4T544tWzH6hKfbfQvm3HdbOxrmggDNAPY9o=
+github.com/lightstep/go-expohisto v1.0.0 h1:UPtTS1rGdtehbbAF7o/dhkWLTDI73UifG8LbfQI7cA4=
+github.com/lightstep/go-expohisto v1.0.0/go.mod h1:xDXD0++Mu2FOaItXtdDfksfgxfV0z1TMPa+e/EUd0cs=
 github.com/linode/linodego v1.37.0 h1:B/2Spzv9jYXzKA+p+GD8fVCNJ7Wuw6P91ZDD9eCkkso=
 github.com/linode/linodego v1.37.0/go.mod h1:L7GXKFD3PoN2xSEtFc04wIXP5WK65O10jYQx0PQISWQ=
 github.com/lufia/plan9stats v0.0.0-20240408141607-282e7b5d6b74 h1:1KuuSOy4ZNgW0KA2oYIngXVFhQcXxhLqCVK7cBcldkk=
@@ -865,6 +867,8 @@ github.com/onsi/gomega v0.0.0-20170829124025-dcabb60a477c/go.mod h1:C1qb7wdrVGGV
 github.com/onsi/gomega v1.7.0/go.mod h1:ex+gbHU/CVuBBDIJjb2X0qEXbFg53c61hWP/1CpauHY=
 github.com/onsi/gomega v1.19.0 h1:4ieX6qQjPP/BfC3mpsAtIGGlxTWPeA3Inl/7DtXw1tw=
 github.com/onsi/gomega v1.19.0/go.mod h1:LY+I3pBVzYsTBU1AnDwOSxaYi9WoWiqgwooUqq9yPro=
+github.com/open-telemetry/opentelemetry-collector-contrib/connector/spanmetricsconnector v0.117.0 h1:+aFOdtADYVCa0LZ9NwQCSgholjnlcDCZtUxw1ANM09Q=
+github.com/open-telemetry/opentelemetry-collector-contrib/connector/spanmetricsconnector v0.117.0/go.mod h1:+yiEfRt40Sf6vnrusZuGK3u7Ygc+yFUjUQmsXyWJiZc=
 github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusremotewriteexporter v0.117.0 h1:5SVrY+xan8gF/dFTrr1ZDNqpiLaKeObQESnLFS0hiWo=
 github.com/open-telemetry/opentelemetry-collector-contrib/exporter/prometheusremotewriteexporter v0.117.0/go.mod h1:HOE5cXKLgSVJFl49aAlbkfsWn8smQxz+CXmdkNpHHUg=
 github.com/open-telemetry/opentelemetry-collector-contrib/extension/basicauthextension v0.117.0 h1:drUV799bIixmtoLw2Qqe8u9XwQ8oGi+aausK6W0Wkfc=
@@ -889,6 +893,8 @@ github.com/open-telemetry/opentelemetry-collector-contrib/internal/k8sconfig v0.
 github.com/open-telemetry/opentelemetry-collector-contrib/internal/k8sconfig v0.117.0/go.mod h1:GhC+Pk3PbAIq52vmYr+d6PN4Hnxyp4lGQMbomI7Bom8=
 github.com/open-telemetry/opentelemetry-collector-contrib/internal/metadataproviders v0.117.0 h1:NcKa3IoJeWcJhgR8PeON/WrVXvJEtwJk0JjOramOB2Y=
 github.com/open-telemetry/opentelemetry-collector-contrib/internal/metadataproviders v0.117.0/go.mod h1:l9phs2ptsSwM/up7A6Y6wcrEKPFpwrfl/HTFsP6CFXA=
+github.com/open-telemetry/opentelemetry-collector-contrib/internal/pdatautil v0.117.0 h1:SjZHtgph6f675yK/p+GTo8I7VlIAjJFod3SMNgfpEAg=
+github.com/open-telemetry/opentelemetry-collector-contrib/internal/pdatautil v0.117.0/go.mod h1:e4cIzlw2iGmMCgHKyJHLf+PF99A1Y6GvNC0+E3x1dA4=
 github.com/open-telemetry/opentelemetry-collector-contrib/pkg/experimentalmetricmetadata v0.117.0 h1:xLphmoZCppxmMbvzhr9+gpayoUXPVhXtgzMw2MYATe4=
 github.com/open-telemetry/opentelemetry-collector-contrib/pkg/experimentalmetricmetadata v0.117.0/go.mod h1:SMhpc9NNFHzzq75fmvcZa9f9KDZnIsum6Wfj4bG4/LQ=
 github.com/open-telemetry/opentelemetry-collector-contrib/pkg/golden v0.117.0 h1:tOJFUIZaAU4zm5CilqZN1/AuKQa7diTrcEhgQIYly6k=

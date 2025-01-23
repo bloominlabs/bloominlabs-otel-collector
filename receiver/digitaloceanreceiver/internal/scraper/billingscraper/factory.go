@@ -15,7 +15,7 @@ import (
 
 // This file implements Factory for Processes scraper.
 
-var TypeStr = "certificates"
+var TypeStr = "billing"
 
 // Factory is the Factory for scraper.
 type Factory struct{}
@@ -35,5 +35,5 @@ func (f *Factory) CreateMetricsScraper(
 ) (scraper.Metrics, error) {
 	cfg := config.(*Config)
 	s := newBillingScraper(ctx, settings, cfg)
-	return scraper.NewMetrics(s.scrape)
+	return scraper.NewMetrics(s.scrape, scraper.WithStart(s.start))
 }

@@ -7,6 +7,7 @@ go 1.22.8
 toolchain go1.23.4
 
 require (
+	github.com/open-telemetry/opentelemetry-collector-contrib/connector/spanmetricsconnector v0.117.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/basicauthextension v0.117.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/healthcheckextension v0.117.0
 	github.com/open-telemetry/opentelemetry-collector-contrib/extension/pprofextension v0.117.0
@@ -201,6 +202,7 @@ require (
 	github.com/leodido/go-syslog/v4 v4.2.0 // indirect
 	github.com/leodido/ragel-machinery v0.0.0-20190525184631-5f46317e436b // indirect
 	github.com/lib/pq v1.10.9 // indirect
+	github.com/lightstep/go-expohisto v1.0.0 // indirect
 	github.com/linode/linodego v1.37.0 // indirect
 	github.com/lufia/plan9stats v0.0.0-20240408141607-282e7b5d6b74 // indirect
 	github.com/magefile/mage v1.15.0 // indirect
@@ -224,6 +226,7 @@ require (
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/filter v0.117.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/k8sconfig v0.117.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/internal/metadataproviders v0.117.0 // indirect
+	github.com/open-telemetry/opentelemetry-collector-contrib/internal/pdatautil v0.117.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/pkg/experimentalmetricmetadata v0.117.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/pkg/ottl v0.117.0 // indirect
 	github.com/open-telemetry/opentelemetry-collector-contrib/pkg/pdatautil v0.117.0 // indirect

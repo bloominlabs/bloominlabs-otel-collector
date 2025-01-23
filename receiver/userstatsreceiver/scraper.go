@@ -53,18 +53,22 @@ func newBackupsUtilizationScraper(
 	config *Config,
 	clientFactory userStatsClientFactory,
 ) *userStatsScraper {
-	return &userStatsScraper{
-		logger:  settings.Logger,
-		rConfig: config,
-		s3Config: &spaces.DigitalOceanSpacesConfig{
-			InternalEndpoint: config.Endpoint,
-			Region:           config.Region,
-			AccessKeyID:      config.AccessKeyID,
-			SecretAccessKey:  config.SecretAccessKey,
-		},
+	s3Config := &spaces.DigitalOceanSpacesConfig{
+		Region:           config.Region,
+		AccessKeyID:      config.AccessKeyID,
+		SecretAccessKey:  config.SecretAccessKey,
+		InternalEndpoint: config.Endpoint,
+	}
+
+	scraper := &userStatsScraper{
+		logger:        settings.Logger,
+		rConfig:       config,
+		s3Config:      s3Config,
 		clientFactory: clientFactory,
 		mb:            metricMetadata.NewMetricsBuilder(config.MetricsBuilderConfig, settings),
 	}
+
+	return scraper
 }
 
 // scrape scrapes the metric stats, transforms them and attributes them into a metric slices.

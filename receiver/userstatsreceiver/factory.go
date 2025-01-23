@@ -41,7 +41,7 @@ func NewFactory() receiver.Factory {
 
 func createDefaultConfig() component.Config {
 	return &Config{
-		Endpoint:             "digitaloceanspaces.com",
+		Endpoint:             "",
 		Region:               "sfo3",
 		AccessKeyID:          "",
 		SecretAccessKey:      "",
