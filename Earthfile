@@ -54,7 +54,7 @@ release:
 docker:
   FROM --platform=linux/amd64 gcr.io/distroless/base-debian12:debug-nonroot
   COPY +certs/internal.pem /etc/ssl/certs/internal.pem
-  COPY ./bloominlabs-otel-collector .
+  COPY +build/bloominlabs-otel-collector .
   ENTRYPOINT ["./bloominlabs-otel-collector"]
   SAVE IMAGE --push ghcr.io/bloominlabs/otel-collector:latest
 
