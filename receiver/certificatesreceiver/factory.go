@@ -20,7 +20,8 @@ import (
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/receiver"
-	"go.opentelemetry.io/collector/receiver/scraperhelper"
+	"go.opentelemetry.io/collector/scraper"
+	"go.opentelemetry.io/collector/scraper/scraperhelper"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/certificatesreceiver/internal/metadata"
 )
@@ -29,9 +30,7 @@ const (
 	stability = component.StabilityLevelDevelopment
 )
 
-var (
-	typeStr = component.MustNewType("certificates")
-)
+var typeStr = component.MustNewType("certificates")
 
 func NewFactory() receiver.Factory {
 	return receiver.NewFactory(
@@ -58,13 +57,13 @@ func createMetricsReceiver(
 	rCfg := cfg.(*Config)
 
 	ns := newCertificatesScraper(set, rCfg)
-	scraper, err := scraperhelper.NewScraper(typeStr.String(), ns.scrape)
+	scraper, err := scraper.NewMetrics(ns.scrape)
 	if err != nil {
 		return nil, err
 	}
 
-	return scraperhelper.NewScraperControllerReceiver(
+	return scraperhelper.NewMetricsController(
 		&rCfg.ControllerConfig, set, consumer,
-		scraperhelper.AddScraper(scraper),
+		scraperhelper.AddScraper(typeStr, scraper),
 	)
 }

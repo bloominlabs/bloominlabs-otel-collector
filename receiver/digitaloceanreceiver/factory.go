@@ -11,7 +11,8 @@ import (
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/consumer"
 	"go.opentelemetry.io/collector/receiver"
-	"go.opentelemetry.io/collector/receiver/scraperhelper"
+	"go.opentelemetry.io/collector/scraper"
+	"go.opentelemetry.io/collector/scraper/scraperhelper"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver/internal"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver/internal/metadata"
@@ -19,6 +20,8 @@ import (
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver/internal/scraper/billingscraper"
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/digitaloceanreceiver/internal/scraper/dropletscraper"
 )
+
+var TypeStr = component.MustNewType("digitalocean")
 
 // This file implements Factory for Digitalocean receiver.
 var (
@@ -64,7 +67,7 @@ func createMetricsReceiver(
 		return nil, err
 	}
 
-	return scraperhelper.NewScraperControllerReceiver(
+	return scraperhelper.NewMetricsController(
 		&oCfg.ControllerConfig,
 		set,
 		consumer,
@@ -77,8 +80,8 @@ func createAddScraperOptions(
 	set receiver.Settings,
 	config *Config,
 	factories map[string]internal.ScraperFactory,
-) ([]scraperhelper.ScraperControllerOption, error) {
-	scraperControllerOptions := make([]scraperhelper.ScraperControllerOption, 0, len(config.Scrapers))
+) ([]scraperhelper.ControllerOption, error) {
+	scraperControllerOptions := make([]scraperhelper.ControllerOption, 0, len(config.Scrapers))
 
 	for key, cfg := range config.Scrapers {
 		digitaloceanScraper, ok, err := createDigitaloceanScraper(ctx, set, key, cfg, factories)
@@ -87,7 +90,7 @@ func createAddScraperOptions(
 		}
 
 		if ok {
-			scraperControllerOptions = append(scraperControllerOptions, scraperhelper.AddScraper(digitaloceanScraper))
+			scraperControllerOptions = append(scraperControllerOptions, scraperhelper.AddScraper(TypeStr, digitaloceanScraper))
 			continue
 		}
 
@@ -97,7 +100,7 @@ func createAddScraperOptions(
 	return scraperControllerOptions, nil
 }
 
-func createDigitaloceanScraper(ctx context.Context, set receiver.Settings, key string, cfg internal.Config, factories map[string]internal.ScraperFactory) (scraper scraperhelper.Scraper, ok bool, err error) {
+func createDigitaloceanScraper(ctx context.Context, set receiver.Settings, key string, cfg internal.Config, factories map[string]internal.ScraperFactory) (scraper scraper.Metrics, ok bool, err error) {
 	factory := factories[key]
 	if factory == nil {
 		ok = false

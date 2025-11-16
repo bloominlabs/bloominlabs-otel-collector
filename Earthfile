@@ -1,10 +1,10 @@
 # https://github.com/hashicorp/vault/pull/12358
 VERSION 0.8
-FROM golang:1.22
+FROM golang:1.25
 WORKDIR /bloominlabs-otel-collector
 
 tools:
-  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.106.1
+  RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/builder@v0.139.0
   # RUN GO111MODULE=on go install go.opentelemetry.io/collector/cmd/mdatagen@v0.98.0
   SAVE ARTIFACT /go/bin/builder
   # SAVE ARTIFACT /go/bin/mdatagen
@@ -18,7 +18,8 @@ files:
 
 deps:
   FROM +files
-  COPY go.mod go.sum ./
+  COPY --if-exists go.mod ./
+  COPY --if-exists go.sum ./
   RUN go mod download
   # Output these back in case go mod download changes them.
   SAVE ARTIFACT go.mod AS LOCAL go.mod
@@ -32,7 +33,7 @@ generate:
   FROM +deps
   COPY +tools/builder /go/bin/builder
   COPY otelcol-builder.yaml . 
-  RUN GO111MODULE=on CGO_ENABLED=0 builder --output-path . --config otelcol-builder.yaml --name bloominlabs-otel-collector --skip-compilation
+  RUN GO111MODULE=on CGO_ENABLED=0 builder --config otelcol-builder.yaml --skip-compilation
   SAVE ARTIFACT *.go AS LOCAL ./
   SAVE ARTIFACT go.mod AS LOCAL go.mod
   SAVE ARTIFACT go.sum AS LOCAL go.sum
@@ -53,7 +54,7 @@ release:
 docker:
   FROM --platform=linux/amd64 gcr.io/distroless/base-debian12:debug-nonroot
   COPY +certs/internal.pem /etc/ssl/certs/internal.pem
-  COPY +build/bloominlabs-otel-collector .
+  COPY ./bloominlabs-otel-collector .
   ENTRYPOINT ["./bloominlabs-otel-collector"]
   SAVE IMAGE --push ghcr.io/bloominlabs/otel-collector:latest
 

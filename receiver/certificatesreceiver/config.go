@@ -17,7 +17,7 @@ package certificatesreceiver // import "github.com/open-telemetry/opentelemetry-
 import (
 	"fmt"
 
-	"go.opentelemetry.io/collector/receiver/scraperhelper"
+	"go.opentelemetry.io/collector/scraper/scraperhelper"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/certificatesreceiver/internal/metadata"
 )
@@ -28,7 +28,7 @@ const (
 
 type Config struct {
 	scraperhelper.ControllerConfig `mapstructure:",squash"`
-	metadata.MetricsBuilderConfig           `mapstructure:",squash"`
+	metadata.MetricsBuilderConfig  `mapstructure:",squash"`
 
 	CertificateIncludeGlobs []string `mapstructure:"certificate_include_globs"`
 	CertificateExcludeGlobs []string `mapstructure:"certificate_exclude_globs"`

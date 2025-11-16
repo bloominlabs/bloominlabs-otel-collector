@@ -12,7 +12,7 @@ import (
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/config/configopaque"
 	"go.opentelemetry.io/collector/confmap"
-	"go.opentelemetry.io/collector/receiver/scraperhelper"
+	"go.opentelemetry.io/collector/scraper/scraperhelper"
 	"go.uber.org/multierr"
 
 	"github.com/digitalocean/godo"
@@ -26,7 +26,7 @@ const (
 // Config defines configuration for digitalocean receiver.
 type Config struct {
 	scraperhelper.ControllerConfig `mapstructure:",squash"`
-	Scrapers                                map[string]internal.Config `mapstructure:"scrapers"`
+	Scrapers                       map[string]internal.Config `mapstructure:"scrapers"`
 
 	// Token is used to provide a per-request ACL token
 	// which overrides the agent's default (empty) token.
@@ -41,8 +41,10 @@ type Config struct {
 	TokenFile string `mapstructure:"token_file"`
 }
 
-var _ component.Config = (*Config)(nil)
-var _ confmap.Unmarshaler = (*Config)(nil)
+var (
+	_ component.Config    = (*Config)(nil)
+	_ confmap.Unmarshaler = (*Config)(nil)
+)
 
 // Validate checks the receiver configuration is valid
 func (cfg *Config) Validate() error {

@@ -8,7 +8,6 @@ import (
 
 	"go.opentelemetry.io/collector/component"
 	"go.opentelemetry.io/collector/confmap"
-	"go.opentelemetry.io/collector/confmap/converter/expandconverter"
 	envprovider "go.opentelemetry.io/collector/confmap/provider/envprovider"
 	fileprovider "go.opentelemetry.io/collector/confmap/provider/fileprovider"
 	httpprovider "go.opentelemetry.io/collector/confmap/provider/httpprovider"
@@ -20,8 +19,8 @@ import (
 func main() {
 	info := component.BuildInfo{
 		Command:     "bloominlabs-otel-collector",
-		Description: "Custom OpenTelemetry Collector distribution",
-		Version:     "1.0.0",
+		Description: "Local OpenTelemetry Collector binary",
+		Version:     "",
 	}
 
 	set := otelcol.CollectorSettings{
@@ -36,10 +35,16 @@ func main() {
 					httpsprovider.NewFactory(),
 					yamlprovider.NewFactory(),
 				},
-				ConverterFactories: []confmap.ConverterFactory{
-					expandconverter.NewFactory(),
-				},
 			},
+		},
+		ProviderModules: map[string]string{
+			envprovider.NewFactory().Create(confmap.ProviderSettings{}).Scheme(): "go.opentelemetry.io/collector/confmap/provider/envprovider v1.45.0",
+			fileprovider.NewFactory().Create(confmap.ProviderSettings{}).Scheme(): "go.opentelemetry.io/collector/confmap/provider/fileprovider v1.45.0",
+			httpprovider.NewFactory().Create(confmap.ProviderSettings{}).Scheme(): "go.opentelemetry.io/collector/confmap/provider/httpprovider v1.45.0",
+			httpsprovider.NewFactory().Create(confmap.ProviderSettings{}).Scheme(): "go.opentelemetry.io/collector/confmap/provider/httpsprovider v1.45.0",
+			yamlprovider.NewFactory().Create(confmap.ProviderSettings{}).Scheme(): "go.opentelemetry.io/collector/confmap/provider/yamlprovider v1.45.0",
+    	},
+		ConverterModules: []string{
 		},
 	}
 

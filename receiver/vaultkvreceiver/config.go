@@ -18,7 +18,7 @@ import (
 	"fmt"
 	"strings"
 
-	"go.opentelemetry.io/collector/receiver/scraperhelper"
+	"go.opentelemetry.io/collector/scraper/scraperhelper"
 
 	"github.com/open-telemetry/opentelemetry-collector-contrib/receiver/vaultkvreceiver/internal/metadata"
 )
@@ -28,10 +28,10 @@ const (
 )
 
 type Config struct {
-	Mount                                   string `mapstructure:"mount"`
-	URL                                     string `mapstructure:"url"`
+	Mount                          string `mapstructure:"mount"`
+	URL                            string `mapstructure:"url"`
 	scraperhelper.ControllerConfig `mapstructure:",squash"`
-	metadata.MetricsBuilderConfig           `mapstructure:",squash"`
+	metadata.MetricsBuilderConfig  `mapstructure:",squash"`
 }
 
 func (cfg *Config) Validate() error {

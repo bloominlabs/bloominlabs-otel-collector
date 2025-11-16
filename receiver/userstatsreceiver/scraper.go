@@ -24,7 +24,7 @@ import (
 	"go.opentelemetry.io/collector/pdata/pcommon"
 	"go.opentelemetry.io/collector/pdata/pmetric"
 	"go.opentelemetry.io/collector/receiver"
-	"go.opentelemetry.io/collector/receiver/scrapererror"
+	"go.opentelemetry.io/collector/scraper/scrapererror"
 	"go.uber.org/zap"
 
 	metricMetadata "github.com/open-telemetry/opentelemetry-collector-contrib/receiver/userstatsreceiver/internal/metadata"
@@ -53,25 +53,28 @@ func newBackupsUtilizationScraper(
 	config *Config,
 	clientFactory userStatsClientFactory,
 ) *userStatsScraper {
-	return &userStatsScraper{
-		logger:  settings.Logger,
-		rConfig: config,
-		s3Config: &spaces.DigitalOceanSpacesConfig{
-			Endpoint:        config.Endpoint,
-			Region:          config.Region,
-			AccessKeyID:     config.AccessKeyID,
-			SecretAccessKey: config.SecretAccessKey,
-		},
+	s3Config := &spaces.DigitalOceanSpacesConfig{
+		Region:           config.Region,
+		AccessKeyID:      config.AccessKeyID,
+		SecretAccessKey:  config.SecretAccessKey,
+		InternalEndpoint: config.Endpoint,
+	}
+
+	scraper := &userStatsScraper{
+		logger:        settings.Logger,
+		rConfig:       config,
+		s3Config:      s3Config,
 		clientFactory: clientFactory,
 		mb:            metricMetadata.NewMetricsBuilder(config.MetricsBuilderConfig, settings),
 	}
+
+	return scraper
 }
 
 // scrape scrapes the metric stats, transforms them and attributes them into a metric slices.
 func (p *userStatsScraper) scrape(ctx context.Context) (pmetric.Metrics, error) {
 	p.logger.Info("starting scrape")
 	s3Client, err := p.s3Config.GetClient()
-
 	if err != nil {
 		return pmetric.NewMetrics(), fmt.Errorf("failed to get s3 client: %w", err)
 	}

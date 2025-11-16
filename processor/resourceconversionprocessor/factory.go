@@ -28,10 +28,8 @@ const (
 	stability = component.StabilityLevelDevelopment
 )
 
-var (
-	// The value of "type" key in configuration.
-	typeStr = component.MustNewType("resourceconversion")
-)
+// The value of "type" key in configuration.
+var typeStr = component.MustNewType("resourceconversion")
 
 var processorCapabilities = consumer.Capabilities{MutatesData: true}
 
@@ -54,7 +52,7 @@ func createMetricsProcessor(
 	nextConsumer consumer.Metrics,
 ) (processor.Metrics, error) {
 	proc := &resourceProcessor{}
-	return processorhelper.NewMetricsProcessor(
+	return processorhelper.NewMetrics(
 		ctx,
 		set,
 		cfg,

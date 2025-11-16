@@ -1,0 +1,46 @@
+receivers:
+    github:
+        webhook:
+          endpoint: localhost:19418
+          path: /events
+          health_path: /health
+          secret: ${env:GITHUB_WEBHOOK_SECRET}
+
+processors:
+
+exporters:
+  debug:
+    verbosity: detailed
+
+connectors:
+  spanmetrics:
+    histogram:
+      disable: true
+    dimensions_cache_size: 1000
+    aggregation_temporality: "AGGREGATION_TEMPORALITY_CUMULATIVE"    
+    metrics_flush_interval: 15s
+    metrics_expiration: 5m
+    dimensions:
+      - name: github.workflow.name
+    events:
+      enabled: false
+      dimensions:
+        - name: exception.type
+        - name: exception.message
+    resource_metrics_key_attributes:
+      - service.name
+      - github.workflow.name
+      - telemetry.sdk.language
+      - telemetry.sdk.name
+
+service:
+  extensions: []
+  pipelines:
+    traces:
+      receivers: [github]
+      processors: []
+      exporters: [debug, spanmetrics]
+    metrics:
+      receivers: [spanmetrics]
+      processors: []
+      exporters: [debug]
