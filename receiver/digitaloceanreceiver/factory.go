@@ -67,7 +67,7 @@ func createMetricsReceiver(
 		return nil, err
 	}
 
-	return scraperhelper.NewScraperControllerReceiver(
+	return scraperhelper.NewMetricsController(
 		&oCfg.ControllerConfig,
 		set,
 		consumer,
@@ -80,8 +80,8 @@ func createAddScraperOptions(
 	set receiver.Settings,
 	config *Config,
 	factories map[string]internal.ScraperFactory,
-) ([]scraperhelper.ScraperControllerOption, error) {
-	scraperControllerOptions := make([]scraperhelper.ScraperControllerOption, 0, len(config.Scrapers))
+) ([]scraperhelper.ControllerOption, error) {
+	scraperControllerOptions := make([]scraperhelper.ControllerOption, 0, len(config.Scrapers))
 
 	for key, cfg := range config.Scrapers {
 		digitaloceanScraper, ok, err := createDigitaloceanScraper(ctx, set, key, cfg, factories)

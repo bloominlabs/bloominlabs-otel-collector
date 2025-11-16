@@ -21,7 +21,7 @@ func TestCreateMetricsScraper(t *testing.T) {
 	factory := &Factory{}
 	cfg := &Config{}
 
-	scraper, err := factory.CreateMetricsScraper(context.Background(), receivertest.NewNopSettings(), cfg)
+	scraper, err := factory.CreateMetricsScraper(context.Background(), receivertest.NewNopSettings(receivertest.NopType), cfg)
 
 	assert.NoError(t, err)
 	assert.NotNil(t, scraper)
